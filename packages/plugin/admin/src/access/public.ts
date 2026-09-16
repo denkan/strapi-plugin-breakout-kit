@@ -44,6 +44,7 @@ export {
   useNotification,
   useAPIErrorHandler,
   adminApi,
+  useFetchClient,
   DescriptionComponentRenderer,
   createRulesEngine,
   translatedErrors,

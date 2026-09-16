@@ -5,6 +5,21 @@ import { PluginIcon } from "./components/PluginIcon";
 
 import type { StrapiApp } from "@strapi/strapi/admin";
 
+// Public API (levels 2 and 3 of the usage model: composition pieces and hooks).
+export {
+  DocumentProvider,
+  type DocumentProviderProps,
+  type DocumentCallbacks,
+  type Override,
+  useDocument,
+  useEditLayout,
+  useEditForm,
+  useEditField,
+  usePermissions,
+  useLocales,
+  useDocumentOperations,
+} from "./data";
+
 const plugin: StrapiApp["appPlugins"][string] = {
   register(app) {
     app.addMenuLink({

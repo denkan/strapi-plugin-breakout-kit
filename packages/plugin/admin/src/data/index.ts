@@ -1,10 +1,18 @@
 /**
  * Layer 2: Data.
  *
- * <DocumentProvider> and hooks (useDocument, useSchema, useEditLayout,
- * useEditForm, useDocumentActions, usePermissions, useLocales). Consumes the
- * access layer only; never reaches into Strapi internals directly.
- *
- * Implemented in Phase 3.
+ * <DocumentProvider> + hooks. Consumes the access layer only; never reaches into
+ * Strapi internals directly.
  */
-export {};
+export { DocumentProvider, type DocumentProviderProps } from './DocumentProvider';
+export { useHeadlessData, type DocumentCallbacks } from './context';
+export {
+  useDocument,
+  useEditLayout,
+  useEditForm,
+  useEditField,
+  usePermissions,
+  useLocales,
+} from './hooks';
+export { useDocumentOperations } from './operations';
+export { resolveOverride, isControlledValue, type Override } from './override';

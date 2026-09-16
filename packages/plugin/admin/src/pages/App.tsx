@@ -2,11 +2,13 @@ import { Page } from "@strapi/strapi/admin";
 import { Routes, Route } from "react-router-dom";
 
 import { HomePage } from "./HomePage";
+import { HooksDemo } from "./HooksDemo";
 
 const App = () => {
   return (
     <Routes>
       <Route index element={<HomePage />} />
+      <Route path="hooks-demo" element={<HooksDemo />} />
       <Route path="*" element={<Page.Error />} />
     </Routes>
   );
