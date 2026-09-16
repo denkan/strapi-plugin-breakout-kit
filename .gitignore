@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+
+# Builds
+dist/
+build/
+.strapi/
+.cache/
+
+# Strapi playground runtime artifacts
+apps/playground/.tmp/
+apps/playground/public/uploads/*
+!apps/playground/public/uploads/.gitkeep
+*.db
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+yarn-error.log*
+
+# Test output
+coverage/
+playwright-report/
+test-results/
+
+# Scratch area (e.g. Strapi source clone for research)
+scratch/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp

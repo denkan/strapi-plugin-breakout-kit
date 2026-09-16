@@ -1,0 +1,19 @@
+{
+  "name": "strapi-headless-content-manager-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm-run-all --parallel dev:plugin dev:playground",
+    "dev:plugin": "npm run watch --workspace packages/plugin",
+    "dev:playground": "npm run develop --workspace apps/playground",
+    "build": "npm run build --workspace packages/plugin",
+    "seed": "npm run seed --workspace apps/playground"
+  },
+  "devDependencies": {
+    "npm-run-all": "^4.1.5"
+  }
+}
