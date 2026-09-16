@@ -1,0 +1,58 @@
+name: Publish
+
+# Phase 8.4: build, run the full suite once more, publish to npm with provenance,
+# create a GitHub release. Manual dispatch only until the package name is confirmed
+# (PLAN §8 open decision #1 / Phase 9); requires the NPM_TOKEN secret.
+# npm credentials exist ONLY in this workflow — never in the adaptation workflow.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write # npm provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Unit tests
+        run: npm run test:unit
+
+      - name: Prepare playground
+        run: node apps/playground/scripts/make-env.js && mkdir -p apps/playground/.tmp && npm run seed
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Contract & parity tests
+        run: npm run test:contract
+
+      - name: Publish to npm (provenance)
+        run: npm publish -w packages/plugin --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION=$(node -p "require('./packages/plugin/package.json').version")
+          STRAPI=$(node -p "require('./drift/manifest.json').strapiVersion")
+          gh release create "v${VERSION}" --title "v${VERSION}" --notes \
+            "strapi-plugin-headless-content-manager ${VERSION} — tested against Strapi ${STRAPI}. See packages/plugin/CHANGELOG.md."

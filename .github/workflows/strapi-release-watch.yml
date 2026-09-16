@@ -1,0 +1,68 @@
+name: Strapi release watch
+
+# Phase 8.1: daily check of the latest @strapi/strapi on npm vs drift/manifest.json.
+# A newer v5 release dispatches the adaptation workflow; a new major opens an issue.
+
+on:
+  schedule:
+    - cron: '17 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  actions: write
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Compare npm latest vs manifest
+        id: compare
+        run: |
+          LATEST=$(npm view @strapi/strapi version)
+          CURRENT=$(node -p "require('./drift/manifest.json').strapiVersion")
+          echo "latest=$LATEST" >> "$GITHUB_OUTPUT"
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          MAJOR="${LATEST%%.*}"
+          echo "major=$MAJOR" >> "$GITHUB_OUTPUT"
+          if [ "$LATEST" = "$CURRENT" ]; then
+            echo "action=none" >> "$GITHUB_OUTPUT"
+          elif [ "$MAJOR" != "5" ]; then
+            echo "action=major" >> "$GITHUB_OUTPUT"
+          else
+            # is LATEST actually newer? (sort -V picks the highest)
+            HIGHEST=$(printf '%s\n%s\n' "$LATEST" "$CURRENT" | sort -V | tail -1)
+            if [ "$HIGHEST" = "$LATEST" ]; then
+              echo "action=adapt" >> "$GITHUB_OUTPUT"
+            else
+              echo "action=none" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Open issue for a new major
+        if: steps.compare.outputs.action == 'major'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          LATEST: ${{ steps.compare.outputs.latest }}
+        run: |
+          TITLE="Strapi $LATEST released (new major) — manual migration needed"
+          if ! gh issue list --state open --search "\"$TITLE\" in:title" --json number --jq length | grep -qv '^0$'; then
+            gh issue create --title "$TITLE" --label needs-human --body \
+              "The release watcher found @strapi/strapi \`$LATEST\` on npm. A new major is out of scope for automated adaptation (PLAN.md Phase 8.1) — plan the migration manually. Manifest is at \`${{ steps.compare.outputs.current }}\`."
+          fi
+
+      - name: Dispatch adaptation workflow
+        if: steps.compare.outputs.action == 'adapt'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run strapi-adapt.yml -f version="${{ steps.compare.outputs.latest }}"
+          echo "Dispatched adaptation for ${{ steps.compare.outputs.latest }}"

@@ -62,6 +62,26 @@ npm run drift:hashes        # recompute drift/manifest.json hashes from scratch/
   Strapi rate-limits admin logins (5/5min) — never log in per-test, and after several
   manual browser logins expect 429s for a few minutes.
 
+## Automated adaptation (Phase 8)
+
+When adapting to a new Strapi version (the strapi-adapt workflow runs you with a drift
+report and failing test output):
+
+1. Read `drift-report.md` first — it lists exactly which tracked internals changed, with
+   diffs, and which of our files consume them (`usedBy`).
+2. **Adapt the access layer first** (`packages/plugin/admin/src/access/` and the
+   `packages/plugin/vite/runtime/` shims). Touch data/components/composition layers only
+   if strictly necessary.
+3. The two runtime shims (`useDocumentContext.mjs`, `useDocument.mjs`) must remain
+   behavior-identical to the new upstream originals on stock routes — read the upstream
+   diff and mirror any changed semantics (fallback order, skip logic, error strings).
+4. **Never copy code from any `ee/` directory.** Never weaken, skip or delete contract or
+   parity tests to make them pass — fix the code.
+5. Every internal dependency must stay reflected in `drift/manifest.json`; when green, run
+   `node drift/scripts/update-manifest.mjs --version <target>`.
+6. Iterate with `npm run test:unit` and `npm run test:contract` until green. Clear
+   `apps/playground/node_modules/.strapi` between plugin rebuilds.
+
 Seeded admin login: `admin@playground.local` / `Playground123!` (override via `SEED_ADMIN_EMAIL`/`SEED_ADMIN_PASSWORD`).
 
 The playground's Strapi version is pinned exactly in `apps/playground/package.json`.

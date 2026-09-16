@@ -1,0 +1,180 @@
+name: Strapi adaptation
+
+# Phase 8.2: new Strapi v5 release -> adapted plugin -> green PR.
+# Dispatched by strapi-release-watch (or manually). Token scope is intentionally
+# limited to pushing a branch and opening a PR; no npm credentials exist here.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Target @strapi/strapi version (5.x.y)'
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: strapi-adapt
+  cancel-in-progress: false
+
+env:
+  TARGET: ${{ inputs.version }}
+
+jobs:
+  adapt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Configure git
+        run: |
+          git config user.name "strapi-adapt[bot]"
+          git config user.email "strapi-adapt@users.noreply.github.com"
+          git checkout -B "strapi-${TARGET}"
+
+      - name: Install
+        run: npm ci
+
+      - name: Bump Strapi versions
+        run: |
+          node drift/scripts/bump-strapi.mjs --version "$TARGET"
+          npm install
+
+      - name: Drift check
+        id: drift
+        run: |
+          set +e
+          node drift/scripts/check.mjs --version "$TARGET" --report drift-report.md --json drift.json
+          echo "drifted=$?" >> "$GITHUB_OUTPUT"
+          set -e
+          cat drift-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Build plugin
+        run: npm run build
+
+      - name: Prepare playground
+        run: node apps/playground/scripts/make-env.js && mkdir -p apps/playground/.tmp && npm run seed
+
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+
+      - name: Test suite (pre-adaptation)
+        id: pretest
+        run: |
+          set +e
+          { npm run test:unit && npm run test:contract; } 2>&1 | tee test-output.txt
+          echo "failed=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+          set -e
+
+      # ---------- Green path: no drift, tests pass ----------
+      - name: Finalize no-drift update
+        if: steps.drift.outputs.drifted == '0' && steps.pretest.outputs.failed == '0'
+        id: nodrift
+        run: |
+          node drift/scripts/update-manifest.mjs --version "$TARGET"
+          npm version patch -w packages/plugin --no-git-tag-version
+          echo "ready=true" >> "$GITHUB_OUTPUT"
+
+      # ---------- Adaptation path: drift or failing tests ----------
+      - name: Claude Code adaptation
+        if: steps.drift.outputs.drifted != '0' || steps.pretest.outputs.failed != '0'
+        uses: anthropics/claude-code-action@v1
+        continue-on-error: true
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_args: '--max-turns 150'
+          prompt: |
+            You are adapting this Strapi plugin to Strapi ${{ inputs.version }}.
+            Read CLAUDE.md and follow its rules exactly, especially:
+            - adapt the access layer (and the vite/runtime shims) FIRST; touch higher
+              layers only if strictly necessary
+            - never copy code from any ee/ directory
+            - every internal dependency must be reflected in drift/manifest.json
+            - do NOT weaken, skip or delete contract or parity tests to make them pass
+
+            Inputs in the working tree:
+            - drift-report.md: what moved upstream (with diffs)
+            - test-output.txt: the failing test output (if tests failed)
+            - The playground is already bumped to ${{ inputs.version }} and seeded.
+
+            Iterate until `npm run test:unit` and `npm run test:contract` are green.
+            When green: run `node drift/scripts/update-manifest.mjs --version ${{ inputs.version }}`
+            and `npm version patch -w packages/plugin --no-git-tag-version`.
+            Do not commit or push — the workflow handles that.
+
+      - name: Test suite (post-adaptation)
+        if: steps.drift.outputs.drifted != '0' || steps.pretest.outputs.failed != '0'
+        id: posttest
+        run: |
+          set +e
+          { npm run test:unit && npm run test:contract; } 2>&1 | tee test-output-post.txt
+          echo "failed=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+          set -e
+
+      # ---------- Commit, push, PR ----------
+      - name: Commit and push
+        id: push
+        run: |
+          git add -A
+          git commit -m "Adapt to Strapi ${TARGET}" || echo "nothing to commit"
+          git push -u origin "strapi-${TARGET}" --force-with-lease
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Open PR (green)
+        if: steps.nodrift.outputs.ready == 'true' || steps.posttest.outputs.failed == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "${{ steps.nodrift.outputs.ready }}" = "true" ]; then
+            KIND="No tracked internals changed; full suite green."
+          else
+            KIND="Drift detected and adapted by Claude Code; full suite green after adaptation."
+          fi
+          {
+            echo "Automated adaptation to Strapi ${TARGET}."
+            echo
+            echo "$KIND"
+            echo
+            echo "## Drift summary"
+            echo
+            cat drift-report.md
+          } > pr-body.md
+          gh pr create --title "Adapt to Strapi ${TARGET}" --body-file pr-body.md \
+            --label automated || gh pr edit --body-file pr-body.md
+          # Auto-merge only for the no-drift path, and only when the maintainer has
+          # opted in via the ENABLE_AUTO_MERGE repository variable (merge policy 8.3).
+          if [ "${{ steps.nodrift.outputs.ready }}" = "true" ] && [ "${{ vars.ENABLE_AUTO_MERGE }}" = "true" ]; then
+            gh pr merge --auto --squash || true
+          fi
+
+      - name: Open draft PR (needs human)
+        if: steps.nodrift.outputs.ready != 'true' && steps.posttest.outputs.failed != '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "Automated adaptation to Strapi ${TARGET} could NOT reach green."
+            echo
+            echo "Last test run output tail:"
+            echo '```'
+            tail -60 test-output-post.txt 2>/dev/null || tail -60 test-output.txt
+            echo '```'
+            echo
+            echo "## Drift summary"
+            echo
+            cat drift-report.md
+          } > pr-body.md
+          gh pr create --draft --title "Adapt to Strapi ${TARGET} (needs human)" \
+            --body-file pr-body.md --label automated --label needs-human || \
+            gh pr edit --body-file pr-body.md
