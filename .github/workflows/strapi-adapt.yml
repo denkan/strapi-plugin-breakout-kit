@@ -3,6 +3,14 @@ name: Strapi adaptation
 # Phase 8.2: new Strapi v5 release -> adapted plugin -> green PR.
 # Dispatched by strapi-release-watch (or manually). Token scope is intentionally
 # limited to pushing a branch and opening a PR; no npm credentials exist here.
+#
+# Repo setup requirements:
+# - Settings > Actions > General: "Allow GitHub Actions to create and approve pull
+#   requests" must be enabled (done for this repo).
+# - Optional secret ANTHROPIC_API_KEY: enables the Claude Code adaptation step.
+# - Optional secret ADAPT_PUSH_TOKEN (fine-grained PAT with contents:write): pushes
+#   the branch as the user so CI runs on the automated PR (GITHUB_TOKEN pushes do
+#   not trigger workflows). Without it, rely on the suite run inside THIS workflow.
 
 on:
   workflow_dispatch:
@@ -31,6 +39,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.ADAPT_PUSH_TOKEN || github.token }}
 
       - uses: actions/setup-node@v4
         with:
@@ -150,8 +159,10 @@ jobs:
           gh label create automated --color 5319e7 --force 2>/dev/null || true
           if [ "${{ steps.nodrift.outputs.ready }}" = "true" ]; then
             KIND="No tracked internals changed; full suite green."
-          else
+          elif [ "$HAS_ANTHROPIC_KEY" = "true" ]; then
             KIND="Drift detected and adapted by Claude Code; full suite green after adaptation."
+          else
+            KIND="Drift detected but the full suite is green without code changes (benign upstream changes; no ANTHROPIC_API_KEY configured, agent step skipped)."
           fi
           {
             echo "Automated adaptation to Strapi ${TARGET}."
