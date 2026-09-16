@@ -44,7 +44,7 @@ test('component layer renders every field type and saves through the action bar'
   const pageErrors: string[] = [];
   page.on('pageerror', (err) => pageErrors.push(String(err)));
 
-  await page.goto('/admin/plugins/headless-content-manager/components-demo');
+  await page.goto('/admin/breakout-playground/components-demo');
 
   const form = page.getByTestId('components-form');
   await expect(form).toBeVisible({ timeout: 45_000 });

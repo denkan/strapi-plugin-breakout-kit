@@ -1,1 +1,1 @@
-export const PLUGIN_ID = "headless-content-manager";
+export const PLUGIN_ID = "breakout-kit";

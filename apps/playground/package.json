@@ -21,7 +21,7 @@
     "@strapi/plugin-users-permissions": "5.53.0",
     "@strapi/strapi": "5.53.0",
     "better-sqlite3": "12.8.0",
-    "strapi-plugin-headless-content-manager": "*",
+    "strapi-plugin-breakout-kit": "*",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.30.3",

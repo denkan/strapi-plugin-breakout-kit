@@ -9,7 +9,7 @@ const EDITED_TITLE = 'The Complete Article (hooks-edited)';
  * coexist with independent form state (collection type + single type side by side).
  */
 test('hooks-only page edits and saves documents through the data layer', async ({ page }) => {
-  await page.goto('/admin/plugins/headless-content-manager/hooks-demo');
+  await page.goto('/admin/breakout-playground/hooks-demo');
 
   const articleInput = page.getByTestId('hooks-article-input');
   const singleInput = page.getByTestId('hooks-single-input');

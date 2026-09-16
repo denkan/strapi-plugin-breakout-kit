@@ -1,7 +1,7 @@
 # `<EditPage>` — the one-liner edit view
 
 ```tsx
-import { EditPage } from 'strapi-plugin-headless-content-manager/strapi-admin';
+import { EditPage } from 'strapi-plugin-breakout-kit/strapi-admin';
 
 <EditPage model="api::article.article" documentId="abc123" locale="en" />
 ```

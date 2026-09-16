@@ -11,7 +11,7 @@ import { test, expect } from '@playwright/test';
  * - a live RTK Query fetch (useContentTypeSchema) outside the CM routes
  */
 test('access layer adapters all resolve in the running admin', async ({ page }) => {
-  await page.goto('/admin/plugins/headless-content-manager');
+  await page.goto('/admin/breakout-playground');
 
   const summary = page.getByTestId('access-summary');
   await expect(summary).toBeVisible();

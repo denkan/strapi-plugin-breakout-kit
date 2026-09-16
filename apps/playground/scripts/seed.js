@@ -217,10 +217,10 @@ async function main() {
 
   try {
     // Checkpoint assertion: the plugin must be registered and enabled.
-    if (!app.plugin('headless-content-manager')) {
-      throw new Error('Plugin headless-content-manager is not registered');
+    if (!app.plugin('breakout-kit')) {
+      throw new Error('Plugin breakout-kit is not registered');
     }
-    console.log('Plugin headless-content-manager is registered');
+    console.log('Plugin breakout-kit is registered');
 
     await ensureAdminUser(app);
     await ensureLocale(app, 'sv', 'Swedish (sv)');

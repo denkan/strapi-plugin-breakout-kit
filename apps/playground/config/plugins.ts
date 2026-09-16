@@ -24,7 +24,7 @@ const deniedTypes = [
 ];
 
 const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Plugin => ({
-  'headless-content-manager': {
+  'breakout-kit': {
     enabled: true,
   },
   'users-permissions': {

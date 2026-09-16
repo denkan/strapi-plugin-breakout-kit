@@ -3,7 +3,7 @@ import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 
 const require = createRequire(import.meta.url);
-const { headlessContentManager } = require('strapi-plugin-headless-content-manager/vite');
+const { headlessContentManager } = require('strapi-plugin-breakout-kit/vite');
 
 const cmRoot = path.dirname(require.resolve('@strapi/content-manager/package.json'));
 const shimTarget = path.join(cmRoot, 'dist/admin/hooks/useDocumentContext.mjs');
@@ -71,7 +71,7 @@ describe('headlessContentManager vite plugin', () => {
     const plugin = makePlugin();
     const config = plugin.config();
     expect(config.optimizeDeps.include).toContain(
-      'strapi-plugin-headless-content-manager/strapi-admin'
+      'strapi-plugin-breakout-kit/strapi-admin'
     );
     expect(config.optimizeDeps.esbuildOptions.plugins).toHaveLength(1);
   });

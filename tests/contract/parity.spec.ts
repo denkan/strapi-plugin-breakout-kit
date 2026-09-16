@@ -84,7 +84,7 @@ const stockUrl = (type: SeededDoc, documentId?: string) =>
 
 /** Opens the EditPage demo and selects the given model (first document auto-selected). */
 async function openEditPage(page: Page, type: SeededDoc) {
-  await page.goto('/admin/plugins/headless-content-manager/edit-page');
+  await page.goto('/admin/breakout-playground/edit-page');
   await page.getByTestId('editpage-model').getByRole('combobox').click();
   await page.getByRole('option', { name: type.label, exact: false }).first().click();
   await expect(page.getByTestId('editpage-root')).toBeVisible({ timeout: 30_000 });

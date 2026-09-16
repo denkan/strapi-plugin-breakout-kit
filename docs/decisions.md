@@ -26,5 +26,21 @@ Decisions resolved with the maintainer, per PLAN.md §8 and docs/research/findin
    - drift/manifest.json grows per surface; keep `usedBy` accurate so unused entries can be
      dropped if a surface is removed
 
-Still open (from PLAN §8): final npm package name (before Phase 9), exact versioning scheme
-(before Phase 7), auto-merge policy for agent PRs (after Phase 8 trial).
+6. **Package name (PLAN §8 #1, resolved):** `strapi-plugin-breakout-kit` — "break out of
+   Strapi's locked-in admin tools". Plugin id `breakout-kit`, display name "Breakout Kit",
+   repo `strapi-breakout-kit`. Chosen over "headless-*" names to avoid the headless-CMS
+   ambiguity and over the narrower `-content-manager` scope given decision #5.
+7. **Versioning scheme (PLAN §8 #2, resolved):** plugin-own semver starting `0.1.0`
+   (experimental); tight Strapi peerDependencies ranges per release; README compatibility
+   table; npm dist-tags per Strapi minor (`strapi-5.54`); patch = our fixes, minor = Strapi
+   adaptation/features; on stabilization jump to `5.0.0` so plugin major tracks Strapi major.
+8. **No shipped admin UI:** the plugin registers no menu link or pages — demos and the
+   access diagnostics page live in the playground's admin extension. The plugin exposes a
+   programmatic `accessDiagnostics` export instead (also required technically: dev-mode
+   source imports of CM internals from app code would split the dep-prebundle singletons).
+9. **Media picker customization** will be handled as a custom field / `app.addFields`
+   replacement in consumer apps, NOT via tweakable seams in this plugin. Next seam
+   milestone instead: dynamic-zone render slots (custom accordion icons, add-component
+   button) — driven by the maintainer's concrete needs.
+
+Still open (from PLAN §8): auto-merge policy for agent PRs (after Phase 8 trial).

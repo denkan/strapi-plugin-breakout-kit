@@ -1,7 +1,7 @@
 # Components and hooks
 
 All pieces must live inside a `<DocumentProvider>`; the provider owns data fetching, RBAC,
-and form state. Everything below is importable from `strapi-plugin-headless-content-manager/strapi-admin`.
+and form state. Everything below is importable from `strapi-plugin-breakout-kit/strapi-admin`.
 
 ## `<DocumentProvider>` (data layer)
 

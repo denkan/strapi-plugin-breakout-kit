@@ -1,6 +1,6 @@
 # Agent instructions
 
-This repo builds `strapi-plugin-headless-content-manager`: a headless, prop-driven version of
+This repo builds `strapi-plugin-breakout-kit`: a headless, prop-driven version of
 the Strapi v5 content manager edit view. **Read PLAN.md first** — it defines the phases,
 architecture and checkpoints. Work phase by phase; do not skip checkpoints.
 

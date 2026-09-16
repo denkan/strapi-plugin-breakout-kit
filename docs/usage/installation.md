@@ -3,7 +3,7 @@
 > Applies to Strapi v5 apps using the default Vite-based admin build.
 
 ```bash
-npm install strapi-plugin-headless-content-manager
+npm install strapi-plugin-breakout-kit
 ```
 
 ## 1. Enable the plugin
@@ -12,7 +12,7 @@ npm install strapi-plugin-headless-content-manager
 
 ```ts
 export default {
-  'headless-content-manager': { enabled: true },
+  'breakout-kit': { enabled: true },
 };
 ```
 
@@ -27,7 +27,7 @@ the edit view can run outside the content manager's routes.
 
 ```ts
 import { mergeConfig, type UserConfig } from 'vite';
-import { headlessContentManager } from 'strapi-plugin-headless-content-manager/vite';
+import { headlessContentManager } from 'strapi-plugin-breakout-kit/vite';
 
 export default (config: UserConfig) =>
   mergeConfig(config, { plugins: [headlessContentManager()] });

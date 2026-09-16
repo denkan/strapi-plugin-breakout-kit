@@ -37,12 +37,3 @@ export {
   SINGLE_TYPES,
   COLLECTION_TYPES,
 } from '@strapi/content-manager/dist/admin/constants/collections.mjs';
-
-import { useDocumentRBAC as useDocumentRBACViaDeepImport } from '@strapi/content-manager/dist/admin/features/DocumentRBAC.mjs';
-
-/**
- * Contract-test probe: the deep-imported module must be the SAME instance as the public
- * export (single admin build = single resolution per file). Compared against the public
- * `useDocumentRBAC` on the plugin diagnostics page.
- */
-export const __singletonProbe = { useDocumentRBACViaDeepImport };

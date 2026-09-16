@@ -75,21 +75,21 @@
   },
   "strapi": {
     "kind": "plugin",
-    "name": "headless-content-manager",
-    "displayName": "Headless Content Manager",
+    "name": "breakout-kit",
+    "displayName": "Breakout Kit",
     "description": "Headless, prop-driven content manager edit view for Strapi v5"
   },
-  "name": "strapi-plugin-headless-content-manager",
+  "name": "strapi-plugin-breakout-kit",
   "description": "Headless, prop-driven content manager edit view for Strapi v5",
   "license": "MIT",
   "author": "Dennis Nystrom <dennis.nystrom@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/denkan/strapi-headless-content-manager.git",
+    "url": "git+https://github.com/denkan/strapi-breakout-kit.git",
     "directory": "packages/plugin"
   },
-  "homepage": "https://github.com/denkan/strapi-headless-content-manager#readme",
+  "homepage": "https://github.com/denkan/strapi-breakout-kit#readme",
   "bugs": {
-    "url": "https://github.com/denkan/strapi-headless-content-manager/issues"
+    "url": "https://github.com/denkan/strapi-breakout-kit/issues"
   }
 }

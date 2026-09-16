@@ -1,4 +1,4 @@
-# strapi-plugin-headless-content-manager
+# strapi-plugin-breakout-kit
 
 > ⚠️ **Experimental.** This plugin reuses Strapi's internal content-manager code and is
 > tested against specific Strapi versions — see [Compatibility](#compatibility) and
@@ -9,7 +9,7 @@ full edit page — or compose your own from the same hooks and components — an
 admin panel, driven by props instead of route params.
 
 ```tsx
-import { EditPage } from 'strapi-plugin-headless-content-manager/strapi-admin';
+import { EditPage } from 'strapi-plugin-breakout-kit/strapi-admin';
 
 <EditPage model="api::article.article" documentId="abc123" locale="en" />
 ```
@@ -33,14 +33,14 @@ can't reuse it. This plugin unlocks the same components and behavior as props:
 ## Installation
 
 ```bash
-npm install strapi-plugin-headless-content-manager
+npm install strapi-plugin-breakout-kit
 ```
 
 **1. Enable the plugin** — `config/plugins.ts`:
 
 ```ts
 export default {
-  'headless-content-manager': { enabled: true },
+  'breakout-kit': { enabled: true },
 };
 ```
 
@@ -48,7 +48,7 @@ export default {
 
 ```ts
 import { mergeConfig, type UserConfig } from 'vite';
-import { headlessContentManager } from 'strapi-plugin-headless-content-manager/vite';
+import { headlessContentManager } from 'strapi-plugin-breakout-kit/vite';
 
 export default (config: UserConfig) =>
   mergeConfig(config, { plugins: [headlessContentManager()] });
@@ -75,7 +75,7 @@ export default {
       intlLabel: { id: 'my-editor', defaultMessage: 'My editor' },
       Component: async () => {
         const { EditPage } = await import(
-          'strapi-plugin-headless-content-manager/strapi-admin'
+          'strapi-plugin-breakout-kit/strapi-admin'
         );
         const MyEditorPage = () => (
           <EditPage model="api::article.article" documentId="abc123" />
@@ -126,7 +126,7 @@ const field = useEditField('title');
 const { save, publish } = useDocumentOperations();
 ```
 
-Full reference: [docs/usage](https://github.com/denkan/strapi-headless-content-manager/tree/main/docs/usage).
+Full reference: [docs/usage](https://github.com/denkan/strapi-breakout-kit/tree/main/docs/usage).
 
 ## Compatibility
 

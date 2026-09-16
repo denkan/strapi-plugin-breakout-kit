@@ -8,8 +8,8 @@ import {
   Typography,
 } from '@strapi/design-system';
 
-import { useFetchClient } from '../access';
-import { EditPage } from '../composition';
+import { useFetchClient } from '@strapi/strapi/admin';
+import { EditPage } from 'strapi-plugin-breakout-kit/strapi-admin';
 
 /**
  * Phase 5 checkpoint page: renders <EditPage> for any model/document/locale chosen via

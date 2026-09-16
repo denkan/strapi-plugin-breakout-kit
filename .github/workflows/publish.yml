@@ -55,4 +55,4 @@ jobs:
           VERSION=$(node -p "require('./packages/plugin/package.json').version")
           STRAPI=$(node -p "require('./drift/manifest.json').strapiVersion")
           gh release create "v${VERSION}" --title "v${VERSION}" --notes \
-            "strapi-plugin-headless-content-manager ${VERSION} — tested against Strapi ${STRAPI}. See packages/plugin/CHANGELOG.md."
+            "strapi-plugin-breakout-kit ${VERSION} — tested against Strapi ${STRAPI}. See packages/plugin/CHANGELOG.md."

@@ -1,13 +1,13 @@
 import * as React from 'react';
 import { Badge, Box, Button, Field, Flex, Main, Typography } from '@strapi/design-system';
 
-import { useFetchClient } from '../access';
+import { useFetchClient } from '@strapi/strapi/admin';
 import {
   DocumentProvider,
   useDocument,
   useDocumentOperations,
   useEditField,
-} from '../data';
+} from 'strapi-plugin-breakout-kit/strapi-admin';
 
 /**
  * Phase 3 checkpoint page: displays and edits documents using ONLY the data-layer hooks —

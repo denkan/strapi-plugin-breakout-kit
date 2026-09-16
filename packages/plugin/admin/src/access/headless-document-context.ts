@@ -28,7 +28,7 @@ export interface HeadlessDocumentContextValue {
   currentDocument: UseDocumentReturn;
 }
 
-const KEY = Symbol.for('strapi-plugin-headless-content-manager/document-context@v1');
+const KEY = Symbol.for('strapi-plugin-breakout-kit/document-context@v1');
 
 type HeadlessContext = React.Context<HeadlessDocumentContextValue | null>;
 

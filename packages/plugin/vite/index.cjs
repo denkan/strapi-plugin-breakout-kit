@@ -5,7 +5,7 @@
  *
  * ```ts
  * import { mergeConfig, type UserConfig } from 'vite';
- * import { headlessContentManager } from 'strapi-plugin-headless-content-manager/vite';
+ * import { headlessContentManager } from 'strapi-plugin-breakout-kit/vite';
  *
  * export default (config: UserConfig) =>
  *   mergeConfig(config, { plugins: [headlessContentManager()] });
@@ -108,7 +108,7 @@ function headlessContentManager() {
    * hoist-non-react-statics) that break as native ESM.
    */
   const esbuildResolver = {
-    name: 'headless-content-manager',
+    name: 'breakout-kit',
     setup(build) {
       build.onResolve({ filter: /^@strapi\/(content-manager|admin)\/dist\// }, (args) => {
         if (!cmRoot) resolveRoots(process.cwd());
@@ -141,7 +141,7 @@ function headlessContentManager() {
   };
 
   return {
-    name: 'headless-content-manager',
+    name: 'breakout-kit',
     enforce: 'pre',
     config() {
       return {
@@ -153,7 +153,7 @@ function headlessContentManager() {
           // module instance for contexts/registries. Serving our graph as source
           // instead would create parallel CM module copies and trigger runtime dep
           // re-discovery (observed: duplicated prismjs core crashing the admin).
-          include: ['strapi-plugin-headless-content-manager/strapi-admin'],
+          include: ['strapi-plugin-breakout-kit/strapi-admin'],
           esbuildOptions: {
             plugins: [esbuildResolver],
           },

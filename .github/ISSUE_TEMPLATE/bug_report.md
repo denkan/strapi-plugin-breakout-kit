@@ -6,7 +6,7 @@ labels: bug
 
 **Versions**
 
-- strapi-plugin-headless-content-manager:
+- strapi-plugin-breakout-kit:
 - @strapi/strapi (exact):
 - Node:
 

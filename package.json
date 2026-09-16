@@ -1,5 +1,5 @@
 {
-  "name": "strapi-headless-content-manager-monorepo",
+  "name": "strapi-breakout-kit-monorepo",
   "version": "0.0.0",
   "private": true,
   "workspaces": [

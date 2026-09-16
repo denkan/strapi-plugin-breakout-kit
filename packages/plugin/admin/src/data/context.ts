@@ -34,7 +34,7 @@ export function useHeadlessData(consumerName: string): HeadlessDataContextValue 
   const value = React.useContext(HeadlessDataContext);
   if (!value) {
     throw new Error(
-      `${consumerName} must be used inside a <DocumentProvider> from strapi-plugin-headless-content-manager`
+      `${consumerName} must be used inside a <DocumentProvider> from strapi-plugin-breakout-kit`
     );
   }
   return value;

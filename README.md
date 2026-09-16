@@ -1,4 +1,4 @@
-# strapi-headless-content-manager (monorepo)
+# strapi-breakout-kit (monorepo)
 
 > ⚠️ Work in progress — not yet published. Package name pending final confirmation.
 
@@ -34,7 +34,7 @@ npm run test:contract    # starts the playground itself if needed
 ```
 
 Playground demo pages (log in first):
-`/admin/plugins/headless-content-manager` (access diagnostics) · `…/hooks-demo` ·
+`/admin/plugins/breakout-kit` (access diagnostics) · `…/hooks-demo` ·
 `…/components-demo` · `…/edit-page` (full EditPage driven by dropdowns).
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for the workflow and the rules around Strapi
