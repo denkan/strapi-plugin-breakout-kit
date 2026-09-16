@@ -14,7 +14,9 @@
     "seed": "npm run seed --workspace apps/playground",
     "test:unit": "vitest run tests/unit",
     "test:contract": "playwright test",
-    "drift:hashes": "node drift/scripts/update-hashes.mjs"
+    "drift:hashes": "node drift/scripts/update-hashes.mjs",
+    "drift:check": "node drift/scripts/check.mjs",
+    "drift:update": "node drift/scripts/update-manifest.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
