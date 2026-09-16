@@ -58,6 +58,12 @@ npm run drift:hashes        # recompute drift/manifest.json hashes from scratch/
   `hooks/useDocument.mjs` (wrapper extends `useDoc` with the headless-context fallback —
   needed because route-coupled internals like the relation modal's RootRelationRenderer
   call `useDoc` directly). Shims import originals via the `?hcm-original` suffix.
+- NEVER import '@strapi/content-manager/...' (entry or deep paths) from PLAYGROUND
+  admin source (apps/playground/src/admin) — in dev, app-source imports pull the CM
+  graph out of the Vite dep prebundle and split module singletons (symptom: blank
+  admin, "Cannot set properties of undefined (setting 'comment')" from a duplicated
+  prismjs). Demo/diagnostic pages import ONLY 'strapi-plugin-breakout-kit/strapi-admin'
+  (prebundled); internals-probes go through the plugin's `accessDiagnostics` export.
 - Contract tests authenticate ONCE via tests/contract/auth.setup.ts (storageState):
   Strapi rate-limits admin logins (5/5min) — never log in per-test, and after several
   manual browser logins expect 429s for a few minutes.
