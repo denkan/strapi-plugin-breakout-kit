@@ -42,13 +42,35 @@ const packageRoot = (name, from) =>
  */
 const ORIGINAL_SUFFIX = '?hcm-original';
 
+/** Resolves a package's exports-map subpath ('.' or './sub') to an absolute file. */
+const resolveExportFile = (pkgRoot, subpath) => {
+  const pkg = require(path.join(pkgRoot, 'package.json'));
+  const entry = pkg.exports?.[subpath];
+  const rel =
+    typeof entry === 'string' ? entry : (entry?.import ?? entry?.default ?? entry?.require);
+  return rel ? path.join(pkgRoot, rel) : undefined;
+};
+
 function headlessContentManager() {
   /** @type {string | undefined} */ let cmRoot;
+  /** @type {string | undefined} */ let adminRoot;
   /** Map of real CM file path -> replacement shim path. */
   /** @type {Map<string, string>} */ let redirects = new Map();
+  /**
+   * Exact bare specifiers pinned to the copies in @strapi/strapi's OWN dependency
+   * closure. npm can install duplicate copies of these next to the app (e.g. a newer
+   * @strapi/admin satisfying peer ranges); if the plugin's imports resolved there while
+   * the admin shell bundles the nested copy, React contexts and registries would split
+   * into two instances ("useRBAC must be used within Auth" and friends).
+   * @type {Map<string, string>}
+   */ let entryAliases = new Map();
 
   const resolveRoots = (rootDir) => {
-    cmRoot = packageRoot('@strapi/content-manager', rootDir);
+    // Anchor everything in the same closure the admin shell is built from.
+    const strapiRoot = packageRoot('@strapi/strapi', rootDir);
+    adminRoot = packageRoot('@strapi/admin', strapiRoot);
+    cmRoot = packageRoot('@strapi/content-manager', strapiRoot);
+
     const hooksDir = path.join(cmRoot, 'dist', 'admin', 'hooks');
     redirects = new Map([
       // Seam 2 (docs/research/findings.md §5): context-first document resolution.
@@ -57,6 +79,24 @@ function headlessContentManager() {
       // (consumed directly by e.g. the relation modal's RootRelationRenderer).
       [path.join(hooksDir, 'useDocument.mjs'), path.join(RUNTIME_DIR, 'useDocument.mjs')],
     ]);
+
+    entryAliases = new Map();
+    const adminEntry = resolveExportFile(adminRoot, './strapi-admin');
+    if (adminEntry) entryAliases.set('@strapi/admin/strapi-admin', adminEntry);
+    const adminEe = resolveExportFile(adminRoot, './strapi-admin/ee');
+    if (adminEe) entryAliases.set('@strapi/admin/strapi-admin/ee', adminEe);
+    const cmEntry = resolveExportFile(cmRoot, './strapi-admin');
+    if (cmEntry) entryAliases.set('@strapi/content-manager/strapi-admin', cmEntry);
+    try {
+      // react-intl is not in Strapi's own singleton alias list; pin it to the admin
+      // shell's copy so IntlProvider context stays a single instance.
+      entryAliases.set(
+        'react-intl',
+        require.resolve('react-intl', { paths: [adminRoot] })
+      );
+    } catch {
+      /* react-intl not resolvable from the admin closure — leave default resolution */
+    }
   };
 
   /**
@@ -77,7 +117,8 @@ function headlessContentManager() {
         const root = spec.startsWith('@strapi/content-manager')
           ? '@strapi/content-manager'
           : '@strapi/admin';
-        const abs = path.join(packageRoot(root, args.resolveDir), spec.slice(root.length + 1));
+        const rootDir = root === '@strapi/content-manager' ? cmRoot : adminRoot;
+        const abs = path.join(rootDir, spec.slice(root.length + 1));
         if (isOriginal) return { path: abs };
         return { path: redirects.get(abs) ?? abs };
       });
@@ -88,6 +129,14 @@ function headlessContentManager() {
         const shim = redirects.get(abs);
         return shim ? { path: shim } : null;
       });
+      build.onResolve(
+        { filter: /^(@strapi\/(admin|content-manager)\/strapi-admin(\/ee)?|react-intl)$/ },
+        (args) => {
+          if (!cmRoot) resolveRoots(process.cwd());
+          const pinned = entryAliases.get(args.path);
+          return pinned ? { path: pinned } : null;
+        }
+      );
     },
   };
 
@@ -117,16 +166,18 @@ function headlessContentManager() {
     resolveId(source, importer) {
       if (!cmRoot) resolveRoots(process.cwd());
 
+      // 0. Singleton entry pins (see entryAliases above).
+      const pinned = entryAliases.get(source);
+      if (pinned) return pinned;
+
       // 1. Deep specifiers past the exports map: @scope/name/dist/... -> <pkg root>/dist/...
       //    A trailing ?hcm-original suffix resolves to the real file (used by the shims).
       for (const root of DEEP_ROOTS) {
         if (source.startsWith(`${root}/dist/`)) {
           const isOriginal = source.endsWith(ORIGINAL_SUFFIX);
           const spec = isOriginal ? source.slice(0, -ORIGINAL_SUFFIX.length) : source;
-          const abs = path.join(
-            packageRoot(root, importer ? path.dirname(importer.split('?')[0]) : undefined),
-            spec.slice(root.length + 1)
-          );
+          const rootDir = root === '@strapi/content-manager' ? cmRoot : adminRoot;
+          const abs = path.join(rootDir, spec.slice(root.length + 1));
           if (isOriginal) return abs;
           return redirects.get(abs) ?? abs;
         }

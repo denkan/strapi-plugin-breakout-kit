@@ -1,6 +1,14 @@
 {
   "version": "0.0.0",
-  "keywords": [],
+  "keywords": [
+    "strapi",
+    "strapi-plugin",
+    "strapi5",
+    "content-manager",
+    "headless",
+    "edit-view",
+    "admin"
+  ],
   "type": "commonjs",
   "exports": {
     "./package.json": "./package.json",
@@ -20,7 +28,12 @@
       "default": "./dist/server/index.js"
     }
   },
-  "files": ["dist", "vite"],
+  "files": [
+    "dist",
+    "vite",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "strapi-plugin build",
     "watch": "strapi-plugin watch",
@@ -52,14 +65,13 @@
     "@strapi/strapi": "^5.53.0",
     "@strapi/admin": "^5.53.0",
     "@strapi/content-manager": "^5.53.0",
-    "@strapi/sdk-plugin": "^6.1.1",
-    "@strapi/design-system": "^2.2.4",
-    "@strapi/icons": "^2.2.4",
-    "react-intl": "^6.8.9",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.30.6",
-    "styled-components": "^6.5.3"
+    "@strapi/design-system": "^2.0.0",
+    "@strapi/icons": "^2.0.0",
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0",
+    "react-intl": "^6.6.0",
+    "react-router-dom": "^6.0.0",
+    "styled-components": "^6.0.0"
   },
   "strapi": {
     "kind": "plugin",
@@ -70,5 +82,14 @@
   "name": "strapi-plugin-headless-content-manager",
   "description": "Headless, prop-driven content manager edit view for Strapi v5",
   "license": "MIT",
-  "author": "Dennis Nystrom <dennis.nystrom@gmail.com>"
+  "author": "Dennis Nystrom <dennis.nystrom@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/denkan/strapi-headless-content-manager.git",
+    "directory": "packages/plugin"
+  },
+  "homepage": "https://github.com/denkan/strapi-headless-content-manager#readme",
+  "bugs": {
+    "url": "https://github.com/denkan/strapi-headless-content-manager/issues"
+  }
 }
