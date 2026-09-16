@@ -34,6 +34,7 @@ export {
   EditSidePanels,
   type EditSidePanelsProps,
 } from "./components";
+export { EditPage, type EditPageProps } from "./composition";
 
 const plugin: StrapiApp["appPlugins"][string] = {
   register(app) {
