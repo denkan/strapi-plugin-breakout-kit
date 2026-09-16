@@ -4,6 +4,7 @@
   "type": "commonjs",
   "exports": {
     "./package.json": "./package.json",
+    "./vite": "./vite/index.cjs",
     "./strapi-admin": {
       "types": "./dist/admin/src/index.d.ts",
       "source": "./admin/src/index.ts",
@@ -19,7 +20,7 @@
       "default": "./dist/server/index.js"
     }
   },
-  "files": ["dist"],
+  "files": ["dist", "vite"],
   "scripts": {
     "build": "strapi-plugin build",
     "watch": "strapi-plugin watch",
@@ -31,6 +32,7 @@
   "dependencies": {},
   "devDependencies": {
     "@strapi/strapi": "^5.53.0",
+    "@strapi/content-manager": "^5.53.0",
     "@strapi/sdk-plugin": "^6.1.1",
     "prettier": "^3.9.7",
     "@strapi/design-system": "^2.2.4",
@@ -47,6 +49,7 @@
   },
   "peerDependencies": {
     "@strapi/strapi": "^5.53.0",
+    "@strapi/content-manager": "^5.53.0",
     "@strapi/sdk-plugin": "^6.1.1",
     "@strapi/design-system": "^2.2.4",
     "@strapi/icons": "^2.2.4",

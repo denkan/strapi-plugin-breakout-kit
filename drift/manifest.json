@@ -1,0 +1,195 @@
+{
+  "strapiVersion": "5.53.0",
+  "strapiCommit": "99800b107996c39a68786473792f94103352de2d",
+  "notes": "Paths are relative to the strapi/strapi repo root; hashes are sha256 of normalized SOURCE content (drift/scripts/lib/normalize.mjs). distPath is the runtime file our deep imports resolve to (1:1 compiled from path).",
+  "dependencies": [
+    {
+      "id": "cm-input-renderer",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/pages/EditView/components/InputRenderer.tsx",
+      "distPath": "dist/admin/pages/EditView/components/InputRenderer.mjs",
+      "symbol": "InputRenderer",
+      "hash": "1523498da7f3e22c6415c976573ae1d35111a4ca794242f3a375e99fea620eda",
+      "usedBy": [
+        "packages/plugin/admin/src/access/internal.ts"
+      ]
+    },
+    {
+      "id": "cm-form-layout",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/pages/EditView/components/FormLayout.tsx",
+      "distPath": "dist/admin/pages/EditView/components/FormLayout.mjs",
+      "symbol": "FormLayout",
+      "hash": "150e2d49901b00e078937e35b035d71387910e2e333915a62dc074496daa70c8",
+      "usedBy": [
+        "packages/plugin/admin/src/access/internal.ts"
+      ]
+    },
+    {
+      "id": "cm-document-actions-renderers",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/pages/EditView/components/DocumentActions.tsx",
+      "distPath": "dist/admin/pages/EditView/components/DocumentActions.mjs",
+      "symbol": "DocumentActions, DocumentActionButton, DocumentActionsMenu",
+      "hash": "7059cad20c206714f89b1db5c817ad5893df98bfa48fce273b9fc0c37ae97542",
+      "usedBy": [
+        "packages/plugin/admin/src/access/internal.ts"
+      ]
+    },
+    {
+      "id": "cm-utils-data",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/pages/EditView/utils/data.ts",
+      "distPath": "dist/admin/pages/EditView/utils/data.mjs",
+      "symbol": "transformDocument, handleInvisibleAttributes",
+      "hash": "b0b02f861b93c13123e0ff88ab2797563a9052ecb9981d2bfa2093c8a4a71832",
+      "usedBy": [
+        "packages/plugin/admin/src/access/internal.ts"
+      ]
+    },
+    {
+      "id": "cm-utils-forms",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/pages/EditView/utils/forms.ts",
+      "distPath": "dist/admin/pages/EditView/utils/forms.mjs",
+      "symbol": "createDefaultForm",
+      "hash": "94fb00a63a3314919e7c463e095fa3af9c5e8e28184b916feff1e34d8bd1b901",
+      "usedBy": [
+        "packages/plugin/admin/src/access/internal.ts"
+      ]
+    },
+    {
+      "id": "cm-utils-validation",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/utils/validation.ts",
+      "distPath": "dist/admin/utils/validation.mjs",
+      "symbol": "createYupSchema",
+      "hash": "f7cd747c44fcfe4a5d4c60445dd425d4a5ca1e1e422ff0b21e8a4a76e91e6ed8",
+      "usedBy": [
+        "packages/plugin/admin/src/access/internal.ts"
+      ]
+    },
+    {
+      "id": "cm-use-content-type-schema",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/hooks/useContentTypeSchema.ts",
+      "distPath": "dist/admin/hooks/useContentTypeSchema.mjs",
+      "symbol": "useContentTypeSchema",
+      "hash": "e75e8b58f0de9d9c73f1f8a570b9c74a0e341491d27e3c07a2ef549620826ed5",
+      "usedBy": [
+        "packages/plugin/admin/src/access/internal.ts"
+      ]
+    },
+    {
+      "id": "cm-use-lazy-components",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/hooks/useLazyComponents.ts",
+      "distPath": "dist/admin/hooks/useLazyComponents.mjs",
+      "symbol": "useLazyComponents",
+      "hash": "c0edd12a78c09f7c400bfd5f1f4469971645990d48d084aca54bf06c223040c2",
+      "usedBy": [
+        "packages/plugin/admin/src/access/internal.ts"
+      ]
+    },
+    {
+      "id": "cm-constants-collections",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/constants/collections.ts",
+      "distPath": "dist/admin/constants/collections.mjs",
+      "symbol": "SINGLE_TYPES, COLLECTION_TYPES",
+      "hash": "9089e5d478cb7df4ba410013d06c6968a432d45f541e533a88d1ccbc4aa4ec1c",
+      "usedBy": [
+        "packages/plugin/admin/src/access/internal.ts"
+      ]
+    },
+    {
+      "id": "cm-document-rbac",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/features/DocumentRBAC.tsx",
+      "distPath": "dist/admin/features/DocumentRBAC.mjs",
+      "symbol": "DocumentRBAC, useDocumentRBAC",
+      "hash": "f3bfd8b9927fb5d0607317bceb28dcd39103f539507a544319611c4557b70497",
+      "usedBy": [
+        "packages/plugin/admin/src/access/internal.ts",
+        "packages/plugin/admin/src/access/public.ts"
+      ]
+    },
+    {
+      "id": "cm-use-document-context",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/hooks/useDocumentContext.ts",
+      "distPath": "dist/admin/hooks/useDocumentContext.mjs",
+      "symbol": "useDocumentContext",
+      "hash": "efd147986bd2c65ca0facbcb640f3539fcd91d371e6168bbca9f1873b1a9a0b1",
+      "usedBy": [
+        "packages/plugin/vite/runtime/useDocumentContext.mjs"
+      ],
+      "note": "alias-REPLACED by the Vite helper; our shim must keep mirroring this module's behavior (fallback order, thrown errors, return shape) exactly"
+    },
+    {
+      "id": "cm-use-document",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/hooks/useDocument.ts",
+      "distPath": "dist/admin/hooks/useDocument.mjs",
+      "symbol": "useDocument, useDoc",
+      "hash": "1ebe487b9d60919b462b013edafc97ffcf609888412d154f6019a8225fc27539",
+      "usedBy": [
+        "packages/plugin/vite/runtime/useDocumentContext.mjs",
+        "packages/plugin/admin/src/access/public.ts"
+      ],
+      "note": "shim deep-imports useDocument and replicates useDoc's URL-branch semantics (param names, skip logic, error strings)"
+    },
+    {
+      "id": "cm-relation-modal-context",
+      "kind": "structure",
+      "path": "packages/core/content-manager/admin/src/pages/EditView/components/FormInputs/Relations/RelationModal.tsx",
+      "distPath": "dist/admin/pages/EditView/components/FormInputs/Relations/RelationModal.mjs",
+      "symbol": "useRelationModal (context value shape: currentDocumentMeta, currentDocument)",
+      "hash": "7da3980efc752ae10c79a47d80ec4f461134db68924a86ccef0cd4ed16859a2f",
+      "usedBy": [
+        "packages/plugin/vite/runtime/useDocumentContext.mjs"
+      ]
+    },
+    {
+      "id": "cm-public-exports",
+      "kind": "export",
+      "path": "packages/core/content-manager/admin/src/exports.ts",
+      "symbol": "buildValidParams, DocumentStatus, unstable_useDocument, unstable_useDocumentActions, unstable_useDocumentLayout, DocumentRBAC, useDocumentRBAC, types",
+      "hash": "d29a310186aa1ec467659bd0137bd45a696c21b11f696365dabeb192d9892b25",
+      "usedBy": [
+        "packages/plugin/admin/src/access/public.ts"
+      ]
+    },
+    {
+      "id": "admin-shell-public-exports",
+      "kind": "export",
+      "path": "packages/core/admin/admin/src/index.ts",
+      "symbol": "Form, useForm, useField, Blocker, Page, Layouts, useRBAC, useAuth, useStrapiApp, useQueryParams, useNotification, useAPIErrorHandler, adminApi, DescriptionComponentRenderer, createRulesEngine, translatedErrors, ConfirmDialog, getYupValidationErrors",
+      "hash": "128cb4021bac5d0d741d9e824c502b8bd29fd39f41b191a0a9d4d4c0da513249",
+      "usedBy": [
+        "packages/plugin/admin/src/access/public.ts"
+      ]
+    },
+    {
+      "id": "strapi-admin-aggregator-exports",
+      "kind": "export",
+      "path": "packages/core/strapi/src/admin.ts",
+      "symbol": "re-exports of @strapi/admin/strapi-admin and the five content-manager hooks",
+      "hash": "1daa293e2d0372b69d139dd398e5f0a7bfdfd74da67c075dae87445dbe377e72",
+      "usedBy": [
+        "packages/plugin/admin/src/access/public.ts"
+      ]
+    },
+    {
+      "id": "cm-package-exports-map",
+      "kind": "structure",
+      "path": "packages/core/content-manager/package.json",
+      "symbol": "exports map + unbundled dist/admin layout (deep-import resolution target)",
+      "hash": "9a938363774ea248f3071fce68b9b43dfd6e30026c2220df56b7473229e7eb8b",
+      "usedBy": [
+        "packages/plugin/vite/index.cjs"
+      ],
+      "note": "the Vite helper assumes dist/admin/**/*.mjs mirrors admin/src/** 1:1"
+    }
+  ]
+}

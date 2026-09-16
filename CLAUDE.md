@@ -34,7 +34,26 @@ npm install                 # root; npm workspaces
 npm run build               # build the plugin
 npm run dev                 # plugin watch + playground develop (admin at http://localhost:1337/admin)
 npm run seed                # seed admin user + sample content (idempotent)
+npm run test:unit           # vitest (tests/unit)
+npm run test:contract       # playwright against the playground admin (starts it if needed)
+npm run drift:hashes        # recompute drift/manifest.json hashes from scratch/strapi checkout
 ```
+
+## Access-layer specifics (Phase 2)
+
+- Deep imports into `@strapi/content-manager/dist/...` only resolve through the Vite helper
+  (`packages/plugin/vite/index.cjs`), which consumers add to `src/admin/vite.config.ts`
+  (see docs/usage/installation.md). The playground already has it.
+- The helper alias-replaces CM's `hooks/useDocumentContext.mjs` with
+  `packages/plugin/vite/runtime/useDocumentContext.mjs`. That shim MUST stay
+  behavior-identical to the original on stock CM routes (guarded by
+  tests/contract/stock-cm-unaffected.spec.ts) — check drift/manifest.json entry
+  `cm-use-document-context` when Strapi changes it.
+- The helper file must stay CommonJS (see the comment in it) and dev-mode module identity
+  depends on `optimizeDeps.include` pinning the plugin entry — don't "simplify" either.
+- After editing plugin admin code: `npm run build` then restart the playground; in dev the
+  plugin is inside the Vite dep prebundle, so a stale cache means
+  `rm -rf apps/playground/node_modules/.strapi` if changes don't show up.
 
 Seeded admin login: `admin@playground.local` / `Playground123!` (override via `SEED_ADMIN_EMAIL`/`SEED_ADMIN_PASSWORD`).
 
