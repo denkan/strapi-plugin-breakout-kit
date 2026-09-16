@@ -21,6 +21,7 @@ concurrency:
 
 env:
   TARGET: ${{ inputs.version }}
+  HAS_ANTHROPIC_KEY: ${{ secrets.ANTHROPIC_API_KEY != '' }}
 
 jobs:
   adapt:
@@ -87,7 +88,7 @@ jobs:
 
       # ---------- Adaptation path: drift or failing tests ----------
       - name: Claude Code adaptation
-        if: steps.drift.outputs.drifted != '0' || steps.pretest.outputs.failed != '0'
+        if: env.HAS_ANTHROPIC_KEY == 'true' && (steps.drift.outputs.drifted != '0' || steps.pretest.outputs.failed != '0')
         uses: anthropics/claude-code-action@v1
         continue-on-error: true
         with:
@@ -121,6 +122,16 @@ jobs:
           echo "failed=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
           set -e
 
+      - name: Finalize adapted update
+        if: (steps.drift.outputs.drifted != '0' || steps.pretest.outputs.failed != '0') && steps.posttest.outputs.failed == '0'
+        run: |
+          node drift/scripts/update-manifest.mjs --version "$TARGET"
+          BASE_VERSION=$(git show origin/main:packages/plugin/package.json > /tmp/base-pkg.json && node -p "require('/tmp/base-pkg.json').version")
+          CUR_VERSION=$(node -p "require('./packages/plugin/package.json').version")
+          if [ "$BASE_VERSION" = "$CUR_VERSION" ]; then
+            npm version patch -w packages/plugin --no-git-tag-version
+          fi
+
       # ---------- Commit, push, PR ----------
       - name: Commit and push
         id: push
@@ -136,6 +147,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          gh label create automated --color 5319e7 --force 2>/dev/null || true
           if [ "${{ steps.nodrift.outputs.ready }}" = "true" ]; then
             KIND="No tracked internals changed; full suite green."
           else
@@ -163,6 +175,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          gh label create automated --color 5319e7 --force 2>/dev/null || true
+          gh label create needs-human --color d93f0b --force 2>/dev/null || true
           {
             echo "Automated adaptation to Strapi ${TARGET} could NOT reach green."
             echo

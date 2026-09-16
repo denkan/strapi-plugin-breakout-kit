@@ -37,3 +37,9 @@ scratch/
 .vscode/
 *.swp
 *.tgz
+
+# Adaptation workflow work files (never committed to adaptation branches)
+/drift-report.md
+/drift.json
+/test-output*.txt
+/pr-body.md
