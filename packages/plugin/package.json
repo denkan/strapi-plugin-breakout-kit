@@ -85,11 +85,11 @@
   "author": "Dennis Nystrom <dennis.nystrom@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/denkan/strapi-breakout-kit.git",
+    "url": "git+https://github.com/denkan/strapi-plugin-breakout-kit.git",
     "directory": "packages/plugin"
   },
-  "homepage": "https://github.com/denkan/strapi-breakout-kit#readme",
+  "homepage": "https://github.com/denkan/strapi-plugin-breakout-kit#readme",
   "bugs": {
-    "url": "https://github.com/denkan/strapi-breakout-kit/issues"
+    "url": "https://github.com/denkan/strapi-plugin-breakout-kit/issues"
   }
 }

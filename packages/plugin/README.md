@@ -126,7 +126,7 @@ const field = useEditField('title');
 const { save, publish } = useDocumentOperations();
 ```
 
-Full reference: [docs/usage](https://github.com/denkan/strapi-breakout-kit/tree/main/docs/usage).
+Full reference: [docs/usage](https://github.com/denkan/strapi-plugin-breakout-kit/tree/main/docs/usage).
 
 ## Compatibility
 

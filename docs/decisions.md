@@ -28,7 +28,7 @@ Decisions resolved with the maintainer, per PLAN.md §8 and docs/research/findin
 
 6. **Package name (PLAN §8 #1, resolved):** `strapi-plugin-breakout-kit` — "break out of
    Strapi's locked-in admin tools". Plugin id `breakout-kit`, display name "Breakout Kit",
-   repo `strapi-breakout-kit`. Chosen over "headless-*" names to avoid the headless-CMS
+   repo `strapi-plugin-breakout-kit`. Chosen over "headless-*" names to avoid the headless-CMS
    ambiguity and over the narrower `-content-manager` scope given decision #5.
 7. **Versioning scheme (PLAN §8 #2, resolved):** plugin-own semver starting `0.1.0`
    (experimental); tight Strapi peerDependencies ranges per release; README compatibility
