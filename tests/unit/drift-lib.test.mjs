@@ -26,12 +26,16 @@ describe('extractExportNames', () => {
 });
 
 describe('normalizeSource', () => {
-  it('ignores comments and whitespace but not code changes', () => {
-    const a = `const x = 1; // comment\n/* block */\nconst y = 2;`;
+  it('ignores full-line comments, block comments and whitespace — not code changes', () => {
+    // Note: trailing `//` comments are deliberately NOT stripped (a regex would
+    // corrupt string literals containing `//`, e.g. URLs).
+    const a = `const x = 1;\n// full-line comment\n/* block\ncomment */\nconst y = 2;`;
     const b = `const x = 1;\nconst y = 2;`;
     const c = `const x = 1;\nconst y = 3;`;
     expect(normalizeSource(a)).toBe(normalizeSource(b));
     expect(hashSource(a)).toBe(hashSource(b));
     expect(hashSource(a)).not.toBe(hashSource(c));
+    const url = `const u = 'https://example.com';`;
+    expect(normalizeSource(url)).toContain('https://example.com');
   });
 });
