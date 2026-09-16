@@ -1,76 +1,17 @@
+// Version-tolerant sqlite config: the generated template used 5.53-only types
+// (isDatabaseClientKind, typed connection records) which break the version matrix
+// (supported window includes older 5.x). The playground only ever uses sqlite.
 import path from 'path';
-import type { Core } from '@strapi/strapi';
-import { isDatabaseClientKind } from '@strapi/database';
 
-const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Database => {
-  const client = env('DATABASE_CLIENT', 'sqlite');
-
-  if (!isDatabaseClientKind(client)) {
-    throw new Error(
-      `Unsupported DATABASE_CLIENT: ${client}. Use "postgres", "mysql", or "sqlite".`
-    );
-  }
-
-  const connections: Record<Core.Config.Database.ClientKind, Core.Config.Database['connection']> = {
-    mysql: {
-      client: 'mysql',
-      connection: {
-        host: env('DATABASE_HOST', 'localhost'),
-        port: env.int('DATABASE_PORT', 3306),
-        database: env('DATABASE_NAME', 'strapi'),
-        user: env('DATABASE_USERNAME', 'strapi'),
-        password: env('DATABASE_PASSWORD', 'strapi'),
-        ssl: env.bool('DATABASE_SSL', false) && {
-          key: env('DATABASE_SSL_KEY', undefined),
-          cert: env('DATABASE_SSL_CERT', undefined),
-          ca: env('DATABASE_SSL_CA', undefined),
-          capath: env('DATABASE_SSL_CAPATH', undefined),
-          cipher: env('DATABASE_SSL_CIPHER', undefined),
-          rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', true),
-        },
-      },
-      pool: { min: env.int('DATABASE_POOL_MIN', 2), max: env.int('DATABASE_POOL_MAX', 10) },
-    },
-    postgres: {
-      client: 'postgres',
-      connection: {
-        connectionString: env('DATABASE_URL'),
-        host: env('DATABASE_HOST', 'localhost'),
-        port: env.int('DATABASE_PORT', 5432),
-        database: env('DATABASE_NAME', 'strapi'),
-        user: env('DATABASE_USERNAME', 'strapi'),
-        password: env('DATABASE_PASSWORD', 'strapi'),
-        ssl: env.bool('DATABASE_SSL', false) && {
-          key: env('DATABASE_SSL_KEY', undefined),
-          cert: env('DATABASE_SSL_CERT', undefined),
-          ca: env('DATABASE_SSL_CA', undefined),
-          capath: env('DATABASE_SSL_CAPATH', undefined),
-          cipher: env('DATABASE_SSL_CIPHER', undefined),
-          rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', true),
-        },
-        schema: env('DATABASE_SCHEMA', 'public'),
-      },
-      pool: { min: env.int('DATABASE_POOL_MIN', 2), max: env.int('DATABASE_POOL_MAX', 10) },
-    },
-    sqlite: {
-      client: 'sqlite',
-      connection: {
-        // Resolve from the app root (cwd), not __dirname: this config runs from
-        // dist/config under `strapi develop` but from config/ when the app is
-        // loaded programmatically (e.g. scripts/seed.js), so __dirname-relative
-        // paths point at different directories in a monorepo.
-        filename: path.resolve(process.cwd(), env('DATABASE_FILENAME', '.tmp/data.db')),
-      },
-      useNullAsDefault: true,
-    },
-  };
-
-  return {
+export default ({ env }: { env: (key: string, def?: string) => string }) => ({
+  connection: {
+    client: 'sqlite',
     connection: {
-      ...connections[client],
-      acquireConnectionTimeout: env.int('DATABASE_CONNECTION_TIMEOUT', 60000),
+      // Resolve from cwd, not __dirname: this config runs from dist/ under
+      // `strapi develop` but from source when loaded programmatically (seed).
+      filename: path.resolve(process.cwd(), env('DATABASE_FILENAME', '.tmp/data.db')),
     },
-  };
-};
-
-export default config;
+    useNullAsDefault: true,
+    acquireConnectionTimeout: 60000,
+  },
+});

@@ -1,7 +1,8 @@
 {
   "strapiVersion": "5.53.0",
+  "strapiFloor": "5.50.0",
   "strapiCommit": "99800b107996c39a68786473792f94103352de2d",
-  "notes": "Paths are relative to the strapi/strapi repo root; hashes are sha256 of normalized SOURCE content (drift/scripts/lib/normalize.mjs). distPath is the runtime file our deep imports resolve to (1:1 compiled from path).",
+  "notes": "Paths are relative to the strapi/strapi repo root; hashes are sha256 of normalized SOURCE content (drift/scripts/lib/normalize.mjs). distPath is the runtime file our deep imports resolve to (1:1 compiled from path). Support window: strapiFloor..strapiVersion (roof/target); peers must declare >=floor <roof-next-minor; the version matrix (drift/scripts/version-matrix.mjs) verifies every minor in the window.",
   "dependencies": [
     {
       "id": "cm-input-renderer",

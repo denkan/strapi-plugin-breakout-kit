@@ -4,7 +4,7 @@
  * - apps/playground: every exact-pinned @strapi/* dependency currently at the manifest's
  *   version is set to the target (other deps untouched)
  * - packages/plugin: @strapi/{strapi,admin,content-manager} devDependency ranges -> ^target,
- *   peerDependency ranges -> the tight tested window ">=target <target's-next-minor"
+ *   peerDependency ranges -> the tested window ">=manifest.strapiFloor <target's-next-minor"
  *   (versioning decision #7: peers declare exactly what a release was tested against)
  *
  * Usage: node drift/scripts/bump-strapi.mjs --version 5.54.0
@@ -42,7 +42,9 @@ fs.writeFileSync(playgroundPath, `${JSON.stringify(playground, null, 2)}\n`);
 const pluginPath = path.join(repoRoot, 'packages', 'plugin', 'package.json');
 const plugin = JSON.parse(fs.readFileSync(pluginPath, 'utf8'));
 const [major, minor] = target.split('.').map(Number);
-const tightRange = `>=${target} <${major}.${minor + 1}.0`;
+// The support window keeps its floor (manifest.strapiFloor); adaptation moves the roof.
+const floor = manifest.strapiFloor ?? target;
+const tightRange = `>=${floor} <${major}.${minor + 1}.0`;
 for (const name of ['@strapi/strapi', '@strapi/admin', '@strapi/content-manager']) {
   if (plugin.devDependencies?.[name]) plugin.devDependencies[name] = `^${target}`;
   if (plugin.peerDependencies?.[name]) plugin.peerDependencies[name] = tightRange;

@@ -37,6 +37,7 @@ npm run seed                # seed admin user + sample content (idempotent)
 npm run test:unit           # vitest (tests/unit)
 npm run test:contract       # playwright against the playground admin (starts it if needed)
 npm run drift:hashes        # recompute drift/manifest.json hashes from scratch/strapi checkout
+npm run matrix -- 5.51.0    # full suite against one Strapi version (uniform tree); --window = all minors floor..roof (DESTRUCTIVE to node_modules while running; restores after)
 ```
 
 ## Access-layer specifics (Phase 2)
@@ -87,6 +88,10 @@ report and failing test output):
    `node drift/scripts/update-manifest.mjs --version <target>`.
 6. Iterate with `npm run test:unit` and `npm run test:contract` until green. Clear
    `apps/playground/node_modules/.strapi` between plugin rebuilds.
+7. Changes must hold across the SUPPORT WINDOW (drift/manifest.json strapiFloor..strapiVersion),
+   not just the target: run `npm run matrix -- --window` (or let CI's version-matrix run on
+   the adaptation branch). If the floor cannot stay green, raise strapiFloor explicitly and
+   say so in the PR — never silently.
 
 Seeded admin login: `admin@playground.local` / `Playground123!` (override via `SEED_ADMIN_EMAIL`/`SEED_ADMIN_PASSWORD`).
 

@@ -43,12 +43,19 @@ Decisions resolved with the maintainer, per PLAN.md §8 and docs/research/findin
    milestone instead: dynamic-zone render slots (custom accordion icons, add-component
    button) — driven by the maintainer's concrete needs.
 
-10. **Supported Strapi floor: 5.53.** No backward support for older 5.x — drift exists even
-    at 5.52 (3 tracked files differ) and every supported version must pass the full suite;
-    older-Strapi users upgrade within v5 first. Peer ranges declare the tested window
-    (currently `>=5.53.0 <5.55.0`); adaptation releases move the window forward. Revisit
-    only if real demand appears (option then: drift-check older tags to find how far the
-    surface is identical, publish a widened range if the suite passes).
+10. **Supported Strapi window: floor 5.50, roof = drift-manifest target** (revised after
+    empirical probing: the full suite is green on uniform 5.50–5.53 installs; drift in
+    tracked files across that span is TypeScript-cosmetic only). The window is declared in
+    drift/manifest.json (`strapiFloor`..`strapiVersion`), enforced by peer ranges
+    (`>=floor <roof-next-minor`), and MUST be suite-verified per minor by the version
+    matrix before any published claim. When a change cannot stay green across the window,
+    the floor rises (explicit, changelog'd; older users are served by dist-tags).
+    Mirrored/vendored surfaces (shims, EditForm markup, action flows) track the ROOF.
+10b. **Version matrix is script-first:** drift/scripts/version-matrix.mjs runs locally
+    (`npm run matrix -- 5.51.0` or `--window`) and CI's version-matrix.yml merely
+    parallelizes the same script (one job per minor; triggered on adaptation branches and
+    manually). Uniform trees per version via npm overrides — mixed hoisted trees break
+    Strapi's own singleton aliasing (duplicate @codemirror/state).
 11. **Publishing: CI-only, "merge = release".** The publish workflow triggers on pushes to
     main where the plugin version differs from npm (plus manual dispatch as the
     first-release path and fallback). First publish is manual; after it, consider npm

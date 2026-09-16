@@ -1,0 +1,64 @@
+name: Version matrix
+
+# Runs the SAME script developers use locally (drift/scripts/version-matrix.mjs),
+# parallelized: one job per Strapi minor in the supported window (manifest
+# strapiFloor..strapiVersion). Triggered on adaptation branches (so a roof bump
+# proves the whole window before merge) and manually.
+
+on:
+  push:
+    branches: ['strapi-*']
+  workflow_dispatch:
+    inputs:
+      versions:
+        description: 'JSON array of versions (default: the manifest window)'
+        required: false
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      versions: ${{ steps.list.outputs.versions }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: list
+        run: |
+          if [ -n '${{ inputs.versions }}' ]; then
+            echo 'versions=${{ inputs.versions }}' >> "$GITHUB_OUTPUT"
+          else
+            echo "versions=$(node drift/scripts/version-matrix.mjs --list)" >> "$GITHUB_OUTPUT"
+          fi
+
+  test:
+    needs: plan
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        strapi: ${{ fromJSON(needs.plan.outputs.versions) }}
+    name: Strapi ${{ matrix.strapi }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Prepare playground env
+        run: node apps/playground/scripts/make-env.js
+
+      - name: Install Playwright browser (baseline install first)
+        run: npm ci && npx playwright install --with-deps chromium
+
+      - name: Run matrix for ${{ matrix.strapi }}
+        run: node drift/scripts/version-matrix.mjs ${{ matrix.strapi }} --no-restore
+
+      - name: Upload artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: matrix-${{ matrix.strapi }}
+          path: test-results/
+          retention-days: 7

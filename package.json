@@ -16,7 +16,8 @@
     "test:contract": "playwright test",
     "drift:hashes": "node drift/scripts/update-hashes.mjs",
     "drift:check": "node drift/scripts/check.mjs",
-    "drift:update": "node drift/scripts/update-manifest.mjs"
+    "drift:update": "node drift/scripts/update-manifest.mjs",
+    "matrix": "node drift/scripts/version-matrix.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
