@@ -48,6 +48,15 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Tag with the tested Strapi minor (dist-tag strapi-5.x)
+        run: |
+          VERSION=$(node -p "require('./packages/plugin/package.json').version")
+          STRAPI=$(node -p "require('./drift/manifest.json').strapiVersion")
+          MINOR="strapi-${STRAPI%.*}"
+          npm dist-tag add "strapi-plugin-breakout-kit@${VERSION}" "$MINOR"
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
