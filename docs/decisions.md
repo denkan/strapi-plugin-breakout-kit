@@ -43,4 +43,15 @@ Decisions resolved with the maintainer, per PLAN.md §8 and docs/research/findin
    milestone instead: dynamic-zone render slots (custom accordion icons, add-component
    button) — driven by the maintainer's concrete needs.
 
+10. **Supported Strapi floor: 5.53.** No backward support for older 5.x — drift exists even
+    at 5.52 (3 tracked files differ) and every supported version must pass the full suite;
+    older-Strapi users upgrade within v5 first. Peer ranges declare the tested window
+    (currently `>=5.53.0 <5.55.0`); adaptation releases move the window forward. Revisit
+    only if real demand appears (option then: drift-check older tags to find how far the
+    surface is identical, publish a widened range if the suite passes).
+11. **Publishing: CI-only, "merge = release".** The publish workflow triggers on pushes to
+    main where the plugin version differs from npm (plus manual dispatch as the
+    first-release path and fallback). First publish is manual; after it, consider npm
+    Trusted Publishing (OIDC) and dropping NPM_TOKEN.
+
 Still open (from PLAN §8): auto-merge policy for agent PRs (after Phase 8 trial).

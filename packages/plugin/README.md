@@ -132,7 +132,13 @@ Full reference: [docs/usage](https://github.com/denkan/strapi-plugin-breakout-ki
 
 | Plugin version | Tested against Strapi |
 |---|---|
-| 0.x (unreleased) | 5.53.0 |
+| 0.x (unreleased) | 5.53 – 5.54 |
+
+**Strapi 5.53 is the floor.** Older 5.x versions are not supported: the internals this
+plugin reuses differ even one minor back, and each supported version must pass the full
+contract/parity suite. If you're on an older 5.x, upgrade Strapi first
+(`npx @strapi/upgrade latest` within v5 is routine) — that's also the officially
+recommended path for Strapi fixes.
 
 Each release declares a tight `peerDependencies` range for the Strapi packages it was
 tested against. An automated pipeline tracks new Strapi releases, re-runs the full contract

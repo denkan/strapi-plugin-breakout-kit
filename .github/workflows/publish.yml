@@ -1,19 +1,53 @@
 name: Publish
 
 # Phase 8.4: build, run the full suite once more, publish to npm with provenance,
-# create a GitHub release. Manual dispatch only until the package name is confirmed
-# (PLAN §8 open decision #1 / Phase 9); requires the NPM_TOKEN secret.
-# npm credentials exist ONLY in this workflow — never in the adaptation workflow.
+# create a GitHub release, dist-tag by tested Strapi minor.
+# Triggers: any push to main where packages/plugin's version differs from npm
+# ("merge = release" — the version bump in a PR is the release intent), plus
+# manual dispatch as first-release path and kill-switch fallback.
+# Requires the NPM_TOKEN secret; npm credentials exist ONLY in this workflow.
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'packages/plugin/**'
+      - 'drift/manifest.json'
   workflow_dispatch:
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
 
 permissions:
   contents: write
   id-token: write # npm provenance
 
 jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    outputs:
+      should_publish: ${{ steps.compare.outputs.should_publish }}
+      version: ${{ steps.compare.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: compare
+        run: |
+          VERSION=$(node -p "require('./packages/plugin/package.json').version")
+          PUBLISHED=$(npm view strapi-plugin-breakout-kit version 2>/dev/null || echo "none")
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          if [ "$VERSION" = "$PUBLISHED" ]; then
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
+            echo "Version $VERSION already on npm — nothing to do."
+          else
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+            echo "Will publish $VERSION (npm has: $PUBLISHED)."
+          fi
+
   publish:
+    needs: check
+    if: needs.check.outputs.should_publish == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
