@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-import { dismissGuidedTour, loginToAdmin } from './helpers/admin';
+import { dismissGuidedTour } from './helpers/admin';
 
 /**
  * Decision #2 guard (docs/decisions.md): the useDocumentContext shim is aliased globally,
@@ -10,8 +10,6 @@ import { dismissGuidedTour, loginToAdmin } from './helpers/admin';
 test('stock content manager edit view still works with the shim active', async ({ page }) => {
   const pageErrors: string[] = [];
   page.on('pageerror', (err) => pageErrors.push(String(err)));
-
-  await loginToAdmin(page);
 
   // Open the seeded article in the stock edit view.
   await page.goto(

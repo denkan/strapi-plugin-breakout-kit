@@ -11,7 +11,11 @@
  */
 export { InputRenderer } from '@strapi/content-manager/dist/admin/pages/EditView/components/InputRenderer.mjs';
 export type { InputRendererProps } from '@strapi/content-manager/dist/admin/pages/EditView/components/InputRenderer.mjs';
-export { FormLayout } from '@strapi/content-manager/dist/admin/pages/EditView/components/FormLayout.mjs';
+export {
+  FormLayout,
+  ResponsiveGridRoot,
+  ResponsiveGridItem,
+} from '@strapi/content-manager/dist/admin/pages/EditView/components/FormLayout.mjs';
 export {
   DocumentActions,
   DocumentActionButton,

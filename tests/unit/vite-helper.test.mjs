@@ -46,10 +46,24 @@ describe('headlessContentManager vite plugin', () => {
     expect(resolved).toMatch(/vite[\\/]runtime[\\/]useDocumentContext\.mjs$/);
   });
 
+  it('redirects useDocument.mjs (useDoc wrapper) and honours the ?hcm-original escape', () => {
+    const plugin = makePlugin();
+    const importer = path.join(cmRoot, 'dist/admin/pages/EditView/EditViewPage.mjs');
+    expect(plugin.resolveId('../../hooks/useDocument.mjs', importer)).toMatch(
+      /vite[\\/]runtime[\\/]useDocument\.mjs$/
+    );
+    expect(
+      plugin.resolveId(
+        '@strapi/content-manager/dist/admin/hooks/useDocument.mjs?hcm-original',
+        undefined
+      )
+    ).toBe(path.join(cmRoot, 'dist/admin/hooks/useDocument.mjs'));
+  });
+
   it('leaves unrelated relative imports alone', () => {
     const plugin = makePlugin();
     const importer = path.join(cmRoot, 'dist/admin/hooks/useDocumentContext.mjs');
-    expect(plugin.resolveId('./useDocument.mjs', importer)).toBeNull();
+    expect(plugin.resolveId('./useContentTypeSchema.mjs', importer)).toBeNull();
     expect(plugin.resolveId('react', importer)).toBeNull();
   });
 

@@ -1,7 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-import { loginToAdmin } from './helpers/admin';
-
 /**
  * Phase 2 contract test: every access-layer adapter resolves against the real,
  * running Strapi admin. The plugin's diagnostics page (admin/src/pages/HomePage.tsx)
@@ -13,8 +11,6 @@ import { loginToAdmin } from './helpers/admin';
  * - a live RTK Query fetch (useContentTypeSchema) outside the CM routes
  */
 test('access layer adapters all resolve in the running admin', async ({ page }) => {
-  await loginToAdmin(page);
-
   await page.goto('/admin/plugins/headless-content-manager');
 
   const summary = page.getByTestId('access-summary');

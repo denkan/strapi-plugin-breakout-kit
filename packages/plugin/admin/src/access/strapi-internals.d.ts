@@ -26,7 +26,9 @@ declare module '@strapi/content-manager/dist/admin/pages/EditView/components/For
     document: unknown;
     hasBackground?: boolean;
   }
-  export const FormLayout: React.ComponentType<FormLayoutProps>;
+  export const FormLayout: React.NamedExoticComponent<FormLayoutProps>;
+  export const ResponsiveGridRoot: React.ComponentType<Record<string, unknown>>;
+  export const ResponsiveGridItem: React.ComponentType<Record<string, unknown>>;
 }
 
 declare module '@strapi/content-manager/dist/admin/pages/EditView/components/DocumentActions.mjs' {

@@ -19,6 +19,21 @@ export {
   useLocales,
   useDocumentOperations,
 } from "./data";
+export {
+  FieldRenderer,
+  type FieldRendererProps,
+  EditForm,
+  type EditFormProps,
+  type RenderField,
+  type RenderPanel,
+  EditHeader,
+  type EditHeaderProps,
+  DocumentActionsBar,
+  type DocumentActionsBarProps,
+  type ActionType,
+  EditSidePanels,
+  type EditSidePanelsProps,
+} from "./components";
 
 const plugin: StrapiApp["appPlugins"][string] = {
   register(app) {

@@ -54,6 +54,13 @@ npm run drift:hashes        # recompute drift/manifest.json hashes from scratch/
 - After editing plugin admin code: `npm run build` then restart the playground; in dev the
   plugin is inside the Vite dep prebundle, so a stale cache means
   `rm -rf apps/playground/node_modules/.strapi` if changes don't show up.
+- TWO modules are alias-replaced by the helper: `hooks/useDocumentContext.mjs` AND
+  `hooks/useDocument.mjs` (wrapper extends `useDoc` with the headless-context fallback —
+  needed because route-coupled internals like the relation modal's RootRelationRenderer
+  call `useDoc` directly). Shims import originals via the `?hcm-original` suffix.
+- Contract tests authenticate ONCE via tests/contract/auth.setup.ts (storageState):
+  Strapi rate-limits admin logins (5/5min) — never log in per-test, and after several
+  manual browser logins expect 429s for a few minutes.
 
 Seeded admin login: `admin@playground.local` / `Playground123!` (override via `SEED_ADMIN_EMAIL`/`SEED_ADMIN_PASSWORD`).
 

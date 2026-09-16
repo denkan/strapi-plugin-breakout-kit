@@ -134,10 +134,11 @@
       "symbol": "useDocument, useDoc",
       "hash": "1ebe487b9d60919b462b013edafc97ffcf609888412d154f6019a8225fc27539",
       "usedBy": [
+        "packages/plugin/vite/runtime/useDocument.mjs",
         "packages/plugin/vite/runtime/useDocumentContext.mjs",
         "packages/plugin/admin/src/access/public.ts"
       ],
-      "note": "shim deep-imports useDocument and replicates useDoc's URL-branch semantics (param names, skip logic, error strings)"
+      "note": "alias-REPLACED by the Vite helper with a wrapper (vite/runtime/useDocument.mjs) that re-exports useDocument/useContentManagerContext untouched and extends useDoc with the headless-context fallback; wrapper must keep mirroring useDoc URL-branch semantics (param names, skip logic, error strings) exactly"
     },
     {
       "id": "cm-relation-modal-context",

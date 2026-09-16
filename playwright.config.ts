@@ -10,6 +10,22 @@ export default defineConfig({
     baseURL: 'http://localhost:1337',
     trace: 'retain-on-failure',
   },
+  projects: [
+    {
+      name: 'setup',
+      testMatch: /auth\.setup\.ts/,
+    },
+    {
+      name: 'contract',
+      testIgnore: /auth\.setup\.ts/,
+      dependencies: ['setup'],
+      use: {
+        baseURL: 'http://localhost:1337',
+        storageState: 'test-results/.auth/admin.json',
+        trace: 'retain-on-failure',
+      },
+    },
+  ],
   webServer: {
     command: 'npm run develop --workspace apps/playground',
     url: 'http://localhost:1337/_health',

@@ -1,7 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-import { loginToAdmin } from './helpers/admin';
-
 const ORIGINAL_TITLE = 'The Complete Article';
 const EDITED_TITLE = 'The Complete Article (hooks-edited)';
 
@@ -11,7 +9,6 @@ const EDITED_TITLE = 'The Complete Article (hooks-edited)';
  * coexist with independent form state (collection type + single type side by side).
  */
 test('hooks-only page edits and saves documents through the data layer', async ({ page }) => {
-  await loginToAdmin(page);
   await page.goto('/admin/plugins/headless-content-manager/hooks-demo');
 
   const articleInput = page.getByTestId('hooks-article-input');
