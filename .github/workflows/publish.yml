@@ -90,5 +90,10 @@ jobs:
         run: npm install -g npm@latest && npm --version
 
       - name: Publish to npm (OIDC trusted publishing; provenance automatic)
-        run: npm publish -w packages/plugin --access public
+        # Run from the package dir, NOT via `-w`: npm's workspace publish path skips
+        # the trusted-publishing OIDC exchange (falls back to ENEEDAUTH).
+        working-directory: packages/plugin
+        run: |
+          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then echo "OIDC env present"; else echo "::warning::NO OIDC env — id-token permission missing?"; fi
+          npm publish --access public
 
