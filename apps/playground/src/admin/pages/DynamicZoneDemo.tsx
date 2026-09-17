@@ -9,6 +9,7 @@ import {
   Typography,
 } from '@strapi/design-system';
 import { ArrowDown, ArrowUp, Images, Information, Link, Quotes, Trash } from '@strapi/icons';
+import { styled } from 'styled-components';
 
 import { useFetchClient } from '@strapi/strapi/admin';
 import { EditPage } from 'strapi-plugin-breakout-kit/strapi-admin';
@@ -139,10 +140,61 @@ const renderEntryConfig: EntryCustomization = {
   },
 };
 
+/**
+ * Mode "boxes" — no accordion at all. Every entry becomes a styled, always-open card:
+ * `renderEntry` never touches `DefaultEntry`, just wraps `entry.renderFields()` in its
+ * own chrome. Reorder/remove affordances are ours, wired via entry.onMove/onRemove.
+ */
+const EntryCard = styled(Box)`
+  border-left: 4px solid ${({ theme }) => theme.colors.primary600};
+`;
+
+const boxesConfig: EntryCustomization = {
+  renderEntry: (entry: ComponentEntry) => (
+    <EntryCard
+      hasRadius
+      background="neutral0"
+      shadow="tableShadow"
+      padding={6}
+      marginBottom={4}
+      data-testid="dz-box-entry"
+    >
+      <Flex justifyContent="space-between" paddingBottom={4}>
+        <Typography variant="delta" tag="h3">
+          {entry.index + 1}. {entry.schema?.displayName}
+        </Typography>
+        <Flex gap={1}>
+          <IconButton
+            variant="ghost"
+            label="Move up"
+            disabled={entry.index === 0}
+            onClick={() => entry.onMove(entry.index - 1)}
+          >
+            <ArrowUp />
+          </IconButton>
+          <IconButton
+            variant="ghost"
+            label="Move down"
+            disabled={entry.index === entry.total - 1}
+            onClick={() => entry.onMove(entry.index + 1)}
+          >
+            <ArrowDown />
+          </IconButton>
+          <IconButton variant="ghost" label="Remove" onClick={() => entry.onRemove()}>
+            <Trash />
+          </IconButton>
+        </Flex>
+      </Flex>
+      {entry.renderFields()}
+    </EntryCard>
+  ),
+};
+
 const MODES = [
   { value: 'stock', label: 'Stock (no config)' },
   { value: 'sugars', label: 'Sugars: entryIcon / entryLabel / entryActions' },
   { value: 'renderEntry', label: 'renderEntry: DefaultEntry tweaks + custom chrome' },
+  { value: 'boxes', label: 'Boxes: no accordion, styled cards for every entry' },
 ] as const;
 
 type Mode = (typeof MODES)[number]['value'];
@@ -151,6 +203,7 @@ const CONFIGS: Record<Mode, EntryCustomization | undefined> = {
   stock: undefined,
   sugars: sugarsConfig,
   renderEntry: renderEntryConfig,
+  boxes: boxesConfig,
 };
 
 const DynamicZoneDemo = () => {

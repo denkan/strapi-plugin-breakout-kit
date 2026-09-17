@@ -119,3 +119,27 @@ test('renderEntry mode: DefaultEntry overrides and fully custom chrome', async (
 
   expect(pageErrors).toEqual([]);
 });
+
+test('boxes mode: accordion fully replaced by styled cards', async ({ page }) => {
+  const pageErrors: string[] = [];
+  page.on('pageerror', (err) => pageErrors.push(String(err)));
+
+  await page.goto('/admin/breakout-playground/dz-demo');
+  await waitForForm(page);
+  await selectMode(page, 'Boxes');
+  await waitForForm(page);
+
+  const root = page.getByTestId('dz-demo-root');
+  const dzList = root.locator('ol[aria-describedby]');
+
+  // Every entry is a card; no stock accordion chrome remains in the zone.
+  await expect(root.getByTestId('dz-box-entry')).toHaveCount(3);
+  await expect(dzList.getByRole('button', { name: 'Drag' })).toHaveCount(0);
+  await expect(dzList.getByRole('button', { name: 'More actions' })).toHaveCount(0);
+
+  // Fields render always-open (no collapse to click through).
+  const quoteCard = root.getByTestId('dz-box-entry').filter({ hasText: '1. Quote' });
+  await expect(quoteCard.getByLabel(/text/)).toBeVisible();
+
+  expect(pageErrors).toEqual([]);
+});

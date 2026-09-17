@@ -95,7 +95,8 @@ stock, so lookup-map misses fall through naturally:
 Types (`EntryCustomization`, `ComponentEntryMeta`, `EntryActionDefaults`, …) are
 zone-agnostic and exported from the package root; repeatable components get the same
 treatment via a `repeatable` prop later (issue #10). Worked examples: the playground's
-"Dynamic zone" page (`apps/playground/src/admin/pages/DynamicZoneDemo.tsx`).
+"Dynamic zone" page (`apps/playground/src/admin/pages/DynamicZoneDemo.tsx`) — including
+a "no accordion at all" mode where every entry is a styled always-open card.
 
 ## `<FieldRenderer>`
 
