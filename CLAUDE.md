@@ -33,7 +33,7 @@ architecture and checkpoints. Work phase by phase; do not skip checkpoints.
 ## Commands
 
 ```bash
-npm install                 # root; npm workspaces
+npm install                 # root; npm workspaces (npm ONLY — preinstall guard rejects pnpm/yarn, which don't read the workspaces field / overrides)
 npm run build               # build the plugin
 npm run dev                 # plugin watch + playground develop (admin at http://localhost:1337/admin)
 npm run seed                # seed admin user + sample content (idempotent)

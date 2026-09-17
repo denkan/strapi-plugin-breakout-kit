@@ -1,3 +1,4 @@
+import { Magic } from '@strapi/icons';
 import type { StrapiApp } from '@strapi/strapi/admin';
 
 /**
@@ -13,7 +14,7 @@ export default {
   register(app: StrapiApp) {
     app.addMenuLink({
       to: 'breakout-playground',
-      icon: () => null,
+      icon: Magic,
       intlLabel: {
         id: 'breakout-playground.label',
         defaultMessage: 'Breakout Playground',

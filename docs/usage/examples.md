@@ -105,3 +105,30 @@ Two providers coexist freely:
   </DocumentProvider>
 </Flex>
 ```
+
+## 6. Custom dynamic-zone entry chrome (icons, labels, actions)
+
+The original motivation for this plugin — custom icons on dynamic-zone accordions and
+control over the entry action buttons. See `dynamicZone` in
+[components.md](components.md) for the full API; the short version:
+
+```tsx
+<EditPage
+  model="api::page.page"
+  documentId={id}
+  form={{
+    dynamicZone: {
+      entryIcon: (entry) => ICONS[entry.componentUid], // undefined = stock icon
+      entryActions: (entry, d) => (
+        <>
+          <PreviewButton entry={entry} />
+          {d.all /* every stock button, still fully wired */}
+        </>
+      ),
+    },
+  }}
+/>
+```
+
+Live, switchable examples: the playground's "Dynamic zone" page
+(`apps/playground/src/admin/pages/DynamicZoneDemo.tsx`).

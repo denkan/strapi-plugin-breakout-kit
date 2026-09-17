@@ -7,11 +7,12 @@
     "apps/*"
   ],
   "scripts": {
-    "dev": "npm-run-all --parallel dev:plugin dev:playground",
+    "preinstall": "npx only-allow npm",
+    "dev": "npm run build && npm-run-all --parallel dev:plugin dev:playground",
     "dev:plugin": "npm run watch --workspace packages/plugin",
     "dev:playground": "npm run develop --workspace apps/playground",
     "build": "npm run build --workspace packages/plugin",
-    "seed": "npm run seed --workspace apps/playground",
+    "seed": "npm run build && npm run seed --workspace apps/playground",
     "test:unit": "vitest run tests/unit",
     "test:contract": "playwright test",
     "drift:hashes": "node drift/scripts/update-hashes.mjs",

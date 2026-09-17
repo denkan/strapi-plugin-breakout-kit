@@ -58,6 +58,46 @@ edit view.
 />
 ```
 
+### Dynamic-zone entry customization (`dynamicZone` prop)
+
+Customize each dynamic-zone entry's chrome without replacing the whole field. Three
+tiers, all "override with the default(s) in hand" — return `undefined` anywhere to keep
+stock, so lookup-map misses fall through naturally:
+
+```tsx
+<EditForm
+  dynamicZone={{
+    // 1. Sugars: icon (left of label), label, and the action buttons (right of label).
+    entryIcon: (entry, defaultIcon) => ICONS[entry.componentUid], // undefined => stock
+    entryLabel: (entry, defaultLabel) => `${entry.index + 1}. ${defaultLabel}`,
+    entryActions: (entry, d) => (
+      // d = { all, delete, drag, moveUp, moveDown, more } — LIVE nodes (the drag
+      // handle keeps its wiring wherever you put it), breakpoint-aware (drag is null
+      // on mobile, moveUp/moveDown on desktop), all null when the field is disabled.
+      <>
+        <MyDuplicateButton entry={entry} />
+        {d.all /* or compose pieces: {d.delete}{d.drag} drops the "more" menu */}
+      </>
+    ),
+    // 2. Full chrome control. DefaultEntry = the stock accordion with all behavior
+    // pre-bound; accepts icon/label/actions overrides. Or skip it and build your own
+    // container around entry.renderFields() (reorder/a11y is then yours to provide).
+    renderEntry: (entry, DefaultEntry) =>
+      entry.componentUid === 'shared.hero' ? (
+        <MyCard onRemove={entry.onRemove}>{entry.renderFields()}</MyCard>
+      ) : (
+        <DefaultEntry />
+      ),
+  }}
+/>
+```
+
+Types (`EntryCustomization`, `ComponentEntryMeta`, `EntryActionDefaults`, …) are
+zone-agnostic and exported from the package root; repeatable components get the same
+treatment via a `repeatable` prop later (issue #10). Worked examples: the playground's
+"Dynamic zone" page (`apps/playground/src/admin/pages/DynamicZoneDemo.tsx`) — including
+a "no accordion at all" mode where every entry is a styled always-open card.
+
 ## `<FieldRenderer>`
 
 One field, stock input for its type, per-field RBAC applied:

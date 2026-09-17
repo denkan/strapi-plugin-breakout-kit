@@ -18,6 +18,11 @@ export {
   usePermissions,
   useLocales,
   useDocumentOperations,
+  type EntryCustomization,
+  type EntryActionDefaults,
+  type ComponentEntry,
+  type ComponentEntryMeta,
+  type DefaultEntryComponent,
 } from "./data";
 export {
   FieldRenderer,

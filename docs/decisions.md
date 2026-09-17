@@ -82,4 +82,21 @@ Decisions resolved with the maintainer, per PLAN.md §8 and docs/research/findin
     perform 2FA-gated writes) — post-release.yml surfaces it in the run summary when
     pending.
 
+13. **Component-entry customization API (issues #4/#10): layered overrides with the
+    defaults in hand.** One zone-agnostic `EntryCustomization` shape (`meta.source`
+    discriminates `dynamicZone` vs `repeatable`), wired per source through `EditForm`
+    props (`dynamicZone` now, `repeatable` with #10) and bridged to vendored modules via
+    the `entry-customization@v1` global-symbol context. Three tiers: sugars
+    (`entryIcon`/`entryLabel`/`entryActions`) → `renderEntry(entry, DefaultEntry)` →
+    build-your-own around `entry.renderFields()`. Uniform semantics: every slot receives
+    the stock default(s); returning `undefined` keeps stock. Actions have MULTIPLE
+    defaults, so `entryActions` receives a named map (`delete`/`drag`/`moveUp`/
+    `moveDown`/`more`) plus `all` (stock-ordered composite) of LIVE nodes — reorder/
+    filter/wrap keeps wiring; pieces are breakpoint-honest and all-null when disabled
+    (the fn still runs, enabling read-only actions). Implementation route: vendor
+    `DynamicZone/{Field,DynamicComponent}.mjs` (drift entries `cm-dz-field`,
+    `cm-dz-dynamic-component`) with `// [breakout-kit]`-marked deviations only; stock
+    action buttons hoisted into named consts, markup unchanged; no config => stock
+    rendering (parity-guarded).
+
 Still open (from PLAN §8): auto-merge policy for agent PRs (after Phase 8 trial).

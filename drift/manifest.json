@@ -153,6 +153,30 @@
       ]
     },
     {
+      "id": "cm-dz-field",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/pages/EditView/components/FormInputs/DynamicZone/Field.tsx",
+      "distPath": "dist/admin/pages/EditView/components/FormInputs/DynamicZone/Field.mjs",
+      "symbol": "DynamicZone, useDynamicZone",
+      "hash": "46655de1fc735bfbd64f233c7b993c6a30f224c47e555e401accb2f54d67f4f9",
+      "usedBy": [
+        "packages/plugin/vite/runtime/DynamicZone/Field.mjs"
+      ],
+      "note": "alias-REPLACED by the Vite helper with a vendored copy adding the renderEntry seam (issue #4); the vendored module must keep mirroring upstream behavior exactly when no entry-customization config is present"
+    },
+    {
+      "id": "cm-dz-dynamic-component",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/pages/EditView/components/FormInputs/DynamicZone/DynamicComponent.tsx",
+      "distPath": "dist/admin/pages/EditView/components/FormInputs/DynamicZone/DynamicComponent.mjs",
+      "symbol": "DynamicComponent",
+      "hash": "f3dad8cc75dc1b3a4646d55efe9018f397b52631ffa3866ce5e41089ce7dbd26",
+      "usedBy": [
+        "packages/plugin/vite/runtime/DynamicZone/DynamicComponent.mjs"
+      ],
+      "note": "VENDORED (imported by the vendored Field.mjs, upstream module no longer loaded): entry icon/label/actions slots; stock action buttons hoisted into named consts \u2014 mirror upstream markup/behavior exactly when no config is present"
+    },
+    {
       "id": "cm-public-exports",
       "kind": "export",
       "path": "packages/core/content-manager/admin/src/exports.ts",
