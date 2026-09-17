@@ -9,6 +9,9 @@ const EDITED_TITLE = 'The Complete Article (hooks-edited)';
  * coexist with independent form state (collection type + single type side by side).
  */
 test('hooks-only page edits and saves documents through the data layer', async ({ page }) => {
+  const pageErrors: string[] = [];
+  page.on('pageerror', (err) => pageErrors.push(String(err)));
+
   await page.goto('/admin/breakout-playground/hooks-demo');
 
   const articleInput = page.getByTestId('hooks-article-input');
@@ -16,6 +19,16 @@ test('hooks-only page edits and saves documents through the data layer', async (
 
   // Both providers render their documents simultaneously.
   await expect(articleInput).toHaveValue(ORIGINAL_TITLE, { timeout: 30_000 });
+
+  // STOCK unstable_useContentManagerContext works headlessly (upstream it reads URL
+  // params via its internal useDoc and would throw here; the shim rebuilds it).
+  const probe = page.getByTestId('cm-context-probe');
+  await expect(probe).toBeVisible({ timeout: 30_000 });
+  await expect(probe).toContainText('model: api::article.article');
+  await expect(probe).toContainText('D&P: true');
+  await expect(probe).toContainText('creating: false');
+  await expect(probe).not.toContainText('layout panels: 0');
+  expect(pageErrors).toEqual([]);
   await expect(singleInput).toHaveValue('Headless CM Playground');
   await expect(page.getByTestId('hooks-article-docid')).not.toHaveText(/single type/);
 
