@@ -60,11 +60,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # NOTE: no registry-url here — setup-node's registry-url writes an .npmrc that
+      # expects NODE_AUTH_TOKEN, which breaks OIDC trusted publishing (empty auth is
+      # sent instead of the OIDC exchange; npm masks it as E404 on publish).
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
-          registry-url: https://registry.npmjs.org
 
       - name: Install
         run: npm ci
