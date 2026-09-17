@@ -13,10 +13,14 @@ pushes).
    automatic). The run summary shows the stage id.
 3. **You:** approve the staged version — npmjs.com UI works fine (despite docs saying
    CLI-only), or `npm stage approve <stage-id> --otp=<code>`.
-4. **You:** move the Strapi-minor dist-tag:
-   `npm dist-tag add strapi-plugin-breakout-kit@<version> strapi-5.<minor> --otp=<code>`
-   (minor = the drift manifest's `strapiVersion`). CI cannot do this — dist-tags are
-   2FA-gated writes. **post-release** nags in its run summary until it's done.
+4. **You:** move the window dist-tags — every minor in the tested window
+   (manifest `strapiFloor`..`strapiVersion`) points at the newest release supporting it:
+   `for m in 5.50 … 5.54; do npm dist-tag add strapi-plugin-breakout-kit@<version> strapi-$m --otp=<code>; done`
+   — **post-release** prints the exact loop for the pending tags in its run summary and
+   nags until all are set (CI cannot do this — dist-tags are 2FA-gated writes; one OTP
+   usually survives the loop, rerun with a fresh code if it expires). When the floor
+   rises past a minor, its tag freezes at the last supporting release — never move it
+   forward manually.
 5. **post-release** auto-creates the GitHub release once the version is live
    (workflow_run after Publish + daily cron + manual dispatch).
 
