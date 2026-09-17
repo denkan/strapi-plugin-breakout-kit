@@ -9,10 +9,19 @@ name: Publish
 # promotes with 2FA on npm, post-release finishes tagging.
 #
 # Auth: npm TRUSTED PUBLISHING (OIDC) — no tokens anywhere. The trusted publisher is
-# configured on npmjs.com for this repo + this workflow file (stage-publish only,
-# "require 2FA and disallow tokens"). This workflow STAGES the version; the maintainer
-# approves with `npm stage approve <stage-id> --otp=<code>`; post-release.yml then
-# creates the GitHub release and surfaces the strapi-5.x dist-tag one-liner.
+# configured on npmjs.com for this repo + this workflow file. This workflow STAGES the
+# version; the maintainer approves with `npm stage approve <stage-id> --otp=<code>`;
+# post-release.yml then creates the GitHub release and surfaces the strapi-5.x
+# dist-tag one-liner.
+#
+# Hard-won OIDC requirements (each one broke us once):
+# - setup-node MUST set registry-url (its .npmrc triggers the exchange; without it
+#   npm bails to ENEEDAUTH with zero HTTP)
+# - publish from the package dir, not `-w` (workspace path skips the exchange)
+# - the npmjs Trusted Publisher fields must match the run's claims EXACTLY —
+#   including Environment name (empty here!); a mismatch surfaces as
+#   "OIDC token exchange error - package not found"
+# - stage-only publishers refuse direct `npm publish`
 
 on:
   push:
