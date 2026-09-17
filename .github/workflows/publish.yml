@@ -8,11 +8,11 @@ name: Publish
 # pipeline also works with npm's STAGED flow (decision #12): stage here, maintainer
 # promotes with 2FA on npm, post-release finishes tagging.
 #
-# Migration plan (decision #12): NPM_TOKEN is BOOTSTRAP-ONLY for the first publish.
-# After 0.1.0 is live: configure a Trusted Publisher on npmjs.com for this repo +
-# workflow ("require 2FA and disallow tokens", staged publishing), swap the publish
-# step to OIDC (drop NODE_AUTH_TOKEN; may need npm@latest for OIDC support), and
-# revoke/delete the NPM_TOKEN secret.
+# Auth: npm TRUSTED PUBLISHING (OIDC) — no tokens anywhere. The trusted publisher is
+# configured on npmjs.com for this repo + this workflow file, with "require 2FA and
+# disallow tokens" + staged publishing. Publishing stages the version; the maintainer
+# promotes it with 2FA on npmjs.com; post-release.yml then finishes the GitHub release
+# (the strapi-5.x dist-tag is a manual post-promote step — 2FA-gated write).
 
 on:
   push:
@@ -84,8 +84,9 @@ jobs:
       - name: Contract & parity tests
         run: npm run test:contract
 
-      - name: Publish to npm (provenance)
-        run: npm publish -w packages/plugin --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+      - name: Upgrade npm (OIDC trusted publishing needs a newer npm than node22 bundles)
+        run: npm install -g npm@latest && npm --version
+
+      - name: Publish to npm (OIDC trusted publishing; provenance automatic)
+        run: npm publish -w packages/plugin --access public
 

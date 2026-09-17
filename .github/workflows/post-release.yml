@@ -29,12 +29,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-          registry-url: https://registry.npmjs.org
 
-      - name: Sync dist-tag and GitHub release for the live version
+      - name: Sync GitHub release; surface pending dist-tag
         env:
           GH_TOKEN: ${{ github.token }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           VERSION=$(node -p "require('./packages/plugin/package.json').version")
           STRAPI=$(node -p "require('./drift/manifest.json').strapiVersion")
@@ -44,13 +42,21 @@ jobs:
             echo "Version $VERSION is not live on npm (staged or unpublished) — nothing to do."
             exit 0
           fi
-          CURRENT_TAG=$(npm view "strapi-plugin-breakout-kit" "dist-tags.${MINOR}" 2>/dev/null || echo "")
-          if [ "$CURRENT_TAG" != "$VERSION" ]; then
-            npm dist-tag add "strapi-plugin-breakout-kit@${VERSION}" "$MINOR"
-            echo "dist-tag $MINOR -> $VERSION"
-          fi
           if ! gh release view "v${VERSION}" >/dev/null 2>&1; then
             gh release create "v${VERSION}" --title "v${VERSION}" --notes \
               "strapi-plugin-breakout-kit ${VERSION} — tested against Strapi ${STRAPI} (window: see peerDependencies). See packages/plugin/CHANGELOG.md."
             echo "GitHub release v${VERSION} created"
+          fi
+          # dist-tags are 2FA-gated writes ("disallow tokens"), so CI cannot apply them.
+          CURRENT_TAG=$(npm view "strapi-plugin-breakout-kit" "dist-tags.${MINOR}" 2>/dev/null || echo "")
+          if [ "$CURRENT_TAG" != "$VERSION" ]; then
+            {
+              echo "## Manual step pending"
+              echo
+              echo "Run (with a fresh OTP):"
+              echo '```'
+              echo "npm dist-tag add strapi-plugin-breakout-kit@${VERSION} ${MINOR} --otp=<code>"
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning::dist-tag ${MINOR} still points at '${CURRENT_TAG}' — apply manually (see run summary)."
           fi

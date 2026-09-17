@@ -71,5 +71,11 @@ Decisions resolved with the maintainer, per PLAN.md §8 and docs/research/findin
     dist-tag + GitHub release are decoupled into post-release.yml (idempotent: runs after
     Publish, on dispatch after promoting, and on a daily self-heal cron) since staged
     versions aren't tag-able until promoted.
+    STATUS 2026-09-17: 0.1.0 published (from the maintainer's machine with OTP — the
+    account's strict 2FA made CI token publish impossible, which validated the decision);
+    trusted publisher configured; publish.yml is OIDC/tokenless; NPM_TOKEN secret deleted.
+    The strapi-5.x dist-tag is a manual one-liner after each 2FA promote (CI cannot
+    perform 2FA-gated writes) — post-release.yml surfaces it in the run summary when
+    pending.
 
 Still open (from PLAN §8): auto-merge policy for agent PRs (after Phase 8 trial).
