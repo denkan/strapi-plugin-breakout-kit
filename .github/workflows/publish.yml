@@ -95,7 +95,13 @@ jobs:
         # dir, not via `-w` (workspace path skips the OIDC exchange).
         working-directory: packages/plugin
         run: |
-          npm stage publish
+          npm stage publish || {
+            echo '--- npm debug log tail ---'
+            tail -60 /home/runner/.npm/_logs/*-debug-0.log
+            echo '--- oidc-related lines ---'
+            grep -inE "oidc|exchange|id.?token|trusted|audience|401|403|404" /home/runner/.npm/_logs/*-debug-0.log | tail -30
+            exit 1
+          }
           {
             echo "## Staged on npm — awaiting 2FA approval"
             echo
