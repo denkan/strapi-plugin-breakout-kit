@@ -213,6 +213,30 @@
       "note": "VENDORED (loaded via the vendored Component/Input.mjs, its only upstream importer; not alias-redirected itself): adds an export of the fields grid, otherwise behavior-identical"
     },
     {
+      "id": "cm-edit-view-page",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/pages/EditView/EditViewPage.tsx",
+      "distPath": "dist/admin/pages/EditView/EditViewPage.mjs",
+      "symbol": "EditViewPage, ProtectedEditViewPage, getDocumentStatus",
+      "hash": "61c0220176c19702c32ca6075a6101bb3f20bf81cd4ff64ee3ff0d9756aa4514",
+      "usedBy": [
+        "packages/plugin/vite/runtime/EditViewPage.mjs"
+      ],
+      "note": "alias-REPLACED by the Vite helper with a thin wrapper: ProtectedEditViewPage consults the consumer's edit-view replacement resolver, everything else re-exported untouched; the wrapper must keep re-exporting exactly this symbol set and mirroring the page's route/query parsing (locale from plugins.i18n.locale, status)"
+    },
+    {
+      "id": "cm-router",
+      "kind": "structure",
+      "path": "packages/core/content-manager/admin/src/router.tsx",
+      "distPath": "dist/admin/router.mjs",
+      "symbol": "edit-route paths + param names (:collectionType/:slug[/:id|/clone/:origin]) mounting ProtectedEditViewPage",
+      "hash": "419bf1d678c5ef18ea92030aca1d1f1b7c4e1cbc2617f03f67e5506d2df5b745",
+      "usedBy": [
+        "packages/plugin/vite/runtime/EditViewPage.mjs"
+      ],
+      "note": "the wrapper parses useParams by these names and assumes every edit route mounts ProtectedEditViewPage from EditViewPage.mjs"
+    },
+    {
       "id": "cm-public-exports",
       "kind": "export",
       "path": "packages/core/content-manager/admin/src/exports.ts",

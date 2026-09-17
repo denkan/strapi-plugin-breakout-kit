@@ -47,7 +47,13 @@ export {
   EditSidePanels,
   type EditSidePanelsProps,
 } from "./components";
-export { EditPage, type EditPageProps } from "./composition";
+export {
+  EditPage,
+  type EditPageProps,
+  setEditViewReplacement,
+  type EditViewReplacementResolver,
+  type EditViewRouteInfo,
+} from "./composition";
 export { accessDiagnostics } from "./access/diagnostics";
 
 const plugin: StrapiApp["appPlugins"][string] = {

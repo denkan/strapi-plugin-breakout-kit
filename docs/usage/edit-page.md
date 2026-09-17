@@ -51,6 +51,44 @@ callbacks, fallbacks) plus:
 />
 ```
 
+## Replacing the stock edit view
+
+Beyond rendering `<EditPage>` on your own pages, you can replace the STOCK
+content-manager edit view itself — the CM route stays (list-view links, redirects and
+breadcrumbs keep working); only the route's component is swapped. Register a resolver
+once, from your admin app's `register()`:
+
+```tsx
+// src/admin/app.tsx
+import { setEditViewReplacement } from 'strapi-plugin-breakout-kit/strapi-admin';
+
+export default {
+  register() {
+    setEditViewReplacement((route) =>
+      route.model === 'api::article.article' && !route.isClone ? MyArticleEditor : undefined
+    );
+  },
+};
+
+// The component receives the parsed route info as props:
+const MyArticleEditor = (route: EditViewRouteInfo) => (
+  <EditPage model={route.model} documentId={route.documentId} locale={route.locale} />
+);
+```
+
+Semantics: the resolver runs per edit route with
+`{ collectionType, model, documentId?, isCreate, isClone, origin?, locale?, status? }`;
+returning `undefined` keeps the stock view (per route — so per model, per mode, or
+per anything). Create routes (`isCreate`) work with `<EditPage>` by omitting
+`documentId`; clone routes (`isClone`) are NOT covered by `<EditPage>` — return
+`undefined` for them unless you implement cloning yourself. Call the setter once;
+compose a single resolver if several views need replacing (a second call warns and
+replaces the first). Implementation-wise this swaps the route's component via the
+Vite helper — no route overriding, no router hacks.
+
+Worked example: the playground replaces the category edit view
+(`apps/playground/src/admin/{app.tsx,pages/CustomCategoryEditView.tsx}`).
+
 ## Parity
 
 The form area is pixel-compared against the stock edit view in the contract suite

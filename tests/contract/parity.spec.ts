@@ -102,6 +102,15 @@ const formLabels = async (page: Page, scope: ReturnType<Page['locator']>) => {
   return labels.map((label) => label.trim());
 };
 
+// The playground demos the edit-view replacement on Category; parity needs the TRUE
+// stock view as its comparison target, so ask the demo resolver to stand down for
+// every test in this file (edit-view-replacement.spec.ts covers the replacement).
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    (window as unknown as { __BK_PARITY_STOCK__?: boolean }).__BK_PARITY_STOCK__ = true;
+  });
+});
+
 for (const type of TYPES) {
   test(`form structure parity: ${type.label}`, async ({ page }) => {
     const documentId = getDocumentId(type);

@@ -136,6 +136,23 @@ describe('headlessContentManager vite plugin', () => {
     expect(plugin.resolveId('./FormInputs/BlocksInput/BlocksInput.mjs', importer)).toBeNull();
   });
 
+  it('redirects EditViewPage.mjs to the replacement wrapper', () => {
+    const plugin = makePlugin();
+    const editView =
+      '@strapi/content-manager/dist/admin/pages/EditView/EditViewPage.mjs';
+    expect(plugin.resolveId(editView, undefined)).toMatch(
+      /vite[\\/]runtime[\\/]EditViewPage\.mjs$/
+    );
+    // The router lazy-imports it relatively.
+    const importer = path.join(cmRoot, 'dist/admin/router.mjs');
+    expect(plugin.resolveId('./pages/EditView/EditViewPage.mjs', importer)).toMatch(
+      /vite[\\/]runtime[\\/]EditViewPage\.mjs$/
+    );
+    expect(plugin.resolveId(`${editView}?hcm-original`, undefined)).toBe(
+      path.join(cmRoot, 'dist/admin/pages/EditView/EditViewPage.mjs')
+    );
+  });
+
   it('does NOT redirect NonRepeatable.mjs despite the suffix collision', () => {
     const plugin = makePlugin();
     const nonRepeatable = path.join(
