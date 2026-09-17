@@ -128,11 +128,50 @@ const { save, publish } = useDocumentOperations();
 
 Full reference: [docs/usage](https://github.com/denkan/strapi-plugin-breakout-kit/tree/main/docs/usage).
 
+## Customize dynamic zones
+
+The `dynamicZone` prop (on `<EditForm>`, or `<EditPage form={{ dynamicZone }}>`) opens up
+each entry's chrome and the add flow. Every seam receives the stock default(s) and treats
+`undefined` as "keep stock":
+
+```tsx
+<EditForm
+  dynamicZone={{
+    // Icon left of the label; label itself.
+    entryIcon: (entry, defaultIcon) => ICONS[entry.componentUid],
+    entryLabel: (entry, defaultLabel) => `${entry.index + 1}. ${defaultLabel}`,
+
+    // Action buttons right of the label — MULTIPLE named defaults, all live nodes
+    // (the drag handle keeps its wiring wherever you put it):
+    entryActions: (entry, d) => <>{myButton}{d.all}</>,          // add one, keep stock
+    // …or compose pieces: <>{d.delete}{d.drag}</> drops the "more" menu.
+
+    // Full chrome control per entry — or no accordion at all:
+    renderEntry: (entry, DefaultEntry) =>
+      entry.componentUid === 'shared.hero'
+        ? <MyCard onRemove={entry.onRemove}>{entry.renderFields()}</MyCard>
+        : <DefaultEntry icon={<Star />} />,
+
+    // Replace the "Add a component" button/flow — ctx has componentsByCategory
+    // and add(uid, position?), so a fully custom picker needs nothing else:
+    renderAddButton: (ctx) => <MyAddFlow ctx={ctx} />,
+  }}
+/>
+```
+
+Details and semantics: [docs/usage/components.md](https://github.com/denkan/strapi-plugin-breakout-kit/blob/main/docs/usage/components.md).
+Live, switchable examples of every mode: the playground's "Dynamic zone" page
+(`apps/playground/src/admin/pages/DynamicZoneDemo.tsx`). Repeatable components get the
+same treatment via a `repeatable` prop (tracked in issue #10).
+
 ## Compatibility
 
 | Plugin version | Tested against Strapi |
 |---|---|
-| 0.x (unreleased) | 5.50 – 5.53 (every minor suite-verified) |
+| 0.x | 5.50 – 5.54 (every minor suite-verified) |
+
+Each release is also dist-tagged by the Strapi minor it targets, so you can pin by your
+Strapi version: `npm install strapi-plugin-breakout-kit@strapi-5.54`.
 
 The supported window is declared by the package's peerDependencies and verified by a
 version-matrix test run (full contract + parity suite against every minor in the window).

@@ -22,6 +22,9 @@ export {
   type EntryActionDefaults,
   type ComponentEntry,
   type ComponentEntryMeta,
+  type ComponentOption,
+  type AddButtonContext,
+  type DefaultAddButtonComponent,
   type DefaultEntryComponent,
 } from "./data";
 export {

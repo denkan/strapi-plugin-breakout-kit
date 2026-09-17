@@ -3,8 +3,9 @@
  * DynamicZone/Field.mjs at the drift-manifest version. The headlessContentManager() Vite
  * plugin redirects the original module here (like the useDocumentContext shim), so BOTH
  * the stock content manager and headless pages render this implementation. Deviations
- * are marked `// [breakout-kit]`: the renderEntry seam (issue #4). No entry-customization
- * config present => byte-identical stock rendering (parity + stock-cm-unaffected tests).
+ * are marked `// [breakout-kit]`: the renderEntry seam (issue #4) and the renderAddButton
+ * seam (issue #5). No entry-customization config present => byte-identical stock
+ * rendering (parity + stock-cm-unaffected tests).
  * Drift entry: cm-dz-field.
  */
 import { jsx, jsxs } from 'react/jsx-runtime';
@@ -225,6 +226,37 @@ const DynamicZone = ({ attribute, disabled: disabledProp, hint, label, labelActi
     };
     const level = useComponent('DynamicZone', (state)=>state.level);
     const ariaDescriptionId = React.useId();
+    // [breakout-kit] renderAddButton seam (issue #5). The stock centered button is
+    // wrapped as DefaultAddButton; a custom node replaces the whole block. The stock
+    // ComponentPicker stays mounted below (it renders null while closed), so custom
+    // UIs that never call ctx.toggle() fully bypass it via ctx.add().
+    const stockAddButton = /*#__PURE__*/ jsx(Flex, {
+        justifyContent: "center",
+        children: /*#__PURE__*/ jsx(AddComponentButton, {
+            hasError: hasError,
+            isDisabled: disabled,
+            isOpen: addComponentIsOpen,
+            onClick: handleClickOpenPicker,
+            children: renderButtonLabel()
+        })
+    });
+    let addButtonOverride;
+    if (dzConfig.renderAddButton) {
+        const addCtx = {
+            source: 'dynamicZone',
+            name,
+            total: dynamicDisplayedComponentsLength,
+            min: attribute?.min,
+            max: attribute?.max,
+            disabled,
+            isOpen: addComponentIsOpen,
+            toggle: handleClickOpenPicker,
+            add: handleAddComponent,
+            componentsByCategory: dynamicComponentsByCategory
+        };
+        const DefaultAddButton = ()=>stockAddButton;
+        addButtonOverride = dzConfig.renderAddButton(addCtx, DefaultAddButton);
+    }
     return /*#__PURE__*/ jsx(DynamicZoneProvider, {
         isInDynamicZone: true,
         children: /*#__PURE__*/ jsxs(Flex, {
@@ -326,16 +358,8 @@ const DynamicZone = ({ attribute, disabled: disabledProp, hint, label, labelActi
                         })
                     ]
                 }),
-                /*#__PURE__*/ jsx(Flex, {
-                    justifyContent: "center",
-                    children: /*#__PURE__*/ jsx(AddComponentButton, {
-                        hasError: hasError,
-                        isDisabled: disabled,
-                        isOpen: addComponentIsOpen,
-                        onClick: handleClickOpenPicker,
-                        children: renderButtonLabel()
-                    })
-                }),
+                // [breakout-kit] add-button slot; falls back to the exact stock block
+                addButtonOverride === undefined ? stockAddButton : addButtonOverride,
                 /*#__PURE__*/ jsx(ComponentPicker, {
                     dynamicComponentsByCategory: dynamicComponentsByCategory,
                     isOpen: addComponentIsOpen,

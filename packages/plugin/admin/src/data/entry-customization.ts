@@ -52,6 +52,39 @@ export interface EntryActionDefaults {
   more: React.ReactNode | null;
 }
 
+/** One selectable component in an "add" picker. */
+export interface ComponentOption {
+  uid: string;
+  displayName: string;
+  icon?: string;
+}
+
+/** Context handed to renderAddButton — everything a custom add UI needs. */
+export interface AddButtonContext {
+  source: 'dynamicZone' | 'repeatable';
+  /** The zone/repeatable field name. */
+  name: string;
+  /** Current entry count. */
+  total: number;
+  min?: number;
+  max?: number;
+  disabled: boolean;
+  /** Stock inline picker open state. */
+  isOpen: boolean;
+  /** Open/close the stock inline picker (enforces `max` with the stock notification). */
+  toggle: () => void;
+  /**
+   * Insert a component at `position` (append when omitted) and close the stock picker.
+   * Does NOT enforce `max` — custom UIs check `total`/`max` themselves.
+   */
+  add: (componentUid: string, position?: number) => void;
+  /** Allowed components grouped by category. */
+  componentsByCategory: Record<string, ComponentOption[]>;
+}
+
+/** The stock centered add button, wired to the stock inline picker. */
+export type DefaultAddButtonComponent = React.ComponentType;
+
 /**
  * DefaultEntry = the vendored stock accordion entry, pre-bound with all behavior
  * (drag & drop, keyboard reorder, delete, collapse, error handling). Accepts
@@ -82,6 +115,16 @@ export interface EntryCustomization {
    * are possible.
    */
   entryActions?: (entry: ComponentEntryMeta, defaults: EntryActionDefaults) => React.ReactNode | undefined;
+  /**
+   * Replace the "add" affordance (button and, if you like, the whole picking flow).
+   * `undefined` keeps stock. A custom UI typically renders its own button + popup and
+   * calls `ctx.add(uid)` — the stock inline picker simply stays closed. Render
+   * `<DefaultAddButton />` to keep the stock button/picker.
+   */
+  renderAddButton?: (
+    ctx: AddButtonContext,
+    DefaultAddButton: DefaultAddButtonComponent
+  ) => React.ReactNode | undefined;
   /**
    * Full control over each entry's chrome. Render `<DefaultEntry />` (optionally with
    * `icon`/`label`/`actions`) to keep stock behavior, or build your own container around

@@ -13,7 +13,8 @@ import * as React from 'react';
  *   { entryIcon(entry, defaultIcon) -> node|undefined,
  *     entryLabel(entry, defaultLabel) -> node|undefined,
  *     entryActions(entry, defaults) -> node|undefined,
- *     renderEntry(entry, DefaultEntry) -> node }
+ *     renderEntry(entry, DefaultEntry) -> node,
+ *     renderAddButton(ctx, DefaultAddButton) -> node|undefined }
  * Typed twin: admin/src/data/entry-customization.ts — keep symbol + shape in sync.
  */
 const KEY = Symbol.for('strapi-plugin-breakout-kit/entry-customization@v1');

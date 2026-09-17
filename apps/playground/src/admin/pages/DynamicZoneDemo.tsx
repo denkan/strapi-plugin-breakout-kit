@@ -1,19 +1,31 @@
 import * as React from 'react';
 import {
   Box,
+  Button,
   Flex,
   IconButton,
   Main,
+  Modal,
   SingleSelect,
   SingleSelectOption,
   Typography,
 } from '@strapi/design-system';
-import { ArrowDown, ArrowUp, Images, Information, Link, Quotes, Trash } from '@strapi/icons';
+import {
+  ArrowDown,
+  ArrowUp,
+  Images,
+  Information,
+  Link,
+  Quotes,
+  Sparkle,
+  Trash,
+} from '@strapi/icons';
 import { styled } from 'styled-components';
 
 import { useFetchClient } from '@strapi/strapi/admin';
 import { EditPage } from 'strapi-plugin-breakout-kit/strapi-admin';
 import type {
+  AddButtonContext,
   ComponentEntry,
   ComponentEntryMeta,
   DefaultEntryComponent,
@@ -190,11 +202,82 @@ const boxesConfig: EntryCustomization = {
   ),
 };
 
+/**
+ * Mode "addButton" — replace the "Add a component" affordance entirely (issue #5).
+ * A clearly-customized button opens a Modal listing every allowed component grouped by
+ * category (plain buttons, no accordions); picking one calls `ctx.add(uid)` directly,
+ * so the stock inline picker never opens. `ctx` also carries total/min/max/disabled
+ * for custom limit handling (`ctx.add` does not enforce `max` on its own).
+ */
+const FancyAddButton = styled(Button)`
+  width: 100%;
+  justify-content: center;
+  border: 2px dashed ${({ theme }) => theme.colors.primary600};
+  background: ${({ theme }) => theme.colors.primary100};
+
+  &:hover:not([aria-disabled='true']) {
+    background: ${({ theme }) => theme.colors.primary200};
+  }
+`;
+
+const CustomAddFlow = ({ ctx }: { ctx: AddButtonContext }) => {
+  const [open, setOpen] = React.useState(false);
+  const atMax = ctx.max !== undefined && ctx.total >= ctx.max;
+  return (
+    <>
+      <FancyAddButton
+        variant="tertiary"
+        startIcon={<Sparkle />}
+        disabled={ctx.disabled || atMax}
+        onClick={() => setOpen(true)}
+        data-testid="dz-custom-add"
+      >
+        Add a section — custom picker ({ctx.total} added)
+      </FancyAddButton>
+      <Modal.Root open={open} onOpenChange={setOpen}>
+        <Modal.Content data-testid="dz-custom-picker">
+          <Modal.Header>
+            <Typography fontWeight="bold">Pick a component</Typography>
+          </Modal.Header>
+          <Modal.Body>
+            {Object.entries(ctx.componentsByCategory).map(([category, comps]) => (
+              <Box key={category} paddingBottom={4}>
+                <Typography variant="sigma" textColor="neutral600" tag="h4">
+                  {category}
+                </Typography>
+                <Flex gap={2} paddingTop={2} wrap="wrap">
+                  {comps.map((comp) => (
+                    <Button
+                      key={comp.uid}
+                      variant="secondary"
+                      onClick={() => {
+                        ctx.add(comp.uid);
+                        setOpen(false);
+                      }}
+                    >
+                      {comp.displayName}
+                    </Button>
+                  ))}
+                </Flex>
+              </Box>
+            ))}
+          </Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
+    </>
+  );
+};
+
+const addButtonConfig: EntryCustomization = {
+  renderAddButton: (ctx) => <CustomAddFlow ctx={ctx} />,
+};
+
 const MODES = [
   { value: 'stock', label: 'Stock (no config)' },
   { value: 'sugars', label: 'Sugars: entryIcon / entryLabel / entryActions' },
   { value: 'renderEntry', label: 'renderEntry: DefaultEntry tweaks + custom chrome' },
   { value: 'boxes', label: 'Boxes: no accordion, styled cards for every entry' },
+  { value: 'addButton', label: 'renderAddButton: custom button + popup picker' },
 ] as const;
 
 type Mode = (typeof MODES)[number]['value'];
@@ -204,6 +287,7 @@ const CONFIGS: Record<Mode, EntryCustomization | undefined> = {
   sugars: sugarsConfig,
   renderEntry: renderEntryConfig,
   boxes: boxesConfig,
+  addButton: addButtonConfig,
 };
 
 const DynamicZoneDemo = () => {
