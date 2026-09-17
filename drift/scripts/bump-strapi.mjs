@@ -6,12 +6,16 @@
  * - packages/plugin: @strapi/{strapi,admin,content-manager} devDependency ranges -> ^target,
  *   peerDependency ranges -> the tested window ">=manifest.strapiFloor <target's-next-minor"
  *   (versioning decision #7: peers declare exactly what a release was tested against)
+ * - packages/plugin/README.md: the Compatibility table row and the dist-tag install
+ *   example follow the window (issue #13), so npm never shows a stale range
  *
  * Usage: node drift/scripts/bump-strapi.mjs --version 5.54.0
  */
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { updateReadmeWindow } from './lib/readme-window.mjs';
 
 const repoRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
@@ -51,6 +55,18 @@ for (const name of ['@strapi/strapi', '@strapi/admin', '@strapi/content-manager'
 }
 fs.writeFileSync(pluginPath, `${JSON.stringify(plugin, null, 2)}\n`);
 
+const readmePath = path.join(repoRoot, 'packages', 'plugin', 'README.md');
+const readme = fs.readFileSync(readmePath, 'utf8');
+const { content: nextReadme, replaced } = updateReadmeWindow(readme, floor, target);
+fs.writeFileSync(readmePath, nextReadme);
+if (replaced !== 2) {
+  // The README was reworded past the anchors — fail loudly rather than ship a stale window.
+  console.error(
+    `README window rewrite made ${replaced} substitution(s), expected 2 — check packages/plugin/README.md against drift/scripts/lib/readme-window.mjs.`
+  );
+  process.exitCode = 1;
+}
+
 console.log(
-  `Bumped ${bumped} playground @strapi/* deps ${current} -> ${target}; plugin peers -> ${tightRange}.`
+  `Bumped ${bumped} playground @strapi/* deps ${current} -> ${target}; plugin peers -> ${tightRange}; README window -> ${floor.split('.').slice(0, 2).join('.')}–${target.split('.').slice(0, 2).join('.')}.`
 );
