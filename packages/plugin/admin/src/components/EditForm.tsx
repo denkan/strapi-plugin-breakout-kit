@@ -9,6 +9,7 @@ import {
 } from '../access';
 import type { EditFieldLayout, EditLayout } from '../access';
 import { useHeadlessData } from '../data/context';
+import { getEntryCustomizationContext, type EntryCustomization } from '../data/entry-customization';
 import { resolveOverride, type Override } from '../data/override';
 
 /**
@@ -44,6 +45,8 @@ export interface EditFormProps {
   /** Force-disable every field (defaults to the layout/RBAC/status-driven state). */
   disabled?: boolean;
   hasBackground?: boolean;
+  /** Dynamic-zone entry customization: entryIcon/entryLabel/entryActions sugars + renderEntry. */
+  dynamicZone?: EntryCustomization;
 }
 
 const DefaultPanelBox = ({ children }: { children: React.ReactNode }) => (
@@ -61,7 +64,13 @@ export const EditForm = ({
   renderPanel,
   disabled,
   hasBackground = true,
+  dynamicZone,
 }: EditFormProps) => {
+  const EntryCustomizationContext = getEntryCustomizationContext();
+  const entryCustomization = React.useMemo(
+    () => (dynamicZone ? { dynamicZone } : null),
+    [dynamicZone]
+  );
   const { currentDocument, editLayout } = useHeadlessData('EditForm');
   const { formatMessage } = useIntl();
 
@@ -91,7 +100,7 @@ export const EditForm = ({
 
   const PanelBox = hasBackground ? DefaultPanelBox : PlainPanelBox;
 
-  return (
+  const body = (
     <Flex direction="column" alignItems="stretch" gap={6}>
       {layout.map((panel, index) => {
         // Dynamic zones get their own full-width block (stock behavior).
@@ -138,5 +147,15 @@ export const EditForm = ({
         return <PanelBox key={index}>{panelContent}</PanelBox>;
       })}
     </Flex>
+  );
+
+  // Provide the entry customization to the vendored entry modules (bridge context);
+  // no config = provider skipped = byte-identical stock rendering.
+  return entryCustomization ? (
+    <EntryCustomizationContext.Provider value={entryCustomization}>
+      {body}
+    </EntryCustomizationContext.Provider>
+  ) : (
+    body
   );
 };

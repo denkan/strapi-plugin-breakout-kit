@@ -16,3 +16,12 @@ export {
 } from './hooks';
 export { useDocumentOperations } from './operations';
 export { resolveOverride, isControlledValue, type Override } from './override';
+export {
+  getEntryCustomizationContext,
+  type EntryCustomization,
+  type EntryCustomizationContextValue,
+  type EntryActionDefaults,
+  type ComponentEntry,
+  type ComponentEntryMeta,
+  type DefaultEntryComponent,
+} from './entry-customization';

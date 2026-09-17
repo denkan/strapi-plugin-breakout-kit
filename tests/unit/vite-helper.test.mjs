@@ -60,6 +60,55 @@ describe('headlessContentManager vite plugin', () => {
     ).toBe(path.join(cmRoot, 'dist/admin/hooks/useDocument.mjs'));
   });
 
+  it('redirects the dynamic-zone Field.mjs to the vendored module (issue #4)', () => {
+    const plugin = makePlugin();
+    const dzDir = path.join(
+      cmRoot,
+      'dist/admin/pages/EditView/components/FormInputs/DynamicZone'
+    );
+    // Deep specifier
+    expect(
+      plugin.resolveId(
+        '@strapi/content-manager/dist/admin/pages/EditView/components/FormInputs/DynamicZone/Field.mjs',
+        undefined
+      )
+    ).toMatch(/vite[\\/]runtime[\\/]DynamicZone[\\/]Field\.mjs$/);
+    // Relative import from inside content-manager (how the stock CM loads it)
+    const importer = path.join(
+      cmRoot,
+      'dist/admin/pages/EditView/components/InputRenderer.mjs'
+    );
+    expect(plugin.resolveId('./FormInputs/DynamicZone/Field.mjs', importer)).toMatch(
+      /vite[\\/]runtime[\\/]DynamicZone[\\/]Field\.mjs$/
+    );
+    // ?hcm-original escape still reaches the upstream module
+    expect(
+      plugin.resolveId(
+        '@strapi/content-manager/dist/admin/pages/EditView/components/FormInputs/DynamicZone/Field.mjs?hcm-original',
+        undefined
+      )
+    ).toBe(path.join(dzDir, 'Field.mjs'));
+  });
+
+  it('does NOT redirect other modules named Field.mjs (e.g. Wysiwyg)', () => {
+    const plugin = makePlugin();
+    const wysiwygField = path.join(
+      cmRoot,
+      'dist/admin/pages/EditView/components/FormInputs/Wysiwyg/Field.mjs'
+    );
+    expect(
+      plugin.resolveId(
+        '@strapi/content-manager/dist/admin/pages/EditView/components/FormInputs/Wysiwyg/Field.mjs',
+        undefined
+      )
+    ).toBe(wysiwygField);
+    const importer = path.join(
+      cmRoot,
+      'dist/admin/pages/EditView/components/InputRenderer.mjs'
+    );
+    expect(plugin.resolveId('./FormInputs/Wysiwyg/Field.mjs', importer)).toBeNull();
+  });
+
   it('leaves unrelated relative imports alone', () => {
     const plugin = makePlugin();
     const importer = path.join(cmRoot, 'dist/admin/hooks/useDocumentContext.mjs');

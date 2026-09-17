@@ -78,6 +78,11 @@ function headlessContentManager() {
       // Seam 1: useDoc gains the headless context as fallback for URL params
       // (consumed directly by e.g. the relation modal's RootRelationRenderer).
       [path.join(hooksDir, 'useDocument.mjs'), path.join(RUNTIME_DIR, 'useDocument.mjs')],
+      // Issue #4: vendored dynamic zone with entry render slots (entry-customization context).
+      [
+        path.join(cmRoot, 'dist', 'admin', 'pages', 'EditView', 'components', 'FormInputs', 'DynamicZone', 'Field.mjs'),
+        path.join(RUNTIME_DIR, 'DynamicZone', 'Field.mjs'),
+      ],
     ]);
 
     entryAliases = new Map();
@@ -122,7 +127,7 @@ function headlessContentManager() {
         if (isOriginal) return { path: abs };
         return { path: redirects.get(abs) ?? abs };
       });
-      build.onResolve({ filter: /useDocument(Context)?\.mjs$/ }, (args) => {
+      build.onResolve({ filter: /(useDocument(Context)?|Field)\.mjs$/ }, (args) => {
         if (!args.path.startsWith('.')) return null;
         if (!cmRoot) resolveRoots(process.cwd());
         const abs = path.resolve(args.resolveDir, args.path);
@@ -188,7 +193,7 @@ function headlessContentManager() {
       if (
         importer &&
         (source.startsWith('./') || source.startsWith('../')) &&
-        (source.endsWith('useDocumentContext.mjs') || source.endsWith('useDocument.mjs'))
+        (source.endsWith('useDocumentContext.mjs') || source.endsWith('useDocument.mjs') || source.endsWith('Field.mjs'))
       ) {
         const abs = path.resolve(path.dirname(importer.split('?')[0]), source);
         const shim = redirects.get(abs);
