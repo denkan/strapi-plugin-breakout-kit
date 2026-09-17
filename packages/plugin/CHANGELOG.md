@@ -2,7 +2,10 @@
 
 All notable changes to this package will be documented in this file.
 
-## Unreleased
+## 0.1.0 — 2026-09-17
+
+First public release (experimental). Tested against Strapi 5.50 – 5.53 (every minor
+suite-verified).
 
 Renamed to `strapi-plugin-breakout-kit` (plugin id `breakout-kit`) before first publish;
 the plugin no longer ships any admin UI (demos moved to the repo playground) and exports
