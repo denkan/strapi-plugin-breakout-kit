@@ -45,8 +45,10 @@ export interface EditFormProps {
   /** Force-disable every field (defaults to the layout/RBAC/status-driven state). */
   disabled?: boolean;
   hasBackground?: boolean;
-  /** Dynamic-zone entry customization: entryIcon/entryLabel/entryActions sugars + renderEntry. */
+  /** Dynamic-zone entry customization: entryIcon/entryLabel/entryActions/renderAddButton + renderEntry. */
   dynamicZone?: EntryCustomization;
+  /** Repeatable-component entry customization — same shape, applies to every repeatable (incl. nested). */
+  repeatable?: EntryCustomization;
 }
 
 const DefaultPanelBox = ({ children }: { children: React.ReactNode }) => (
@@ -65,11 +67,12 @@ export const EditForm = ({
   disabled,
   hasBackground = true,
   dynamicZone,
+  repeatable,
 }: EditFormProps) => {
   const EntryCustomizationContext = getEntryCustomizationContext();
   const entryCustomization = React.useMemo(
-    () => (dynamicZone ? { dynamicZone } : null),
-    [dynamicZone]
+    () => (dynamicZone || repeatable ? { dynamicZone, repeatable } : null),
+    [dynamicZone, repeatable]
   );
   const { currentDocument, editLayout } = useHeadlessData('EditForm');
   const { formatMessage } = useIntl();

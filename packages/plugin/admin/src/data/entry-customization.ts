@@ -7,7 +7,7 @@ import * as React from 'react';
  * (inside @strapi/content-manager's graph) share one instance. Keep symbol + shape in sync.
  *
  * The shapes are zone-agnostic: the same `EntryCustomization` works for dynamic-zone
- * entries today and repeatable-component entries later (#10); `meta.source` discriminates.
+ * entries and repeatable-component entries alike; `meta.source` discriminates.
  */
 
 /** Metadata every slot receives about the entry being rendered. */
@@ -39,8 +39,9 @@ export interface ComponentEntry extends ComponentEntryMeta {
  * arrives with its drag & drop refs and keyboard wiring attached, so reordering or
  * wrapping them keeps behavior intact. Pieces reflect the current breakpoint: `drag`
  * is null on mobile, `moveUp`/`moveDown` are null on desktop (and at list edges);
- * `all` is exactly what stock renders, in stock order. When the field is disabled,
- * stock renders no actions and every piece (incl. `all`) is null.
+ * `all` is exactly what stock renders, in stock order. Disabled fields mirror stock:
+ * dynamic zones render NO actions (every piece incl. `all` is null), repeatables
+ * render the buttons in their disabled state (nodes present).
  */
 export interface EntryActionDefaults {
   all: React.ReactNode;
@@ -48,7 +49,7 @@ export interface EntryActionDefaults {
   drag: React.ReactNode | null;
   moveUp: React.ReactNode | null;
   moveDown: React.ReactNode | null;
-  /** The "add component above/below" category menu — dynamic zones only. */
+  /** The "add component above/below" category menu — dynamic zones only (null for repeatables). */
   more: React.ReactNode | null;
 }
 
@@ -69,20 +70,28 @@ export interface AddButtonContext {
   min?: number;
   max?: number;
   disabled: boolean;
-  /** Stock inline picker open state. */
+  /** Stock inline picker open state (always false for repeatables — they have no picker). */
   isOpen: boolean;
-  /** Open/close the stock inline picker (enforces `max` with the stock notification). */
+  /**
+   * Dynamic zones: open/close the stock inline picker. Repeatables: perform the stock
+   * add. Both enforce `max` with the stock notification.
+   */
   toggle: () => void;
   /**
-   * Insert a component at `position` (append when omitted) and close the stock picker.
-   * Does NOT enforce `max` — custom UIs check `total`/`max` themselves.
+   * Insert a component at `position` (append when omitted). Does NOT enforce `max` —
+   * custom UIs check `total`/`max` themselves. Repeatables ignore the uid argument
+   * (the component type is fixed).
    */
   add: (componentUid: string, position?: number) => void;
-  /** Allowed components grouped by category. */
+  /** Allowed components grouped by category (one fixed entry for repeatables). */
   componentsByCategory: Record<string, ComponentOption[]>;
 }
 
-/** The stock centered add button, wired to the stock inline picker. */
+/**
+ * The stock add affordance for the current state: dynamic zones render the centered
+ * button wired to the stock inline picker; repeatables render the "Add an entry"
+ * footer button — or the empty-state initializer box when there are no entries yet.
+ */
 export type DefaultAddButtonComponent = React.ComponentType;
 
 /**
@@ -133,7 +142,7 @@ export interface EntryCustomization {
   renderEntry?: (entry: ComponentEntry, DefaultEntry: DefaultEntryComponent) => React.ReactNode;
 }
 
-/** Bridge-context value: one slot per entry source (repeatable lands with #10). */
+/** Bridge-context value: one slot per entry source. */
 export interface EntryCustomizationContextValue {
   dynamicZone?: EntryCustomization;
   repeatable?: EntryCustomization;
