@@ -166,6 +166,11 @@ a `singleComponent` prop with one state-aware `renderBox(box, Default)` seam cov
 both the null-state "click to add" box and the boxed fields (`box.value` discriminates,
 `box.onInitialize`/`box.onClear`/`box.renderFields()` do the wiring).
 
+And the form body itself can be rearranged with `renderBody` — it receives every
+rendered panel (the white boxes; dynamic zones always form their own) at once, so
+"group everything outside dynamic zones into a General accordion" or "one tab per
+panel" are plain compositions of `panel.node`.
+
 Details and semantics: [docs/usage/components.md](https://github.com/denkan/strapi-plugin-breakout-kit/blob/main/docs/usage/components.md).
 Live, switchable examples of every mode: the playground's "Dynamic zone" and
 "Repeatable" pages (`apps/playground/src/admin/pages/{DynamicZoneDemo,RepeatableDemo}.tsx`).

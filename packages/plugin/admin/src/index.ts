@@ -37,6 +37,8 @@ export {
   type EditFormProps,
   type RenderField,
   type RenderPanel,
+  type RenderBody,
+  type PanelInfo,
   EditHeader,
   type EditHeaderProps,
   DocumentActionsBar,
