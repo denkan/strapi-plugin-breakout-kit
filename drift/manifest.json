@@ -1,7 +1,7 @@
 {
-  "strapiVersion": "5.53.0",
+  "strapiVersion": "5.54.0",
   "strapiFloor": "5.50.0",
-  "strapiCommit": "99800b107996c39a68786473792f94103352de2d",
+  "strapiCommit": "4576739631b0534dd7464e3ca85e068fa57dfba5",
   "notes": "Paths are relative to the strapi/strapi repo root; hashes are sha256 of normalized SOURCE content (drift/scripts/lib/normalize.mjs). distPath is the runtime file our deep imports resolve to (1:1 compiled from path). Support window: strapiFloor..strapiVersion (roof/target); peers must declare >=floor <roof-next-minor; the version matrix (drift/scripts/version-matrix.mjs) verifies every minor in the window.",
   "dependencies": [
     {
@@ -10,7 +10,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/components/InputRenderer.tsx",
       "distPath": "dist/admin/pages/EditView/components/InputRenderer.mjs",
       "symbol": "InputRenderer",
-      "hash": "1523498da7f3e22c6415c976573ae1d35111a4ca794242f3a375e99fea620eda",
+      "hash": "769609da72add04f9c9b772d9e899cc9bc49d838599714bda15ca078dd27e72f",
       "usedBy": [
         "packages/plugin/admin/src/access/internal.ts"
       ]
@@ -32,7 +32,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/components/DocumentActions.tsx",
       "distPath": "dist/admin/pages/EditView/components/DocumentActions.mjs",
       "symbol": "DocumentActions, DocumentActionButton, DocumentActionsMenu",
-      "hash": "7059cad20c206714f89b1db5c817ad5893df98bfa48fce273b9fc0c37ae97542",
+      "hash": "ef3283a1adcbf58b246dc84916a6a5d9fdc8478ceb0edf34703c15239d3915c7",
       "usedBy": [
         "packages/plugin/admin/src/access/internal.ts"
       ]
@@ -187,7 +187,7 @@
       "kind": "structure",
       "path": "packages/core/content-manager/package.json",
       "symbol": "exports map + unbundled dist/admin layout (deep-import resolution target)",
-      "hash": "9a938363774ea248f3071fce68b9b43dfd6e30026c2220df56b7473229e7eb8b",
+      "hash": "321581d422853f770807e5cf98b436ad1f99282e80ca26208033a6d55d6023af",
       "usedBy": [
         "packages/plugin/vite/index.cjs"
       ],

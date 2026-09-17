@@ -1,5 +1,5 @@
 {
-  "version": "0.1.0",
+  "version": "0.1.1",
   "keywords": [
     "strapi",
     "strapi-plugin",
@@ -44,9 +44,9 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@strapi/strapi": "^5.53.0",
-    "@strapi/admin": "^5.53.0",
-    "@strapi/content-manager": "^5.53.0",
+    "@strapi/strapi": "^5.54.0",
+    "@strapi/admin": "^5.54.0",
+    "@strapi/content-manager": "^5.54.0",
     "@strapi/sdk-plugin": "^6.1.1",
     "prettier": "^3.9.7",
     "@strapi/design-system": "^2.2.4",
@@ -62,9 +62,9 @@
     "typescript": "^5.9.3"
   },
   "peerDependencies": {
-    "@strapi/strapi": ">=5.50.0 <5.54.0",
-    "@strapi/admin": ">=5.50.0 <5.54.0",
-    "@strapi/content-manager": ">=5.50.0 <5.54.0",
+    "@strapi/strapi": ">=5.50.0 <5.55.0",
+    "@strapi/admin": ">=5.50.0 <5.55.0",
+    "@strapi/content-manager": ">=5.50.0 <5.55.0",
     "@strapi/design-system": "^2.0.0",
     "@strapi/icons": "^2.0.0",
     "react": "^17.0.0 || ^18.0.0",
