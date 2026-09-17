@@ -172,3 +172,28 @@ const MyAddFlow = ({ ctx }: { ctx: AddButtonContext }) => {
 
 Note: `ctx.add` does not enforce the zone's `max` — check `ctx.total`/`ctx.max` yourself
 (the demo page's `addButton` mode shows this).
+
+## 8. Group everything outside dynamic zones into a "General" accordion
+
+`renderBody` sees every rendered panel (the white boxes; DZs always form their own) at
+once — no more hacking the DOM to regroup:
+
+```tsx
+<EditPage
+  model="api::page.page"
+  documentId={id}
+  form={{
+    renderBody: (panels) => (
+      <>
+        <MyAccordion title="General">
+          {panels.filter((p) => !p.isDynamicZone).map((p) => p.node)}
+        </MyAccordion>
+        {panels.filter((p) => p.isDynamicZone).map((p) => p.node)}
+      </>
+    ),
+  }}
+/>
+```
+
+Tabs, columns or wizards work the same way — compose `panel.node`s into any container.
+Live examples (accordion + tabs): the playground's "Layout" page.

@@ -41,11 +41,36 @@ export type RenderPanel = (
   Default: React.ComponentType<{ children: React.ReactNode }>
 ) => React.ReactNode;
 
+/**
+ * One resolved panel — Strapi's term for the white boxes the edit view stacks
+ * vertically (`layout.map(panel => panel.map(row => row.map(field => …)))`). Panel
+ * boundaries are computed by Strapi: every dynamic zone forms its own full-width
+ * panel, consecutive non-DZ rows between them share one box.
+ */
+export interface PanelInfo {
+  index: number;
+  /** The panel's rows of fields. */
+  fields: EditFieldLayout[][];
+  isDynamicZone: boolean;
+  /** The fully-rendered panel (renderPanel/renderField already applied), keyed. */
+  node: React.ReactNode;
+}
+
+export type RenderBody = (
+  panels: PanelInfo[],
+  DefaultBody: React.ComponentType
+) => React.ReactNode;
+
 export interface EditFormProps {
   /** Extra per-instance transform on top of the provider's resolved layout. */
   layout?: Override<EditLayout['layout']>;
   renderField?: RenderField;
   renderPanel?: RenderPanel;
+  /**
+   * Rearrange the whole form body: receives every rendered panel at once (group into
+   * accordions, spread across tabs, …). `undefined` keeps the stock vertical stack.
+   */
+  renderBody?: RenderBody;
   /** Force-disable every field (defaults to the layout/RBAC/status-driven state). */
   disabled?: boolean;
   hasBackground?: boolean;
@@ -70,6 +95,7 @@ export const EditForm = ({
   layout: layoutOverride,
   renderField,
   renderPanel,
+  renderBody,
   disabled,
   hasBackground = true,
   dynamicZone,
@@ -113,54 +139,62 @@ export const EditForm = ({
 
   const PanelBox = hasBackground ? DefaultPanelBox : PlainPanelBox;
 
-  const body = (
-    <Flex direction="column" alignItems="stretch" gap={6}>
-      {layout.map((panel, index) => {
-        // Dynamic zones get their own full-width block (stock behavior).
-        if (panel.some((row) => row.some((field) => field.type === 'dynamiczone'))) {
-          const [row] = panel;
-          const [field] = row;
-          return (
-            <Grid.Root gap={4} key={field.name}>
-              <Grid.Item col={12} s={12} xs={12} direction="column" alignItems="stretch">
-                {renderOneField(field)}
-              </Grid.Item>
-            </Grid.Root>
-          );
-        }
+  const panels: PanelInfo[] = layout.map((panel, index) => {
+    // Dynamic zones get their own full-width panel (stock behavior).
+    const isDynamicZone = panel.some((row) => row.some((field) => field.type === 'dynamiczone'));
+    if (isDynamicZone) {
+      const [row] = panel;
+      const [field] = row;
+      const node = (
+        <Grid.Root gap={4} key={field.name}>
+          <Grid.Item col={12} s={12} xs={12} direction="column" alignItems="stretch">
+            {renderOneField(field)}
+          </Grid.Item>
+        </Grid.Root>
+      );
+      return { index, fields: panel, isDynamicZone, node };
+    }
 
-        const panelContent = (
-          <Flex direction="column" alignItems="stretch" gap={6}>
-            {panel.map((row, gridRowIndex) => (
-              <ResponsiveGridRoot gap={{ initial: 6, medium: 4 }} key={gridRowIndex}>
-                {row.map((rawField) => (
-                  <ResponsiveGridItem
-                    col={(rawField as { size?: number }).size}
-                    s={12}
-                    xs={12}
-                    direction="column"
-                    alignItems="stretch"
-                    key={rawField.name}
-                  >
-                    {renderOneField(rawField as EditFieldLayout & { size?: number })}
-                  </ResponsiveGridItem>
-                ))}
-              </ResponsiveGridRoot>
+    const panelContent = (
+      <Flex direction="column" alignItems="stretch" gap={6}>
+        {panel.map((row, gridRowIndex) => (
+          <ResponsiveGridRoot gap={{ initial: 6, medium: 4 }} key={gridRowIndex}>
+            {row.map((rawField) => (
+              <ResponsiveGridItem
+                col={(rawField as { size?: number }).size}
+                s={12}
+                xs={12}
+                direction="column"
+                alignItems="stretch"
+                key={rawField.name}
+              >
+                {renderOneField(rawField as EditFieldLayout & { size?: number })}
+              </ResponsiveGridItem>
             ))}
-          </Flex>
-        );
+          </ResponsiveGridRoot>
+        ))}
+      </Flex>
+    );
 
-        if (renderPanel) {
-          return (
-            <React.Fragment key={index}>
-              {renderPanel({ fields: panel, index, children: panelContent }, PanelBox)}
-            </React.Fragment>
-          );
-        }
-        return <PanelBox key={index}>{panelContent}</PanelBox>;
-      })}
+    const node = renderPanel ? (
+      <React.Fragment key={index}>
+        {renderPanel({ fields: panel, index, children: panelContent }, PanelBox)}
+      </React.Fragment>
+    ) : (
+      <PanelBox key={index}>{panelContent}</PanelBox>
+    );
+    return { index, fields: panel, isDynamicZone, node };
+  });
+
+  // renderBody seam: sees every rendered panel at once (accordion grouping, tabs, …).
+  // DefaultBody = the stock vertical stack; `undefined` keeps stock.
+  const DefaultBody = () => (
+    <Flex direction="column" alignItems="stretch" gap={6}>
+      {panels.map((panel) => panel.node)}
     </Flex>
   );
+  const bodyOverride = renderBody?.(panels, DefaultBody);
+  const body = bodyOverride === undefined ? <DefaultBody /> : <>{bodyOverride}</>;
 
   // Provide the entry customization to the vendored entry modules (bridge context);
   // no config = provider skipped = byte-identical stock rendering.

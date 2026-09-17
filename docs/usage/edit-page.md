@@ -20,7 +20,7 @@ callbacks, fallbacks) plus:
 | `status` / `defaultStatus` / `onStatusChange` | `'draft' \| 'published'` | Controlled or uncontrolled draft/published tab. |
 | `header` | `false \| EditHeaderProps` | `false` hides the header. |
 | `sidePanels` | `false \| EditSidePanelsProps` | `false` hides the right column. |
-| `form` | `EditFormProps` | `layout` transform, `renderField`, `renderPanel`, `dynamicZone`/`repeatable`/`singleComponent` (entry & box customization — see [components.md](components.md)). |
+| `form` | `EditFormProps` | `layout` transform, `renderField`, `renderPanel`, `renderBody` (rearrange all panels: accordions/tabs), `dynamicZone`/`repeatable`/`singleComponent` (entry & box customization — see [components.md](components.md)). |
 
 ## Examples
 

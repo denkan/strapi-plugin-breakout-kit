@@ -58,6 +58,34 @@ edit view.
 />
 ```
 
+### Rearrange the form body (`renderBody`)
+
+"Panels" are Strapi's term for the white boxes the edit view stacks vertically
+(`layout.map(panel => panel.map(row => row.map(field => …)))`); every dynamic zone
+forms its own full-width panel. `renderPanel` wraps one panel at a time — `renderBody`
+receives **every rendered panel at once**, so cross-panel layouts are plain composition
+of `panel.node` (`undefined` keeps the stock stack):
+
+```tsx
+<EditForm
+  renderBody={(panels, DefaultBody) => (
+    <>
+      {/* everything NOT in a dynamic zone into one "General" accordion */}
+      <MyAccordion title="General">
+        {panels.filter((p) => !p.isDynamicZone).map((p) => p.node)}
+      </MyAccordion>
+      {panels.filter((p) => p.isDynamicZone).map((p) => p.node)}
+    </>
+  )}
+/>
+// …or tabs: <MyTabs tabs={panels.map(p => ({ label: labelFor(p), content: p.node }))} />
+```
+
+`PanelInfo` = `{ index, fields (rows of the panel), isDynamicZone, node }` — `node` has
+`renderPanel`/`renderField` already applied. Combine with the `layout` transform to
+regroup fields into different panels first. Worked examples: the playground's "Layout"
+page (`apps/playground/src/admin/pages/LayoutDemo.tsx`).
+
 ### Entry customization (`dynamicZone` / `repeatable` props)
 
 Customize each dynamic-zone or repeatable-component entry's chrome without replacing the

@@ -7,6 +7,7 @@ import { Diagnostics } from './Diagnostics';
 import { DynamicZoneDemo } from './DynamicZoneDemo';
 import { EditPageDemo } from './EditPageDemo';
 import { HooksDemo } from './HooksDemo';
+import { LayoutDemo } from './LayoutDemo';
 import { RepeatableDemo } from './RepeatableDemo';
 import { SingleComponentDemo } from './SingleComponentDemo';
 
@@ -20,6 +21,7 @@ const Nav = () => (
       <Link tag={NavLink} to="dz-demo">Dynamic zone</Link>
       <Link tag={NavLink} to="repeatable-demo">Repeatable</Link>
       <Link tag={NavLink} to="component-demo">Component</Link>
+      <Link tag={NavLink} to="layout-demo">Layout</Link>
     </Flex>
   </Box>
 );
@@ -35,6 +37,7 @@ const App = () => (
       <Route path="dz-demo" element={<DynamicZoneDemo />} />
       <Route path="repeatable-demo" element={<RepeatableDemo />} />
       <Route path="component-demo" element={<SingleComponentDemo />} />
+      <Route path="layout-demo" element={<LayoutDemo />} />
       <Route path="*" element={<Page.Error />} />
     </Routes>
   </>
