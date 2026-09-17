@@ -1,11 +1,18 @@
 name: Publish
 
-# Phase 8.4: build, run the full suite once more, publish to npm with provenance,
-# create a GitHub release, dist-tag by tested Strapi minor.
+# Phase 8.4: build, run the full suite once more, publish to npm with provenance.
 # Triggers: any push to main where packages/plugin's version differs from npm
-# ("merge = release" — the version bump in a PR is the release intent), plus
+# ("merge = release/stage" — the version bump in a PR is the release intent), plus
 # manual dispatch as first-release path and kill-switch fallback.
-# Requires the NPM_TOKEN secret; npm credentials exist ONLY in this workflow.
+# dist-tag + GitHub release live in post-release.yml (idempotent), decoupled so the
+# pipeline also works with npm's STAGED flow (decision #12): stage here, maintainer
+# promotes with 2FA on npm, post-release finishes tagging.
+#
+# Migration plan (decision #12): NPM_TOKEN is BOOTSTRAP-ONLY for the first publish.
+# After 0.1.0 is live: configure a Trusted Publisher on npmjs.com for this repo +
+# workflow ("require 2FA and disallow tokens", staged publishing), swap the publish
+# step to OIDC (drop NODE_AUTH_TOKEN; may need npm@latest for OIDC support), and
+# revoke/delete the NPM_TOKEN secret.
 
 on:
   push:
@@ -82,20 +89,3 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Tag with the tested Strapi minor (dist-tag strapi-5.x)
-        run: |
-          VERSION=$(node -p "require('./packages/plugin/package.json').version")
-          STRAPI=$(node -p "require('./drift/manifest.json').strapiVersion")
-          MINOR="strapi-${STRAPI%.*}"
-          npm dist-tag add "strapi-plugin-breakout-kit@${VERSION}" "$MINOR"
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: GitHub release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          VERSION=$(node -p "require('./packages/plugin/package.json').version")
-          STRAPI=$(node -p "require('./drift/manifest.json').strapiVersion")
-          gh release create "v${VERSION}" --title "v${VERSION}" --notes \
-            "strapi-plugin-breakout-kit ${VERSION} — tested against Strapi ${STRAPI}. See packages/plugin/CHANGELOG.md."

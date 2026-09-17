@@ -61,4 +61,15 @@ Decisions resolved with the maintainer, per PLAN.md §8 and docs/research/findin
     first-release path and fallback). First publish is manual; after it, consider npm
     Trusted Publishing (OIDC) and dropping NPM_TOKEN.
 
+12. **npm publishing: trusted publishing + staged releases** (adopting npm's post-2026
+    direction immediately rather than at the Jan 2027 token cutoff). NPM_TOKEN is
+    bootstrap-only for the first publish of the not-yet-existing package. Then: configure
+    a Trusted Publisher (GitHub Actions, this repo, publish.yml) with "require 2FA and
+    disallow tokens" + staged publishing; swap the publish step to OIDC and revoke the
+    token. Release semantics become "merge = staged, promote (2FA) = live"; the human act
+    moves from PR-merge to npm-promote, which also makes enabling auto-merge safer later.
+    dist-tag + GitHub release are decoupled into post-release.yml (idempotent: runs after
+    Publish, on dispatch after promoting, and on a daily self-heal cron) since staged
+    versions aren't tag-able until promoted.
+
 Still open (from PLAN §8): auto-merge policy for agent PRs (after Phase 8 trial).
