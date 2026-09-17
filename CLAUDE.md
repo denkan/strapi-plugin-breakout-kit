@@ -19,6 +19,9 @@ architecture and checkpoints. Work phase by phase; do not skip checkpoints.
 - Adapt the access layer first; touch higher layers only if strictly necessary.
 - **Never copy code from any `ee/` directory** in the Strapi repo (different license).
 - Never weaken, skip or delete contract or parity tests to make them pass.
+- **`main` is protected incl. admins — direct pushes are rejected.** Every change goes
+  branch → PR → required green `test` check → merge. Releases: see docs/RELEASING.md
+  (merge = staged on npm; maintainer approves with 2FA; dist-tag is manual).
 
 ## Layout
 
