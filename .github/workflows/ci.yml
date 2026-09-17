@@ -2,7 +2,10 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    # strapi-*: adaptation branches are pushed with ADAPT_PUSH_TOKEN (user PAT), so
+    # push-triggered CI runs ungated — the PRs themselves are bot-authored and their
+    # pull_request runs would sit behind GitHub's workflow-approval gate.
+    branches: [main, 'strapi-*']
   pull_request:
 
 concurrency:
