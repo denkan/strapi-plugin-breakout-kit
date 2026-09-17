@@ -43,6 +43,13 @@ const { canUpdate, canPublish } = usePermissions();
 const { isEnabled, locales } = useLocales();
 ```
 
+STOCK Strapi hooks also work inside a `<DocumentProvider>` on custom pages — including
+route-coupled ones: `unstable_useContentManagerContext` (from `@strapi/strapi/admin`)
+and the internal `useDoc` fall back to the surrounding provider when no CM route params
+are present (on stock CM routes the URL always wins). Context-based hooks
+(`useForm`/`useField`, `useDocumentRBAC`, …) and explicit-args hooks
+(`unstable_useDocument`, `unstable_useDocumentLayout`) need no special handling.
+
 ## `<EditForm>`
 
 Renders the full resolved layout with the stock content-manager inputs (blocks, relations,

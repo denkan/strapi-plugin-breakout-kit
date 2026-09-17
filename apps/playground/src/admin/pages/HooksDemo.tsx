@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Badge, Box, Button, Field, Flex, Main, Typography } from '@strapi/design-system';
 
-import { useFetchClient } from '@strapi/strapi/admin';
+import { unstable_useContentManagerContext, useFetchClient } from '@strapi/strapi/admin';
 import {
   DocumentProvider,
   useDocument,
@@ -82,6 +82,26 @@ const DocumentPanel = ({
   );
 };
 
+/**
+ * Proves STOCK Strapi hooks work inside a headless <DocumentProvider>:
+ * unstable_useContentManagerContext is route-coupled upstream (its internal useDoc
+ * reads URL params) — the plugin's shim rebuilds it with the headless fallback.
+ */
+const CmContextProbe = () => {
+  const cm = unstable_useContentManagerContext();
+  if (cm.isLoading) {
+    return <Typography>cm-context loading…</Typography>;
+  }
+  return (
+    <Typography variant="pi" textColor="neutral600" data-testid="cm-context-probe">
+      unstable_useContentManagerContext → model: {cm.model}, collectionType:{' '}
+      {cm.collectionType}, D&P: {String(cm.hasDraftAndPublish)}, creating:{' '}
+      {String(cm.isCreatingEntry)}, layout panels:{' '}
+      {cm.layout.edit?.layout?.length ?? 0}
+    </Typography>
+  );
+};
+
 const HooksDemo = () => {
   const { get } = useFetchClient();
   const [articleId, setArticleId] = React.useState<string | null>(null);
@@ -118,6 +138,7 @@ const HooksDemo = () => {
                     fieldPath="title"
                     testIdPrefix="hooks-article"
                   />
+                  <CmContextProbe />
                 </DocumentProvider>
               ) : (
                 <Typography>Resolving article…</Typography>
