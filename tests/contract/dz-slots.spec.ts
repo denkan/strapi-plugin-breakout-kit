@@ -143,3 +143,41 @@ test('boxes mode: accordion fully replaced by styled cards', async ({ page }) =>
 
   expect(pageErrors).toEqual([]);
 });
+
+test('addButton mode: custom button + popup picker replace the stock flow', async ({
+  page,
+}) => {
+  const pageErrors: string[] = [];
+  page.on('pageerror', (err) => pageErrors.push(String(err)));
+
+  await page.goto('/admin/breakout-playground/dz-demo');
+  await waitForForm(page);
+  await selectMode(page, 'renderAddButton');
+  await waitForForm(page);
+
+  const root = page.getByTestId('dz-demo-root');
+  const dzList = root.locator('ol[aria-describedby]');
+
+  // Stock button gone, custom button in its place.
+  await expect(root.getByRole('button', { name: /Add a component to/ })).toHaveCount(0);
+  const addButton = root.getByTestId('dz-custom-add');
+  await expect(addButton).toBeVisible();
+  await expect(addButton).toContainText('3 added');
+
+  // The popup lists allowed components grouped by category — plain buttons.
+  await addButton.click();
+  const picker = page.getByTestId('dz-custom-picker'); // portaled outside the root
+  await expect(picker).toBeVisible();
+  await expect(picker.getByRole('heading', { name: 'shared' })).toBeVisible();
+  for (const name of ['Quote', 'Link', 'Media block']) {
+    await expect(picker.getByRole('button', { name, exact: true })).toBeVisible();
+  }
+
+  // Picking one inserts via ctx.add and closes the popup; stock picker never opened.
+  await picker.getByRole('button', { name: 'Quote', exact: true }).click();
+  await expect(picker).not.toBeVisible();
+  await expect(dzList.getByRole('listitem')).toHaveCount(4);
+  await expect(addButton).toContainText('4 added');
+
+  expect(pageErrors).toEqual([]);
+});

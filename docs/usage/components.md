@@ -79,7 +79,11 @@ stock, so lookup-map misses fall through naturally:
         {d.all /* or compose pieces: {d.delete}{d.drag} drops the "more" menu */}
       </>
     ),
-    // 2. Full chrome control. DefaultEntry = the stock accordion with all behavior
+    // 2. Replace the "Add a component" affordance. ctx carries componentsByCategory,
+    // add(uid, position?), the stock isOpen/toggle, and total/min/max/disabled —
+    // enough for a fully custom picker (the stock inline picker stays closed).
+    renderAddButton: (ctx, DefaultAddButton) => <MyAddFlow ctx={ctx} />,
+    // 3. Full chrome control. DefaultEntry = the stock accordion with all behavior
     // pre-bound; accepts icon/label/actions overrides. Or skip it and build your own
     // container around entry.renderFields() (reorder/a11y is then yours to provide).
     renderEntry: (entry, DefaultEntry) =>
