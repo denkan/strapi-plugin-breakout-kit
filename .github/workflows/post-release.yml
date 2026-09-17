@@ -3,7 +3,10 @@ name: Post-release
 # Idempotent finisher decoupled from the publish path, so it works with BOTH direct
 # publish and npm's staged flow (stage in CI -> maintainer promotes with 2FA in npm):
 # once the current packages/plugin version is LIVE on npm, ensure
-#   - the strapi-5.x dist-tag points at it (per the drift manifest's tested version)
+#   - EVERY strapi-5.x dist-tag in the tested window (manifest strapiFloor..strapiVersion)
+#     points at it — tag semantics: "newest release that supports Strapi 5.x". When the
+#     floor rises past a minor, that minor's tag naturally freezes at the last release
+#     that supported it.
 #   - the GitHub release exists
 # Runs after Publish, on manual dispatch (right after promoting a staged release),
 # and on a daily self-heal cron.
@@ -36,7 +39,15 @@ jobs:
         run: |
           VERSION=$(node -p "require('./packages/plugin/package.json').version")
           STRAPI=$(node -p "require('./drift/manifest.json').strapiVersion")
-          MINOR="strapi-${STRAPI%.*}"
+          FLOOR=$(node -p "require('./drift/manifest.json').strapiFloor ?? require('./drift/manifest.json').strapiVersion")
+          # Every minor in the tested window, e.g. "5.50 5.51 5.52 5.53 5.54".
+          MINORS=$(node -p "
+            const m = require('./drift/manifest.json');
+            const floor = m.strapiFloor ?? m.strapiVersion;
+            const [maj, lo] = floor.split('.').map(Number);
+            const hi = Number(m.strapiVersion.split('.')[1]);
+            Array.from({ length: hi - lo + 1 }, (_, i) => maj + '.' + (lo + i)).join(' ')
+          ")
           LIVE=$(npm view "strapi-plugin-breakout-kit@${VERSION}" version 2>/dev/null || echo "")
           if [ "$LIVE" != "$VERSION" ]; then
             echo "Version $VERSION is not live on npm (staged or unpublished) — nothing to do."
@@ -44,19 +55,30 @@ jobs:
           fi
           if ! gh release view "v${VERSION}" >/dev/null 2>&1; then
             gh release create "v${VERSION}" --title "v${VERSION}" --notes \
-              "strapi-plugin-breakout-kit ${VERSION} — tested against Strapi ${STRAPI} (window: see peerDependencies). See packages/plugin/CHANGELOG.md."
+              "strapi-plugin-breakout-kit ${VERSION} — tested window: Strapi ${FLOOR%.*} – ${STRAPI%.*} (every minor suite-verified; peerDependencies enforce it). See packages/plugin/CHANGELOG.md."
             echo "GitHub release v${VERSION} created"
           fi
           # dist-tags are 2FA-gated writes ("disallow tokens"), so CI cannot apply them.
-          CURRENT_TAG=$(npm view "strapi-plugin-breakout-kit" "dist-tags.${MINOR}" 2>/dev/null || echo "")
-          if [ "$CURRENT_TAG" != "$VERSION" ]; then
+          # Verify EVERY window tag; nag with a ready-to-paste loop until all are set.
+          PENDING=""
+          for M in $MINORS; do
+            TAG="strapi-${M}"
+            CURRENT=$(npm view "strapi-plugin-breakout-kit" "dist-tags.${TAG}" 2>/dev/null || echo "")
+            if [ "$CURRENT" != "$VERSION" ]; then
+              PENDING="$PENDING $M"
+              echo "::warning::dist-tag ${TAG} points at '${CURRENT:-<unset>}', expected ${VERSION} — apply manually (see run summary)."
+            fi
+          done
+          if [ -n "$PENDING" ]; then
             {
-              echo "## Manual step pending"
+              echo "## Manual step pending — window dist-tags"
               echo
-              echo "Run (with a fresh OTP):"
+              echo "Tag semantics: strapi-5.x = newest release supporting Strapi 5.x."
+              echo "Run (one fresh OTP usually survives the loop; rerun with a new code if it expires — already-set tags are idempotent):"
               echo '```'
-              echo "npm dist-tag add strapi-plugin-breakout-kit@${VERSION} ${MINOR} --otp=<code>"
+              echo "for m in${PENDING}; do npm dist-tag add strapi-plugin-breakout-kit@${VERSION} strapi-\$m --otp=<code>; done"
               echo '```'
             } >> "$GITHUB_STEP_SUMMARY"
-            echo "::warning::dist-tag ${MINOR} still points at '${CURRENT_TAG}' — apply manually (see run summary)."
+          else
+            echo "All window dist-tags (${MINORS}) point at ${VERSION}."
           fi

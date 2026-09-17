@@ -99,4 +99,14 @@ Decisions resolved with the maintainer, per PLAN.md §8 and docs/research/findin
     action buttons hoisted into named consts, markup unchanged; no config => stock
     rendering (parity-guarded).
 
+14. **Window dist-tags** (revising the roof-only scheme from #12's release steps): each
+    release moves EVERY `strapi-5.x` tag in its tested window, so the tag semantics are
+    "newest release that supports Strapi 5.x" — the question consumers actually ask.
+    Roof-only tagging left inner-window tags stale (observed: `strapi-5.53` → 0.1.0
+    while 0.6.x supported 5.53). When the floor rises past a minor, its tag freezes at
+    the last supporting release — the escape hatch for stragglers, since npm installs
+    `latest` regardless of peer ranges and only warns. post-release verifies all window
+    tags and prints the pending-tags OTP loop; the alternative (no tags, peers only)
+    was rejected because peers don't influence resolution.
+
 Still open (from PLAN §8): auto-merge policy for agent PRs (after Phase 8 trial).
