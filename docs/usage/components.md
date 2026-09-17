@@ -111,9 +111,31 @@ hiding them; and there's no picker — `ctx.toggle` performs the stock add (max-
 the "Add an entry" footer button (or the empty-state initializer when there are no
 entries yet).
 
-Worked examples: the playground's "Dynamic zone" and "Repeatable" pages
-(`apps/playground/src/admin/pages/{DynamicZoneDemo,RepeatableDemo}.tsx`) — including
-"no accordion at all" modes where every entry is a styled always-open card.
+**Single (non-repeatable) components** get a third prop, `singleComponent`, with ONE
+state-aware seam replacing the whole box — the null-state "click to add" box and the
+boxed fields alike. Branch on `box.value`; `undefined` keeps stock for that state:
+
+```tsx
+<EditForm
+  singleComponent={{
+    renderBox: (box, DefaultBox) =>
+      box.value ? (
+        <MyCard onClear={box.onClear}>{box.renderFields()}</MyCard>
+      ) : (
+        <MyInitCta onClick={box.onInitialize} />
+      ),
+  }}
+/>
+```
+
+`box` = `{ source: 'singleComponent', componentUid, name, schema, disabled, value,
+onInitialize, onClear, renderFields }`; `renderFields()` carries its own component
+context so nested inputs work inside custom chrome. The field label row (and its stock
+"Reset Entry" trash) stays either way.
+
+Worked examples: the playground's "Dynamic zone", "Repeatable" and "Component" pages
+(`apps/playground/src/admin/pages/{DynamicZoneDemo,RepeatableDemo,SingleComponentDemo}.tsx`)
+— including "no accordion at all" modes where every entry is a styled always-open card.
 
 ## `<FieldRenderer>`
 

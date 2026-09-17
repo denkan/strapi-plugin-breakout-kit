@@ -109,6 +109,33 @@ describe('headlessContentManager vite plugin', () => {
     );
   });
 
+  it('redirects Component/Input.mjs to the vendored module (single-component renderBox)', () => {
+    const plugin = makePlugin();
+    const input =
+      '@strapi/content-manager/dist/admin/pages/EditView/components/FormInputs/Component/Input.mjs';
+    expect(plugin.resolveId(input, undefined)).toMatch(
+      /vite[\\/]runtime[\\/]Component[\\/]Input\.mjs$/
+    );
+    // Relative import from InputRenderer (the stock consumer)
+    const importer = path.join(cmRoot, 'dist/admin/pages/EditView/components/InputRenderer.mjs');
+    expect(plugin.resolveId('./FormInputs/Component/Input.mjs', importer)).toMatch(
+      /vite[\\/]runtime[\\/]Component[\\/]Input\.mjs$/
+    );
+    expect(plugin.resolveId(`${input}?hcm-original`, undefined)).toBe(
+      path.join(cmRoot, 'dist/admin/pages/EditView/components/FormInputs/Component/Input.mjs')
+    );
+    // BlocksInput.mjs also ends with "Input.mjs" — must stay untouched.
+    expect(
+      plugin.resolveId(
+        '@strapi/content-manager/dist/admin/pages/EditView/components/FormInputs/BlocksInput/BlocksInput.mjs',
+        undefined
+      )
+    ).toBe(
+      path.join(cmRoot, 'dist/admin/pages/EditView/components/FormInputs/BlocksInput/BlocksInput.mjs')
+    );
+    expect(plugin.resolveId('./FormInputs/BlocksInput/BlocksInput.mjs', importer)).toBeNull();
+  });
+
   it('does NOT redirect NonRepeatable.mjs despite the suffix collision', () => {
     const plugin = makePlugin();
     const nonRepeatable = path.join(

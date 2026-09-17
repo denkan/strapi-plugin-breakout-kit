@@ -8,7 +8,8 @@ import * as React from 'react';
  * regardless of module identity.
  *
  * Value shape (all optional; absent config = byte-identical stock rendering):
- *   { dynamicZone?: EntryCustomization, repeatable?: EntryCustomization }
+ *   { dynamicZone?: EntryCustomization, repeatable?: EntryCustomization,
+ *     singleComponent?: { renderBox(box, DefaultBox) -> node|undefined } }
  * where EntryCustomization =
  *   { entryIcon(entry, defaultIcon) -> node|undefined,
  *     entryLabel(entry, defaultLabel) -> node|undefined,

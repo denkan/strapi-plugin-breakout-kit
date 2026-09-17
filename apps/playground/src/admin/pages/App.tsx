@@ -8,6 +8,7 @@ import { DynamicZoneDemo } from './DynamicZoneDemo';
 import { EditPageDemo } from './EditPageDemo';
 import { HooksDemo } from './HooksDemo';
 import { RepeatableDemo } from './RepeatableDemo';
+import { SingleComponentDemo } from './SingleComponentDemo';
 
 const Nav = () => (
   <Box paddingLeft={8} paddingTop={4}>
@@ -18,6 +19,7 @@ const Nav = () => (
       <Link tag={NavLink} to="edit-page">EditPage</Link>
       <Link tag={NavLink} to="dz-demo">Dynamic zone</Link>
       <Link tag={NavLink} to="repeatable-demo">Repeatable</Link>
+      <Link tag={NavLink} to="component-demo">Component</Link>
     </Flex>
   </Box>
 );
@@ -32,6 +34,7 @@ const App = () => (
       <Route path="edit-page" element={<EditPageDemo />} />
       <Route path="dz-demo" element={<DynamicZoneDemo />} />
       <Route path="repeatable-demo" element={<RepeatableDemo />} />
+      <Route path="component-demo" element={<SingleComponentDemo />} />
       <Route path="*" element={<Page.Error />} />
     </Routes>
   </>

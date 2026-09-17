@@ -189,6 +189,30 @@
       "note": "alias-REPLACED by the Vite helper with a vendored copy adding the entry-customization seams for repeatables (issue #10); must keep mirroring upstream behavior exactly when no `repeatable` config is present"
     },
     {
+      "id": "cm-component-input",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/pages/EditView/components/FormInputs/Component/Input.tsx",
+      "distPath": "dist/admin/pages/EditView/components/FormInputs/Component/Input.mjs",
+      "symbol": "ComponentInput",
+      "hash": "49739443e3b29412734c02f1e8ba76eedb3aeb26e277eb25b4853df766d3b492",
+      "usedBy": [
+        "packages/plugin/vite/runtime/Component/Input.mjs"
+      ],
+      "note": "alias-REPLACED by the Vite helper with a vendored copy adding the single-component renderBox seam; must keep mirroring upstream behavior exactly when no `singleComponent` config is present"
+    },
+    {
+      "id": "cm-non-repeatable-component",
+      "kind": "file",
+      "path": "packages/core/content-manager/admin/src/pages/EditView/components/FormInputs/Component/NonRepeatable.tsx",
+      "distPath": "dist/admin/pages/EditView/components/FormInputs/Component/NonRepeatable.mjs",
+      "symbol": "NonRepeatableComponent",
+      "hash": "3b125da5b6ee7828916b86bd4f5895174fcaf7f485df0d31050fe3d13d4654a8",
+      "usedBy": [
+        "packages/plugin/vite/runtime/Component/NonRepeatable.mjs"
+      ],
+      "note": "VENDORED (loaded via the vendored Component/Input.mjs, its only upstream importer; not alias-redirected itself): adds an export of the fields grid, otherwise behavior-identical"
+    },
+    {
       "id": "cm-public-exports",
       "kind": "export",
       "path": "packages/core/content-manager/admin/src/exports.ts",

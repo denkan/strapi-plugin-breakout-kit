@@ -161,7 +161,10 @@ each entry's chrome and the add flow. Every seam receives the stock default(s) a
 
 Repeatable components get the same treatment via a `repeatable` prop — same
 `EntryCustomization` shape, `entry.source` discriminates, and it also applies to
-repeatables nested inside dynamic-zone entries.
+repeatables nested inside dynamic-zone entries. Single (non-repeatable) components use
+a `singleComponent` prop with one state-aware `renderBox(box, Default)` seam covering
+both the null-state "click to add" box and the boxed fields (`box.value` discriminates,
+`box.onInitialize`/`box.onClear`/`box.renderFields()` do the wiring).
 
 Details and semantics: [docs/usage/components.md](https://github.com/denkan/strapi-plugin-breakout-kit/blob/main/docs/usage/components.md).
 Live, switchable examples of every mode: the playground's "Dynamic zone" and

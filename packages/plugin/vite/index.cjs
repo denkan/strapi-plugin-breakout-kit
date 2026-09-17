@@ -88,6 +88,12 @@ function headlessContentManager() {
         path.join(cmRoot, 'dist', 'admin', 'pages', 'EditView', 'components', 'FormInputs', 'Component', 'Repeatable.mjs'),
         path.join(RUNTIME_DIR, 'Component', 'Repeatable.mjs'),
       ],
+      // Single-component renderBox seam: vendored ComponentInput (which itself loads the
+      // vendored NonRepeatable — its only upstream importer is this module).
+      [
+        path.join(cmRoot, 'dist', 'admin', 'pages', 'EditView', 'components', 'FormInputs', 'Component', 'Input.mjs'),
+        path.join(RUNTIME_DIR, 'Component', 'Input.mjs'),
+      ],
     ]);
 
     entryAliases = new Map();
@@ -132,7 +138,7 @@ function headlessContentManager() {
         if (isOriginal) return { path: abs };
         return { path: redirects.get(abs) ?? abs };
       });
-      build.onResolve({ filter: /(useDocument(Context)?|Field|Repeatable)\.mjs$/ }, (args) => {
+      build.onResolve({ filter: /(useDocument(Context)?|Field|Repeatable|Input)\.mjs$/ }, (args) => {
         if (!args.path.startsWith('.')) return null;
         if (!cmRoot) resolveRoots(process.cwd());
         const abs = path.resolve(args.resolveDir, args.path);
@@ -198,7 +204,7 @@ function headlessContentManager() {
       if (
         importer &&
         (source.startsWith('./') || source.startsWith('../')) &&
-        (source.endsWith('useDocumentContext.mjs') || source.endsWith('useDocument.mjs') || source.endsWith('Field.mjs') || source.endsWith('Repeatable.mjs'))
+        (source.endsWith('useDocumentContext.mjs') || source.endsWith('useDocument.mjs') || source.endsWith('Field.mjs') || source.endsWith('Repeatable.mjs') || source.endsWith('Input.mjs'))
       ) {
         const abs = path.resolve(path.dirname(importer.split('?')[0]), source);
         const shim = redirects.get(abs);
