@@ -9,7 +9,11 @@ import {
 } from '../access';
 import type { EditFieldLayout, EditLayout } from '../access';
 import { useHeadlessData } from '../data/context';
-import { getEntryCustomizationContext, type EntryCustomization } from '../data/entry-customization';
+import {
+  getEntryCustomizationContext,
+  type EntryCustomization,
+  type SingleComponentCustomization,
+} from '../data/entry-customization';
 import { resolveOverride, type Override } from '../data/override';
 
 /**
@@ -49,6 +53,8 @@ export interface EditFormProps {
   dynamicZone?: EntryCustomization;
   /** Repeatable-component entry customization — same shape, applies to every repeatable (incl. nested). */
   repeatable?: EntryCustomization;
+  /** Single (non-repeatable) component box customization: renderBox covers both the null-state initializer and the boxed fields. */
+  singleComponent?: SingleComponentCustomization;
 }
 
 const DefaultPanelBox = ({ children }: { children: React.ReactNode }) => (
@@ -68,11 +74,15 @@ export const EditForm = ({
   hasBackground = true,
   dynamicZone,
   repeatable,
+  singleComponent,
 }: EditFormProps) => {
   const EntryCustomizationContext = getEntryCustomizationContext();
   const entryCustomization = React.useMemo(
-    () => (dynamicZone || repeatable ? { dynamicZone, repeatable } : null),
-    [dynamicZone, repeatable]
+    () =>
+      dynamicZone || repeatable || singleComponent
+        ? { dynamicZone, repeatable, singleComponent }
+        : null,
+    [dynamicZone, repeatable, singleComponent]
   );
   const { currentDocument, editLayout } = useHeadlessData('EditForm');
   const { formatMessage } = useIntl();

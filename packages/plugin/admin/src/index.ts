@@ -26,6 +26,9 @@ export {
   type AddButtonContext,
   type DefaultAddButtonComponent,
   type DefaultEntryComponent,
+  type ComponentBox,
+  type SingleComponentCustomization,
+  type DefaultBoxComponent,
 } from "./data";
 export {
   FieldRenderer,

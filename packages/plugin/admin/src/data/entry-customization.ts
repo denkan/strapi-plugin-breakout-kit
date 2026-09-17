@@ -142,10 +142,48 @@ export interface EntryCustomization {
   renderEntry?: (entry: ComponentEntry, DefaultEntry: DefaultEntryComponent) => React.ReactNode;
 }
 
+/**
+ * A SINGLE (non-repeatable) component field, handed to renderBox. Not a list entry —
+ * no index/actions; one state-aware box instead.
+ */
+export interface ComponentBox {
+  source: 'singleComponent';
+  componentUid: string;
+  /** The field name (form path; nested single components carry their full path). */
+  name: string;
+  schema?: { icon?: string; displayName?: string; category?: string };
+  /** null = uninitialized (stock shows the "click to add" box). */
+  value: Record<string, unknown> | null;
+  disabled: boolean;
+  /** Initialize with the component's default form values (what the stock box click does). */
+  onInitialize: () => void;
+  /** Reset back to null (what the stock "Reset Entry" trash does). */
+  onClear: () => void;
+  /**
+   * The stock fields grid without box chrome — carries its own ComponentProvider so
+   * nested inputs work inside custom chrome. Returns null while `value` is null.
+   */
+  renderFields: () => React.ReactNode;
+}
+
+/** The stock box for the CURRENT state: the initializer when null, the boxed fields when set. */
+export type DefaultBoxComponent = React.ComponentType;
+
+export interface SingleComponentCustomization {
+  /**
+   * Replace the single-component box. Called in BOTH states — branch on `box.value`
+   * and return `undefined` for any state you want to keep stock:
+   * `(box, Default) => box.value ? <MyCard onClear={box.onClear}>{box.renderFields()}</MyCard> : undefined`.
+   * The field label row (and its stock "Reset Entry" trash) stays either way.
+   */
+  renderBox?: (box: ComponentBox, DefaultBox: DefaultBoxComponent) => React.ReactNode | undefined;
+}
+
 /** Bridge-context value: one slot per entry source. */
 export interface EntryCustomizationContextValue {
   dynamicZone?: EntryCustomization;
   repeatable?: EntryCustomization;
+  singleComponent?: SingleComponentCustomization;
 }
 
 const KEY = Symbol.for('strapi-plugin-breakout-kit/entry-customization@v1');
