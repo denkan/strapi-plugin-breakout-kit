@@ -9,10 +9,10 @@ name: Publish
 # promotes with 2FA on npm, post-release finishes tagging.
 #
 # Auth: npm TRUSTED PUBLISHING (OIDC) — no tokens anywhere. The trusted publisher is
-# configured on npmjs.com for this repo + this workflow file, with "require 2FA and
-# disallow tokens" + staged publishing. Publishing stages the version; the maintainer
-# promotes it with 2FA on npmjs.com; post-release.yml then finishes the GitHub release
-# (the strapi-5.x dist-tag is a manual post-promote step — 2FA-gated write).
+# configured on npmjs.com for this repo + this workflow file (stage-publish only,
+# "require 2FA and disallow tokens"). This workflow STAGES the version; the maintainer
+# approves with `npm stage approve <stage-id> --otp=<code>`; post-release.yml then
+# creates the GitHub release and surfaces the strapi-5.x dist-tag one-liner.
 
 on:
   push:
@@ -89,11 +89,20 @@ jobs:
       - name: Upgrade npm (OIDC trusted publishing needs a newer npm than node22 bundles)
         run: npm install -g npm@latest && npm --version
 
-      - name: Publish to npm (OIDC trusted publishing; provenance automatic)
-        # Run from the package dir, NOT via `-w`: npm's workspace publish path skips
-        # the trusted-publishing OIDC exchange (falls back to ENEEDAUTH).
+      - name: Stage on npm (OIDC trusted publishing; provenance automatic)
+        # The trusted publisher allows STAGE publish only (post-2026 default; direct
+        # `npm publish` is refused and surfaces as ENEEDAUTH). Run from the package
+        # dir, not via `-w` (workspace path skips the OIDC exchange).
         working-directory: packages/plugin
         run: |
-          if [ -n "$ACTIONS_ID_TOKEN_REQUEST_URL" ]; then echo "OIDC env present"; else echo "::warning::NO OIDC env — id-token permission missing?"; fi
-          npm publish --access public
+          npm stage publish
+          {
+            echo "## Staged on npm — awaiting 2FA approval"
+            echo
+            echo '```'
+            npm stage list 2>/dev/null || true
+            echo '```'
+            echo
+            echo 'Approve with: `npm stage approve <stage-id> --otp=<code>` — then apply the dist-tag (see post-release run summary).'
+          } >> "$GITHUB_STEP_SUMMARY"
 

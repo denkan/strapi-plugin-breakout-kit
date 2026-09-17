@@ -73,7 +73,11 @@ Decisions resolved with the maintainer, per PLAN.md §8 and docs/research/findin
     versions aren't tag-able until promoted.
     STATUS 2026-09-17: 0.1.0 published (from the maintainer's machine with OTP — the
     account's strict 2FA made CI token publish impossible, which validated the decision);
-    trusted publisher configured; publish.yml is OIDC/tokenless; NPM_TOKEN secret deleted.
+    trusted publisher configured (STAGE-publish only — the post-Sept-2026 default; direct
+    `npm publish` is refused by the registry and surfaces as CLI ENEEDAUTH);
+    publish.yml runs `npm stage publish` from the package dir (workspace `-w` publish
+    skips the OIDC exchange); maintainer approves via `npm stage approve <id> --otp`.
+    NPM_TOKEN secret deleted.
     The strapi-5.x dist-tag is a manual one-liner after each 2FA promote (CI cannot
     perform 2FA-gated writes) — post-release.yml surfaces it in the run summary when
     pending.
