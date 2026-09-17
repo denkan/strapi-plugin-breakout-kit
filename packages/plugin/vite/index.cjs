@@ -83,6 +83,11 @@ function headlessContentManager() {
         path.join(cmRoot, 'dist', 'admin', 'pages', 'EditView', 'components', 'FormInputs', 'DynamicZone', 'Field.mjs'),
         path.join(RUNTIME_DIR, 'DynamicZone', 'Field.mjs'),
       ],
+      // Issue #10: vendored repeatable component with the same entry render slots.
+      [
+        path.join(cmRoot, 'dist', 'admin', 'pages', 'EditView', 'components', 'FormInputs', 'Component', 'Repeatable.mjs'),
+        path.join(RUNTIME_DIR, 'Component', 'Repeatable.mjs'),
+      ],
     ]);
 
     entryAliases = new Map();
@@ -127,7 +132,7 @@ function headlessContentManager() {
         if (isOriginal) return { path: abs };
         return { path: redirects.get(abs) ?? abs };
       });
-      build.onResolve({ filter: /(useDocument(Context)?|Field)\.mjs$/ }, (args) => {
+      build.onResolve({ filter: /(useDocument(Context)?|Field|Repeatable)\.mjs$/ }, (args) => {
         if (!args.path.startsWith('.')) return null;
         if (!cmRoot) resolveRoots(process.cwd());
         const abs = path.resolve(args.resolveDir, args.path);
@@ -193,7 +198,7 @@ function headlessContentManager() {
       if (
         importer &&
         (source.startsWith('./') || source.startsWith('../')) &&
-        (source.endsWith('useDocumentContext.mjs') || source.endsWith('useDocument.mjs') || source.endsWith('Field.mjs'))
+        (source.endsWith('useDocumentContext.mjs') || source.endsWith('useDocument.mjs') || source.endsWith('Field.mjs') || source.endsWith('Repeatable.mjs'))
       ) {
         const abs = path.resolve(path.dirname(importer.split('?')[0]), source);
         const shim = redirects.get(abs);

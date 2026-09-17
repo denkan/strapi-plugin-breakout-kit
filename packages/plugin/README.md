@@ -159,10 +159,13 @@ each entry's chrome and the add flow. Every seam receives the stock default(s) a
 />
 ```
 
+Repeatable components get the same treatment via a `repeatable` prop — same
+`EntryCustomization` shape, `entry.source` discriminates, and it also applies to
+repeatables nested inside dynamic-zone entries.
+
 Details and semantics: [docs/usage/components.md](https://github.com/denkan/strapi-plugin-breakout-kit/blob/main/docs/usage/components.md).
-Live, switchable examples of every mode: the playground's "Dynamic zone" page
-(`apps/playground/src/admin/pages/DynamicZoneDemo.tsx`). Repeatable components get the
-same treatment via a `repeatable` prop (tracked in issue #10).
+Live, switchable examples of every mode: the playground's "Dynamic zone" and
+"Repeatable" pages (`apps/playground/src/admin/pages/{DynamicZoneDemo,RepeatableDemo}.tsx`).
 
 ## Compatibility
 

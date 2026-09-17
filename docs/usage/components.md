@@ -58,11 +58,14 @@ edit view.
 />
 ```
 
-### Dynamic-zone entry customization (`dynamicZone` prop)
+### Entry customization (`dynamicZone` / `repeatable` props)
 
-Customize each dynamic-zone entry's chrome without replacing the whole field. Three
-tiers, all "override with the default(s) in hand" — return `undefined` anywhere to keep
-stock, so lookup-map misses fall through naturally:
+Customize each dynamic-zone or repeatable-component entry's chrome without replacing the
+whole field. Both props take the same `EntryCustomization` shape (`entry.source`
+discriminates); `repeatable` applies to every repeatable, including ones nested inside
+dynamic-zone entries — target specific fields via `entry.name`. All tiers are "override
+with the default(s) in hand" — return `undefined` anywhere to keep stock, so lookup-map
+misses fall through naturally:
 
 ```tsx
 <EditForm
@@ -97,10 +100,20 @@ stock, so lookup-map misses fall through naturally:
 ```
 
 Types (`EntryCustomization`, `ComponentEntryMeta`, `EntryActionDefaults`, …) are
-zone-agnostic and exported from the package root; repeatable components get the same
-treatment via a `repeatable` prop later (issue #10). Worked examples: the playground's
-"Dynamic zone" page (`apps/playground/src/admin/pages/DynamicZoneDemo.tsx`) — including
-a "no accordion at all" mode where every entry is a styled always-open card.
+zone-agnostic and exported from the package root.
+
+Repeatable-specific quirks (all mirroring stock): entries have **no stock icon**
+(`defaultIcon` is null — `entryIcon` can add one); the default label is the raw
+mainField value (often empty — `entryLabel` fixes that); `defaults.more` is always null
+(no category menu); disabled fields render the action buttons disabled rather than
+hiding them; and there's no picker — `ctx.toggle` performs the stock add (max-enforced),
+`ctx.add` appends/inserts raw and ignores the uid argument, and `DefaultAddButton` is
+the "Add an entry" footer button (or the empty-state initializer when there are no
+entries yet).
+
+Worked examples: the playground's "Dynamic zone" and "Repeatable" pages
+(`apps/playground/src/admin/pages/{DynamicZoneDemo,RepeatableDemo}.tsx`) — including
+"no accordion at all" modes where every entry is a styled always-open card.
 
 ## `<FieldRenderer>`
 

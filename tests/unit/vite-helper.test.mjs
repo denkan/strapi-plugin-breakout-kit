@@ -90,6 +90,44 @@ describe('headlessContentManager vite plugin', () => {
     ).toBe(path.join(dzDir, 'Field.mjs'));
   });
 
+  it('redirects Component/Repeatable.mjs to the vendored module (issue #10)', () => {
+    const plugin = makePlugin();
+    const repeatable =
+      '@strapi/content-manager/dist/admin/pages/EditView/components/FormInputs/Component/Repeatable.mjs';
+    expect(plugin.resolveId(repeatable, undefined)).toMatch(
+      /vite[\\/]runtime[\\/]Component[\\/]Repeatable\.mjs$/
+    );
+    const importer = path.join(
+      cmRoot,
+      'dist/admin/pages/EditView/components/FormInputs/InputRenderer.mjs'
+    );
+    expect(plugin.resolveId('./Component/Repeatable.mjs', importer)).toMatch(
+      /vite[\\/]runtime[\\/]Component[\\/]Repeatable\.mjs$/
+    );
+    expect(plugin.resolveId(`${repeatable}?hcm-original`, undefined)).toBe(
+      path.join(cmRoot, 'dist/admin/pages/EditView/components/FormInputs/Component/Repeatable.mjs')
+    );
+  });
+
+  it('does NOT redirect NonRepeatable.mjs despite the suffix collision', () => {
+    const plugin = makePlugin();
+    const nonRepeatable = path.join(
+      cmRoot,
+      'dist/admin/pages/EditView/components/FormInputs/Component/NonRepeatable.mjs'
+    );
+    expect(
+      plugin.resolveId(
+        '@strapi/content-manager/dist/admin/pages/EditView/components/FormInputs/Component/NonRepeatable.mjs',
+        undefined
+      )
+    ).toBe(nonRepeatable);
+    const importer = path.join(
+      cmRoot,
+      'dist/admin/pages/EditView/components/FormInputs/InputRenderer.mjs'
+    );
+    expect(plugin.resolveId('./Component/NonRepeatable.mjs', importer)).toBeNull();
+  });
+
   it('does NOT redirect other modules named Field.mjs (e.g. Wysiwyg)', () => {
     const plugin = makePlugin();
     const wysiwygField = path.join(
