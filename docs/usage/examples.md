@@ -132,3 +132,43 @@ control over the entry action buttons. See `dynamicZone` in
 
 Live, switchable examples: the playground's "Dynamic zone" page
 (`apps/playground/src/admin/pages/DynamicZoneDemo.tsx`).
+
+## 7. Replace the dynamic-zone "Add component" flow
+
+`renderAddButton` hands you everything the stock flow uses — render your own button and
+picker, insert via `ctx.add(uid)`, and the stock inline picker simply never opens:
+
+```tsx
+const MyAddFlow = ({ ctx }: { ctx: AddButtonContext }) => {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <>
+      <Button onClick={() => setOpen(true)} disabled={ctx.disabled}>
+        Add a section ({ctx.total} added)
+      </Button>
+      <Modal.Root open={open} onOpenChange={setOpen}>
+        <Modal.Content>
+          <Modal.Body>
+            {Object.entries(ctx.componentsByCategory).map(([category, comps]) => (
+              <Box key={category}>
+                <Typography variant="sigma">{category}</Typography>
+                {comps.map((c) => (
+                  <Button key={c.uid} variant="secondary"
+                          onClick={() => { ctx.add(c.uid); setOpen(false); }}>
+                    {c.displayName}
+                  </Button>
+                ))}
+              </Box>
+            ))}
+          </Modal.Body>
+        </Modal.Content>
+      </Modal.Root>
+    </>
+  );
+};
+
+<EditForm dynamicZone={{ renderAddButton: (ctx) => <MyAddFlow ctx={ctx} /> }} />
+```
+
+Note: `ctx.add` does not enforce the zone's `max` — check `ctx.total`/`ctx.max` yourself
+(the demo page's `addButton` mode shows this).
