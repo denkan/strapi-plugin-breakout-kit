@@ -175,6 +175,22 @@ Details and semantics: [docs/usage/components.md](https://github.com/denkan/stra
 Live, switchable examples of every mode: the playground's "Dynamic zone" and
 "Repeatable" pages (`apps/playground/src/admin/pages/{DynamicZoneDemo,RepeatableDemo}.tsx`).
 
+## Replace the stock edit view
+
+The CM route stays — its component is swapped, so list-view links and redirects keep
+working:
+
+```tsx
+// src/admin/app.tsx
+import { setEditViewReplacement } from 'strapi-plugin-breakout-kit/strapi-admin';
+
+setEditViewReplacement((route) =>
+  route.model === 'api::article.article' && !route.isClone ? MyArticleEditor : undefined
+); // undefined = stock view; the component receives { model, documentId, locale, … } as props
+```
+
+See [docs/usage/edit-page.md](https://github.com/denkan/strapi-plugin-breakout-kit/blob/main/docs/usage/edit-page.md) for semantics (create/clone modes, per-model targeting).
+
 ## Compatibility
 
 | Plugin version | Tested against Strapi |

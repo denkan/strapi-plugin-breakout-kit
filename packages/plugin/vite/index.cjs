@@ -94,6 +94,12 @@ function headlessContentManager() {
         path.join(cmRoot, 'dist', 'admin', 'pages', 'EditView', 'components', 'FormInputs', 'Component', 'Input.mjs'),
         path.join(RUNTIME_DIR, 'Component', 'Input.mjs'),
       ],
+      // Edit-view replacement: thin wrapper around the CM route component consulting
+      // the consumer-registered resolver (setEditViewReplacement).
+      [
+        path.join(cmRoot, 'dist', 'admin', 'pages', 'EditView', 'EditViewPage.mjs'),
+        path.join(RUNTIME_DIR, 'EditViewPage.mjs'),
+      ],
     ]);
 
     entryAliases = new Map();
@@ -138,7 +144,7 @@ function headlessContentManager() {
         if (isOriginal) return { path: abs };
         return { path: redirects.get(abs) ?? abs };
       });
-      build.onResolve({ filter: /(useDocument(Context)?|Field|Repeatable|Input)\.mjs$/ }, (args) => {
+      build.onResolve({ filter: /(useDocument(Context)?|Field|Repeatable|Input|EditViewPage)\.mjs$/ }, (args) => {
         if (!args.path.startsWith('.')) return null;
         if (!cmRoot) resolveRoots(process.cwd());
         const abs = path.resolve(args.resolveDir, args.path);
@@ -204,7 +210,7 @@ function headlessContentManager() {
       if (
         importer &&
         (source.startsWith('./') || source.startsWith('../')) &&
-        (source.endsWith('useDocumentContext.mjs') || source.endsWith('useDocument.mjs') || source.endsWith('Field.mjs') || source.endsWith('Repeatable.mjs') || source.endsWith('Input.mjs'))
+        (source.endsWith('useDocumentContext.mjs') || source.endsWith('useDocument.mjs') || source.endsWith('Field.mjs') || source.endsWith('Repeatable.mjs') || source.endsWith('Input.mjs') || source.endsWith('EditViewPage.mjs'))
       ) {
         const abs = path.resolve(path.dirname(importer.split('?')[0]), source);
         const shim = redirects.get(abs);
