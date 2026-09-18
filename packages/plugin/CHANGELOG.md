@@ -2,6 +2,13 @@
 
 All notable changes to this package will be documented in this file.
 
+## 0.8.1 — 2026-09-18
+
+- Fix: the 0.8.0 `breakoutKit()` rename missed `vite/index.d.cts` — the declaration
+  TypeScript pairs with the CJS build under `moduleResolution` bundler/node16 — so
+  consumers were still typed against `headlessContentManager`. A unit test now keeps
+  both declaration files in lockstep with the runtime exports.
+
 ## 0.8.0 — 2026-09-18
 
 - Recursive dynamic zones: a component's dynamic zone may include the component itself.

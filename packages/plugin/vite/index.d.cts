@@ -5,5 +5,5 @@ import type { Plugin } from 'vite';
  * @strapi/content-manager / @strapi/admin dists and installs the headless
  * document-context shim. See the package README for setup.
  */
-export declare function headlessContentManager(): Plugin;
-export default headlessContentManager;
+export declare function breakoutKit(): Plugin;
+export default breakoutKit;
