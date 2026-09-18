@@ -1,6 +1,6 @@
 /**
  * Ambient typings for deep imports into @strapi/content-manager's unbundled dist.
- * These specifiers are resolved by the headlessContentManager() Vite plugin (the packages'
+ * These specifiers are resolved by the breakoutKit() Vite plugin (the packages'
  * exports maps would otherwise reject them); every module listed here is drift-tracked in
  * drift/manifest.json. Types are intentionally minimal — refined as layers above need more.
  */
@@ -115,7 +115,7 @@ declare module '@strapi/content-manager/dist/admin/hooks/useDocumentContext.mjs'
     };
     currentDocument: unknown;
   };
-  /** Present only when the headlessContentManager() Vite shim replaced the module. */
+  /** Present only when the breakoutKit() Vite shim replaced the module. */
   export const __headlessShim: boolean | undefined;
 }
 

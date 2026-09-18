@@ -3,18 +3,18 @@ import { createRequire } from 'node:module';
 import { describe, expect, it } from 'vitest';
 
 const require = createRequire(import.meta.url);
-const { headlessContentManager } = require('strapi-plugin-breakout-kit/vite');
+const { breakoutKit } = require('strapi-plugin-breakout-kit/vite');
 
 const cmRoot = path.dirname(require.resolve('@strapi/content-manager/package.json'));
 const shimTarget = path.join(cmRoot, 'dist/admin/hooks/useDocumentContext.mjs');
 
 const makePlugin = () => {
-  const plugin = headlessContentManager();
+  const plugin = breakoutKit();
   plugin.configResolved({ root: process.cwd() });
   return plugin;
 };
 
-describe('headlessContentManager vite plugin', () => {
+describe('breakoutKit vite plugin', () => {
   it('resolves deep content-manager specifiers to real files', () => {
     const plugin = makePlugin();
     const resolved = plugin.resolveId(
@@ -46,7 +46,7 @@ describe('headlessContentManager vite plugin', () => {
     expect(resolved).toMatch(/vite[\\/]runtime[\\/]useDocumentContext\.mjs$/);
   });
 
-  it('redirects useDocument.mjs (useDoc wrapper) and honours the ?hcm-original escape', () => {
+  it('redirects useDocument.mjs (useDoc wrapper) and honours the ?bk-original escape', () => {
     const plugin = makePlugin();
     const importer = path.join(cmRoot, 'dist/admin/pages/EditView/EditViewPage.mjs');
     expect(plugin.resolveId('../../hooks/useDocument.mjs', importer)).toMatch(
@@ -54,7 +54,7 @@ describe('headlessContentManager vite plugin', () => {
     );
     expect(
       plugin.resolveId(
-        '@strapi/content-manager/dist/admin/hooks/useDocument.mjs?hcm-original',
+        '@strapi/content-manager/dist/admin/hooks/useDocument.mjs?bk-original',
         undefined
       )
     ).toBe(path.join(cmRoot, 'dist/admin/hooks/useDocument.mjs'));
@@ -81,10 +81,10 @@ describe('headlessContentManager vite plugin', () => {
     expect(plugin.resolveId('./FormInputs/DynamicZone/Field.mjs', importer)).toMatch(
       /vite[\\/]runtime[\\/]DynamicZone[\\/]Field\.mjs$/
     );
-    // ?hcm-original escape still reaches the upstream module
+    // ?bk-original escape still reaches the upstream module
     expect(
       plugin.resolveId(
-        '@strapi/content-manager/dist/admin/pages/EditView/components/FormInputs/DynamicZone/Field.mjs?hcm-original',
+        '@strapi/content-manager/dist/admin/pages/EditView/components/FormInputs/DynamicZone/Field.mjs?bk-original',
         undefined
       )
     ).toBe(path.join(dzDir, 'Field.mjs'));
@@ -104,7 +104,7 @@ describe('headlessContentManager vite plugin', () => {
     expect(plugin.resolveId('./Component/Repeatable.mjs', importer)).toMatch(
       /vite[\\/]runtime[\\/]Component[\\/]Repeatable\.mjs$/
     );
-    expect(plugin.resolveId(`${repeatable}?hcm-original`, undefined)).toBe(
+    expect(plugin.resolveId(`${repeatable}?bk-original`, undefined)).toBe(
       path.join(cmRoot, 'dist/admin/pages/EditView/components/FormInputs/Component/Repeatable.mjs')
     );
   });
@@ -121,7 +121,7 @@ describe('headlessContentManager vite plugin', () => {
     expect(plugin.resolveId('./FormInputs/Component/Input.mjs', importer)).toMatch(
       /vite[\\/]runtime[\\/]Component[\\/]Input\.mjs$/
     );
-    expect(plugin.resolveId(`${input}?hcm-original`, undefined)).toBe(
+    expect(plugin.resolveId(`${input}?bk-original`, undefined)).toBe(
       path.join(cmRoot, 'dist/admin/pages/EditView/components/FormInputs/Component/Input.mjs')
     );
     // BlocksInput.mjs also ends with "Input.mjs" — must stay untouched.
@@ -148,7 +148,7 @@ describe('headlessContentManager vite plugin', () => {
     expect(plugin.resolveId('./pages/EditView/EditViewPage.mjs', importer)).toMatch(
       /vite[\\/]runtime[\\/]EditViewPage\.mjs$/
     );
-    expect(plugin.resolveId(`${editView}?hcm-original`, undefined)).toBe(
+    expect(plugin.resolveId(`${editView}?bk-original`, undefined)).toBe(
       path.join(cmRoot, 'dist/admin/pages/EditView/EditViewPage.mjs')
     );
   });
@@ -206,10 +206,10 @@ describe('headlessContentManager vite plugin', () => {
     ).toMatch(shim);
     const importer = path.join(cmRoot, 'dist/admin/pages/ComponentConfigurationPage.mjs');
     expect(plugin.resolveId('../hooks/useContentTypeSchema.mjs', importer)).toMatch(shim);
-    // The shim itself reaches the original through the ?hcm-original suffix.
+    // The shim itself reaches the original through the ?bk-original suffix.
     expect(
       plugin.resolveId(
-        '@strapi/content-manager/dist/admin/hooks/useContentTypeSchema.mjs?hcm-original',
+        '@strapi/content-manager/dist/admin/hooks/useContentTypeSchema.mjs?bk-original',
         undefined
       )
     ).toBe(path.join(cmRoot, 'dist/admin/hooks/useContentTypeSchema.mjs'));

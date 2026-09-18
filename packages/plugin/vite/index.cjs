@@ -5,10 +5,10 @@
  *
  * ```ts
  * import { mergeConfig, type UserConfig } from 'vite';
- * import { headlessContentManager } from 'strapi-plugin-breakout-kit/vite';
+ * import { breakoutKit } from 'strapi-plugin-breakout-kit/vite';
  *
  * export default (config: UserConfig) =>
- *   mergeConfig(config, { plugins: [headlessContentManager()] });
+ *   mergeConfig(config, { plugins: [breakoutKit()] });
  * ```
  *
  * It does two things:
@@ -40,7 +40,7 @@ const packageRoot = (name, from) =>
 /**
  * Suffix that lets a shim import the module it replaces without recursing into itself.
  */
-const ORIGINAL_SUFFIX = '?hcm-original';
+const ORIGINAL_SUFFIX = '?bk-original';
 
 /** Resolves a package's exports-map subpath ('.' or './sub') to an absolute file. */
 const resolveExportFile = (pkgRoot, subpath) => {
@@ -51,7 +51,7 @@ const resolveExportFile = (pkgRoot, subpath) => {
   return rel ? path.join(pkgRoot, rel) : undefined;
 };
 
-function headlessContentManager() {
+function breakoutKit() {
   /** @type {string | undefined} */ let cmRoot;
   /** @type {string | undefined} */ let adminRoot;
   /** Map of real CM file path -> replacement shim path. */
@@ -196,7 +196,7 @@ function headlessContentManager() {
       if (pinned) return pinned;
 
       // 1. Deep specifiers past the exports map: @scope/name/dist/... -> <pkg root>/dist/...
-      //    A trailing ?hcm-original suffix resolves to the real file (used by the shims).
+      //    A trailing ?bk-original suffix resolves to the real file (used by the shims).
       for (const root of DEEP_ROOTS) {
         if (source.startsWith(`${root}/dist/`)) {
           const isOriginal = source.endsWith(ORIGINAL_SUFFIX);
@@ -225,4 +225,4 @@ function headlessContentManager() {
   };
 }
 
-module.exports = { headlessContentManager, default: headlessContentManager };
+module.exports = { breakoutKit, default: breakoutKit };

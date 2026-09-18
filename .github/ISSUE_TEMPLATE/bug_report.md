@@ -13,7 +13,7 @@ labels: bug
 **Setup checklist**
 
 - [ ] Plugin enabled in `config/plugins.ts`
-- [ ] `headlessContentManager()` added to `src/admin/vite.config.ts`
+- [ ] `breakoutKit()` added to `src/admin/vite.config.ts`
 
 **What happens**
 

@@ -2,7 +2,7 @@
  * Access layer — strategy 3: build-time resolution (deep imports).
  *
  * These modules exist in @strapi/content-manager's unbundled dist but are not in its exports
- * map; the headlessContentManager() Vite plugin (which consumers add to src/admin/vite.config.ts)
+ * map; the breakoutKit() Vite plugin (which consumers add to src/admin/vite.config.ts)
  * resolves them to the actual files. Each specifier is drift-tracked in drift/manifest.json.
  *
  * Module identity note: because resolution happens in the app's single admin build, these are

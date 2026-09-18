@@ -27,10 +27,10 @@ the edit view can run outside the content manager's routes.
 
 ```ts
 import { mergeConfig, type UserConfig } from 'vite';
-import { headlessContentManager } from 'strapi-plugin-breakout-kit/vite';
+import { breakoutKit } from 'strapi-plugin-breakout-kit/vite';
 
 export default (config: UserConfig) =>
-  mergeConfig(config, { plugins: [headlessContentManager()] });
+  mergeConfig(config, { plugins: [breakoutKit()] });
 ```
 
 Without this, the admin build fails to resolve the plugin's imports. The stock content

@@ -1,7 +1,7 @@
 /**
  * VENDORED from @strapi/content-manager dist/admin/pages/EditView/components/FormInputs/
  * DynamicZone/DynamicComponent.mjs at the drift-manifest version, installed by the
- * headlessContentManager() Vite plugin via the Field.mjs redirect. Deviations from
+ * breakoutKit() Vite plugin via the Field.mjs redirect. Deviations from
  * upstream are marked with `// [breakout-kit]` and limited to the entry-customization
  * slots (icon/label/actions overrides). The stock action buttons are hoisted into named
  * consts so entryActions can receive them individually; markup is unchanged. No config

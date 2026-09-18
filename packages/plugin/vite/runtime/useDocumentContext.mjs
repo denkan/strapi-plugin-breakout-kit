@@ -8,7 +8,7 @@ import { getHeadlessDocumentContext } from './headless-document-context.mjs';
 
 /**
  * Drop-in replacement for @strapi/content-manager's hooks/useDocumentContext.mjs
- * (v5.53.0), installed by the headlessContentManager() Vite plugin.
+ * (v5.53.0), installed by the breakoutKit() Vite plugin.
  *
  * Source contract (drift-tracked): the original returns
  *   { currentDocumentMeta: relationModalMeta ?? urlMeta, currentDocument: relationModalDoc ?? urlDoc }

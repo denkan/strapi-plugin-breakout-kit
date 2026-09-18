@@ -54,10 +54,10 @@ keeps stock behavior. Never rebuild something stock already does — pass `undef
 
    ```ts
    import { mergeConfig, type UserConfig } from 'vite';
-   import { headlessContentManager } from 'strapi-plugin-breakout-kit/vite';
+   import { breakoutKit } from 'strapi-plugin-breakout-kit/vite';
 
    export default (config: UserConfig) =>
-     mergeConfig(config, { plugins: [headlessContentManager()] });
+     mergeConfig(config, { plugins: [breakoutKit()] });
    ```
 
 4. **Verification gate:** run `npm run develop`, log into the admin, open any entry in

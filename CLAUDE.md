@@ -61,7 +61,7 @@ npm run matrix -- 5.51.0    # full suite against one Strapi version (uniform tre
 - TWO modules are alias-replaced by the helper: `hooks/useDocumentContext.mjs` AND
   `hooks/useDocument.mjs` (wrapper extends `useDoc` with the headless-context fallback —
   needed because route-coupled internals like the relation modal's RootRelationRenderer
-  call `useDoc` directly). Shims import originals via the `?hcm-original` suffix.
+  call `useDoc` directly). Shims import originals via the `?bk-original` suffix.
 - NEVER import '@strapi/content-manager/...' (entry or deep paths) from PLAYGROUND
   admin source (apps/playground/src/admin) — in dev, app-source imports pull the CM
   graph out of the Vite dep prebundle and split module singletons (symptom: blank

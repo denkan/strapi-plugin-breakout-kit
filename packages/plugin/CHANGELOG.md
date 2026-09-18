@@ -2,6 +2,15 @@
 
 All notable changes to this package will be documented in this file.
 
+## Unreleased
+
+- Recursive dynamic zones: a component's dynamic zone may include the component itself.
+  Cycle-safe schema walks in the admin (useContentTypeSchema shim) and server
+  (register-phase populate patches; `recursiveDynamicZones` config, `maxDepth` default 10).
+- **Breaking:** the Vite helper is renamed `headlessContentManager()` → `breakoutKit()`,
+  matching the package name (update `src/admin/vite.config.ts`); the internal
+  original-module suffix changed from `?hcm-original` to `?bk-original`.
+
 ## 0.1.0 — 2026-09-17
 
 First public release (experimental). Tested against Strapi 5.50 – 5.53 (every minor
