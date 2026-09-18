@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 1337
+    },
+    {
+      "name": "playground",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "develop", "--workspace", "apps/playground"],
+      "port": 1337
+    }
+  ]
+}
