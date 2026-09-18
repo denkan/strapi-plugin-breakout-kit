@@ -235,6 +235,30 @@ describe('breakoutKit vite plugin', () => {
     }
   });
 
+  it('declaration files declare exactly the runtime exports (both .d.ts and .d.cts)', async () => {
+    // Regression: the 0.8.0 rename missed index.d.cts — the declaration TypeScript
+    // pairs with the CJS index.cjs under moduleResolution bundler/node16 — so
+    // consumers were still typed against headlessContentManager.
+    const { readFile } = await import('node:fs/promises');
+    const viteDir = path.dirname(require.resolve('strapi-plugin-breakout-kit/vite'));
+    const runtimeExports = Object.keys(require('strapi-plugin-breakout-kit/vite')).filter(
+      (name) => name !== 'default'
+    );
+    expect(runtimeExports).toContain('breakoutKit');
+
+    for (const declarationFile of ['index.d.ts', 'index.d.cts']) {
+      const source = await readFile(path.join(viteDir, declarationFile), 'utf8');
+      for (const name of runtimeExports) {
+        expect(source, `${declarationFile} must declare ${name}`).toContain(
+          `export declare function ${name}`
+        );
+      }
+      expect(source, `${declarationFile} must not keep pre-rename names`).not.toContain(
+        'headlessContentManager'
+      );
+    }
+  });
+
   it('keeps the esbuild resolver rules in optimizeDeps and pins the plugin entry', () => {
     const plugin = makePlugin();
     const config = plugin.config();
