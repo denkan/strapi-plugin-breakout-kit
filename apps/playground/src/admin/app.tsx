@@ -1,4 +1,11 @@
 import { Magic } from '@strapi/icons';
+// Runtime (not type-only) import of the admin entry FROM APP SOURCE: this is what
+// every real app's local plugin / admin customization does (useNotification & co.).
+// Regression fixture: the Vite helper must leave this bare specifier to Vite's own
+// resolver + dep optimizer — pinning it to an absolute path serves the whole admin
+// shell as raw source and breaks CJS deps (react-intl "does not provide an export
+// named 'useIntl'").
+import { useNotification } from '@strapi/admin/strapi-admin';
 import type { StrapiApp } from '@strapi/strapi/admin';
 import { setEditViewReplacement } from 'strapi-plugin-breakout-kit/strapi-admin';
 
@@ -15,6 +22,8 @@ export default {
     locales: [],
   },
   register(app: StrapiApp) {
+    // Keep the fixture import referenced (see header comment).
+    void useNotification;
     // Replace the stock CM edit view for categories only (clones excluded — <EditPage>
     // doesn't cover stock clone semantics); every other model keeps the stock view.
     // The __BK_PARITY_STOCK__ escape exists for the parity contract tests, which need

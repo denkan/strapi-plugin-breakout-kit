@@ -29,6 +29,18 @@
 const path = require('node:path');
 
 const RUNTIME_DIR = path.join(__dirname, 'runtime');
+/** This package's root — importer paths land here (not in node_modules) when the
+ * plugin is workspace-linked (e.g. the repo playground). */
+const PACKAGE_ROOT = path.join(__dirname, '..');
+
+/**
+ * True when a module path belongs to the dependency graph rather than app source:
+ * anything under a node_modules directory, plus this package itself when linked.
+ */
+const isDependencyModule = (importer) => {
+  const file = importer.split('?')[0];
+  return file.includes(`${path.sep}node_modules${path.sep}`) || file.startsWith(PACKAGE_ROOT);
+};
 
 const DEEP_ROOTS = ['@strapi/content-manager', '@strapi/admin'];
 
@@ -191,9 +203,17 @@ function breakoutKit() {
     resolveId(source, importer) {
       if (!cmRoot) resolveRoots(process.cwd());
 
-      // 0. Singleton entry pins (see entryAliases above).
+      // 0. Singleton entry pins (see entryAliases above) — but ONLY for importers
+      //    inside the dependency graph (node_modules, or this package when linked).
+      //    APP-SOURCE importers must fall through to Vite's own resolver: a local
+      //    plugin's `import { useNotification } from '@strapi/admin/strapi-admin'`
+      //    is project source, and returning an absolute path here bypasses the dep
+      //    optimizer, serving the entire admin shell as raw transformed modules —
+      //    where CJS deps break (react-intl: "does not provide an export named
+      //    'useIntl'"). Vite's optimizer already routes bare imports from source to
+      //    the pre-bundled instance, so identity is preserved without the pin.
       const pinned = entryAliases.get(source);
-      if (pinned) return pinned;
+      if (pinned && importer && isDependencyModule(importer)) return pinned;
 
       // 1. Deep specifiers past the exports map: @scope/name/dist/... -> <pkg root>/dist/...
       //    A trailing ?bk-original suffix resolves to the real file (used by the shims).
