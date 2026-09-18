@@ -506,7 +506,7 @@ export interface ApiArticleArticle extends Struct.CollectionTypeSchema {
     quotes: Schema.Attribute.Component<'shared.quote', true>;
     rating: Schema.Attribute.Float;
     sections: Schema.Attribute.DynamicZone<
-      ['shared.quote', 'shared.media-block', 'shared.link']
+      ['shared.quote', 'shared.media-block', 'shared.link', 'shared.wrapper']
     >;
     seo: Schema.Attribute.Component<'shared.seo', false>;
     slug: Schema.Attribute.UID<'title'>;

@@ -130,7 +130,7 @@
     },
     "sections": {
       "type": "dynamiczone",
-      "components": ["shared.quote", "shared.media-block", "shared.link"]
+      "components": ["shared.quote", "shared.media-block", "shared.link", "shared.wrapper"]
     }
   }
 }

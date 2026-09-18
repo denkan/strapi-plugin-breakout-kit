@@ -75,11 +75,13 @@
       "kind": "file",
       "path": "packages/core/content-manager/admin/src/hooks/useContentTypeSchema.ts",
       "distPath": "dist/admin/hooks/useContentTypeSchema.mjs",
-      "symbol": "useContentTypeSchema",
+      "symbol": "useContentTypeSchema, extractContentTypeComponents",
       "hash": "e75e8b58f0de9d9c73f1f8a570b9c74a0e341491d27e3c07a2ef549620826ed5",
       "usedBy": [
-        "packages/plugin/admin/src/access/internal.ts"
-      ]
+        "packages/plugin/admin/src/access/internal.ts",
+        "packages/plugin/vite/runtime/useContentTypeSchema.mjs"
+      ],
+      "note": "alias-REPLACED by the Vite helper with a cycle-safe mirror (vite/runtime/useContentTypeSchema.mjs): identical module except extractContentTypeComponents' walk carries a visited set so recursive dynamic zones terminate; on acyclic schemas output (membership and key order) must stay byte-identical to upstream"
     },
     {
       "id": "cm-use-lazy-components",
@@ -174,7 +176,7 @@
       "usedBy": [
         "packages/plugin/vite/runtime/DynamicZone/DynamicComponent.mjs"
       ],
-      "note": "VENDORED (imported by the vendored Field.mjs, upstream module no longer loaded): entry icon/label/actions slots; stock action buttons hoisted into named consts \u2014 mirror upstream markup/behavior exactly when no config is present"
+      "note": "VENDORED (imported by the vendored Field.mjs, upstream module no longer loaded): entry icon/label/actions slots; stock action buttons hoisted into named consts — mirror upstream markup/behavior exactly when no config is present"
     },
     {
       "id": "cm-repeatable-component",
@@ -276,6 +278,54 @@
         "packages/plugin/vite/index.cjs"
       ],
       "note": "the Vite helper assumes dist/admin/**/*.mjs mirrors admin/src/** 1:1"
+    },
+    {
+      "id": "cm-server-populate-utils",
+      "kind": "file",
+      "path": "packages/core/content-manager/server/src/services/utils/populate.ts",
+      "distPath": "dist/server/services/utils/populate.js",
+      "symbol": "getDeepPopulate, getPopulateForValidation, getDeepPopulateDraftCount",
+      "hash": "216374a5cadf268f99791b1fc7f81b15b28f03c7f24b7b409bfb3a7ce4766fb2",
+      "usedBy": [
+        "packages/plugin/server/src/access/recursive-populate.ts"
+      ],
+      "note": "exports replaced in place at plugin register with cycle-safe mirrors (recursive dynamic zone support); mirrors must track upstream semantics exactly for acyclic schemas"
+    },
+    {
+      "id": "cm-server-history-utils",
+      "kind": "file",
+      "path": "packages/core/content-manager/server/src/history/services/utils.ts",
+      "distPath": "dist/server/history/services/utils.js",
+      "symbol": "createServiceUtils (getDeepPopulate, getComponentFields)",
+      "hash": "9612c46cd0fd571ea8ee48afc80cd2f57aa93024eca9680b582327a2bf8b3b3b",
+      "usedBy": [
+        "packages/plugin/server/src/access/recursive-populate.ts"
+      ],
+      "note": "createServiceUtils wrapped at plugin register so the returned object carries a cycle-safe getDeepPopulate mirror (EE content-history only path)"
+    },
+    {
+      "id": "core-document-service-populate",
+      "kind": "file",
+      "path": "packages/core/core/src/services/document-service/utils/populate.ts",
+      "distPath": "dist/services/document-service/utils/populate.js",
+      "symbol": "getDeepPopulate",
+      "hash": "bb06931c5c9ef62c54a6da27cff1d0af4681704b46ac2e2d1bd0525cc4e3b79c",
+      "usedBy": [
+        "packages/plugin/server/src/access/recursive-populate.ts"
+      ],
+      "note": "export replaced in place at plugin register with a cycle-safe mirror (publish/discard/webhook payload populate)"
+    },
+    {
+      "id": "i18n-content-types-service",
+      "kind": "file",
+      "path": "packages/plugins/i18n/server/src/services/content-types.ts",
+      "distPath": "dist/server/services/content-types.js",
+      "symbol": "getNestedPopulateOfNonLocalizedAttributes",
+      "hash": "1a2d0c2708ea55f633946392461593e13c92d55aa0b409aa0b85ea7c601fc893",
+      "usedBy": [
+        "packages/plugin/server/src/access/recursive-populate.ts"
+      ],
+      "note": "method replaced on the cached i18n content-types service instance at plugin register with a cycle-safe mirror (locale sync populate on save)"
     }
   ]
 }

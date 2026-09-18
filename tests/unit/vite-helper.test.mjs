@@ -194,8 +194,25 @@ describe('headlessContentManager vite plugin', () => {
   it('leaves unrelated relative imports alone', () => {
     const plugin = makePlugin();
     const importer = path.join(cmRoot, 'dist/admin/hooks/useDocumentContext.mjs');
-    expect(plugin.resolveId('./useContentTypeSchema.mjs', importer)).toBeNull();
+    expect(plugin.resolveId('./useDebounce.mjs', importer)).toBeNull();
     expect(plugin.resolveId('react', importer)).toBeNull();
+  });
+
+  it('redirects useContentTypeSchema (deep and relative) to the cycle-safe shim', () => {
+    const plugin = makePlugin();
+    const shim = /vite[\\/]runtime[\\/]useContentTypeSchema\.mjs$/;
+    expect(
+      plugin.resolveId('@strapi/content-manager/dist/admin/hooks/useContentTypeSchema.mjs', undefined)
+    ).toMatch(shim);
+    const importer = path.join(cmRoot, 'dist/admin/pages/ComponentConfigurationPage.mjs');
+    expect(plugin.resolveId('../hooks/useContentTypeSchema.mjs', importer)).toMatch(shim);
+    // The shim itself reaches the original through the ?hcm-original suffix.
+    expect(
+      plugin.resolveId(
+        '@strapi/content-manager/dist/admin/hooks/useContentTypeSchema.mjs?hcm-original',
+        undefined
+      )
+    ).toBe(path.join(cmRoot, 'dist/admin/hooks/useContentTypeSchema.mjs'));
   });
 
   it('keeps the esbuild resolver rules in optimizeDeps and pins the plugin entry', () => {
