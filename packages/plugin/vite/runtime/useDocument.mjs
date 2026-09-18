@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useForm, useQueryParams } from '@strapi/admin/strapi-admin';
 import { useParams } from 'react-router-dom';
 import { buildValidParams } from '@strapi/content-manager/strapi-admin';
-import { useDocument } from '@strapi/content-manager/dist/admin/hooks/useDocument.mjs?hcm-original';
+import { useDocument } from '@strapi/content-manager/dist/admin/hooks/useDocument.mjs?bk-original';
 import { useDocumentLayout } from '@strapi/content-manager/dist/admin/hooks/useDocumentLayout.mjs';
 import { useContentTypeSchema } from '@strapi/content-manager/dist/admin/hooks/useContentTypeSchema.mjs';
 import { SINGLE_TYPES } from '@strapi/content-manager/dist/admin/constants/collections.mjs';
@@ -10,7 +10,7 @@ import { getHeadlessDocumentContext } from './headless-document-context.mjs';
 
 /**
  * Wrapper for @strapi/content-manager's hooks/useDocument.mjs (drift entry
- * cm-use-document), installed by the headlessContentManager() Vite plugin.
+ * cm-use-document), installed by the breakoutKit() Vite plugin.
  * `useDocument` is re-exported untouched. `useDoc` (the internal URL adapter, consumed
  * directly by route-coupled internals like the relation modal's RootRelationRenderer)
  * gains one extra source: when the CM route params are absent but a headless

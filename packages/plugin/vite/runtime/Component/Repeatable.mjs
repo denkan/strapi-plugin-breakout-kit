@@ -1,7 +1,7 @@
 /**
  * VENDORED from @strapi/content-manager dist/admin/pages/EditView/components/FormInputs/
  * Component/Repeatable.mjs at the drift-manifest version, installed by the
- * headlessContentManager() Vite plugin via a redirect (like DynamicZone/Field.mjs).
+ * breakoutKit() Vite plugin via a redirect (like DynamicZone/Field.mjs).
  * Deviations are marked `// [breakout-kit]`: the entry-customization seams for
  * repeatable components (issue #10) — entryIcon/entryLabel/entryActions sugars,
  * renderEntry, renderAddButton — reading the `repeatable` slot of the bridge context.

@@ -1,6 +1,6 @@
 /**
  * WRAPPER for @strapi/content-manager dist/admin/pages/EditView/EditViewPage.mjs,
- * installed by the headlessContentManager() Vite plugin via a redirect (like the
+ * installed by the breakoutKit() Vite plugin via a redirect (like the
  * useDocument shim — thin wrapper, not a vendored body). `EditViewPage` and
  * `getDocumentStatus` are re-exported untouched; `ProtectedEditViewPage` (the
  * component every CM edit route mounts: :collectionType/:slug[/:id|/clone/:origin])
@@ -19,7 +19,7 @@ import {
   EditViewPage,
   ProtectedEditViewPage as OriginalProtectedEditViewPage,
   getDocumentStatus,
-} from '@strapi/content-manager/dist/admin/pages/EditView/EditViewPage.mjs?hcm-original';
+} from '@strapi/content-manager/dist/admin/pages/EditView/EditViewPage.mjs?bk-original';
 import { getEditViewReplacementRegistry } from './edit-view-replacement-registry.mjs';
 
 const ProtectedEditViewPage = () => {

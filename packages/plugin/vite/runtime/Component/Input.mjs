@@ -1,7 +1,7 @@
 /**
  * VENDORED from @strapi/content-manager dist/admin/pages/EditView/components/FormInputs/
  * Component/Input.mjs at the drift-manifest version, installed by the
- * headlessContentManager() Vite plugin via a redirect. Deviations are marked
+ * breakoutKit() Vite plugin via a redirect. Deviations are marked
  * `// [breakout-kit]`: the renderBox seam for SINGLE (non-repeatable) components —
  * one state-aware slot covering both the null-state initializer box and the
  * value-state fields box. Imports NonRepeatable from the sibling vendored copy (its

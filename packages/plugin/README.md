@@ -52,10 +52,10 @@ export default {
 
 ```ts
 import { mergeConfig, type UserConfig } from 'vite';
-import { headlessContentManager } from 'strapi-plugin-breakout-kit/vite';
+import { breakoutKit } from 'strapi-plugin-breakout-kit/vite';
 
 export default (config: UserConfig) =>
-  mergeConfig(config, { plugins: [headlessContentManager()] });
+  mergeConfig(config, { plugins: [breakoutKit()] });
 ```
 
 The helper resolves the plugin's imports into Strapi's per-module content-manager build and

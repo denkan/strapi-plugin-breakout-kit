@@ -4,7 +4,7 @@ import { useGetInitialDataQuery } from '@strapi/content-manager/dist/admin/servi
 
 /**
  * Drop-in replacement for @strapi/content-manager's hooks/useContentTypeSchema.mjs
- * (v5.54.0), installed by the headlessContentManager() Vite plugin.
+ * (v5.54.0), installed by the breakoutKit() Vite plugin.
  *
  * Source contract (drift-tracked, `cm-use-content-type-schema`): identical module —
  * same exports, same WeakMap/Map schema-info caching, same hook order and results —

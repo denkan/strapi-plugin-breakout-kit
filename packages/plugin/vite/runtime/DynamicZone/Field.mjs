@@ -1,6 +1,6 @@
 /**
  * VENDORED from @strapi/content-manager dist/admin/pages/EditView/components/FormInputs/
- * DynamicZone/Field.mjs at the drift-manifest version. The headlessContentManager() Vite
+ * DynamicZone/Field.mjs at the drift-manifest version. The breakoutKit() Vite
  * plugin redirects the original module here (like the useDocumentContext shim), so BOTH
  * the stock content manager and headless pages render this implementation. Deviations
  * are marked `// [breakout-kit]`: the renderEntry seam (issue #4) and the renderAddButton
