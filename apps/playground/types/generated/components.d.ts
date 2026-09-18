@@ -54,6 +54,22 @@ export interface SharedSeo extends Struct.ComponentSchema {
   };
 }
 
+export interface SharedWrapper extends Struct.ComponentSchema {
+  collectionName: 'components_shared_wrappers';
+  info: {
+    description: 'A wrapper with nested dynamic zone';
+    displayName: 'Wrapper';
+    icon: 'blocks';
+  };
+  attributes: {
+    backgroundColor: Schema.Attribute.String;
+    content: Schema.Attribute.DynamicZone<
+      ['shared.link', 'shared.media-block', 'shared.quote', 'shared.wrapper']
+    >;
+    textColor: Schema.Attribute.String;
+  };
+}
+
 declare module '@strapi/strapi' {
   export namespace Public {
     export interface ComponentSchemas {
@@ -61,6 +77,7 @@ declare module '@strapi/strapi' {
       'shared.media-block': SharedMediaBlock;
       'shared.quote': SharedQuote;
       'shared.seo': SharedSeo;
+      'shared.wrapper': SharedWrapper;
     }
   }
 }

@@ -1,0 +1,21 @@
+{
+  "collectionName": "components_shared_wrappers",
+  "info": {
+    "displayName": "Wrapper",
+    "icon": "blocks",
+    "description": "A wrapper with nested dynamic zone"
+  },
+  "options": {},
+  "attributes": {
+    "backgroundColor": {
+      "type": "string"
+    },
+    "textColor": {
+      "type": "string"
+    },
+    "content": {
+      "type": "dynamiczone",
+      "components": ["shared.link", "shared.media-block", "shared.quote", "shared.wrapper"]
+    }
+  }
+}

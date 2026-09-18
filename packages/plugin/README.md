@@ -29,6 +29,10 @@ can't reuse it. This plugin unlocks the same components and behavior as props:
   pixel-level visual parity (asserted by the test suite at &lt;0.5% pixel difference).
 - **Override without forking.** Every derived value takes a replacement or a transform
   function; every component has render seams.
+- **Recursive dynamic zones.** A component's dynamic zone may include the component
+  itself — stock Strapi crashes on such schemas; with the plugin installed they render,
+  save, publish and version like any other content
+  ([docs](../../docs/usage/recursive-dynamic-zones.md)).
 
 ## Installation
 
