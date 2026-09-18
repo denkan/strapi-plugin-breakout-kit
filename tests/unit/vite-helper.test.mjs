@@ -215,6 +215,26 @@ describe('breakoutKit vite plugin', () => {
     ).toBe(path.join(cmRoot, 'dist/admin/hooks/useContentTypeSchema.mjs'));
   });
 
+  it('applies singleton entry pins only for dependency-graph importers', () => {
+    const plugin = makePlugin();
+    const adminRoot = path.dirname(require.resolve('@strapi/admin/package.json'));
+    const nodeModulesImporter = path.join(adminRoot, 'dist/admin/index.mjs');
+    const pluginImporter = require.resolve('strapi-plugin-breakout-kit/vite');
+    const appSourceImporter = path.join(process.cwd(), 'apps/playground/src/admin/app.tsx');
+
+    for (const source of ['@strapi/admin/strapi-admin', 'react-intl']) {
+      // Importers inside the dependency graph get the pinned singleton…
+      expect(plugin.resolveId(source, nodeModulesImporter)).toEqual(expect.any(String));
+      // …including this package itself when workspace-linked (no node_modules in path).
+      expect(plugin.resolveId(source, pluginImporter)).toEqual(expect.any(String));
+      // APP-SOURCE importers must fall through to Vite's resolver + dep optimizer:
+      // pinning here serves the whole admin shell as raw modules and breaks CJS deps
+      // (react-intl "does not provide an export named 'useIntl'").
+      expect(plugin.resolveId(source, appSourceImporter)).toBeNull();
+      expect(plugin.resolveId(source, undefined)).toBeNull();
+    }
+  });
+
   it('keeps the esbuild resolver rules in optimizeDeps and pins the plugin entry', () => {
     const plugin = makePlugin();
     const config = plugin.config();
