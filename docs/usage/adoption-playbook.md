@@ -221,7 +221,7 @@ stock view of an UNRELATED content type is unchanged. Commit per recipe. Do not 
 | Symptom | Cause | Fix |
 |---|---|---|
 | Admin build fails resolving `@strapi/content-manager/dist/...` | Vite helper missing | Phase 1 step 3 |
-| Blank admin, console error `Cannot set properties of undefined (setting 'comment')` | Project admin code imports `@strapi/content-manager/...` directly | Remove that import; use `strapi-plugin-breakout-kit/strapi-admin` |
+| Blank admin or crash on load; console shows ONE of: `Cannot set properties of undefined (setting 'comment')`, react-intl `does not provide an export named 'useIntl'`, prism `Cannot convert undefined or null to object` (e.g. in `prism-tsx.js`), `useRBAC must be used within Auth` — and/or raw `/node_modules/...` module URLs in the Network tab | Project admin app-source (incl. local plugins) imports `@strapi/content-manager/...` or `@strapi/admin/dist/...` directly — the graph escapes the Vite prebundle and module singletons split (plugin >= 0.8.3 prints a `[breakout-kit]` warning naming the offending file) | `grep -rn "content-manager/dist\|admin/dist" src/`; remove those imports; use `strapi-plugin-breakout-kit/strapi-admin` |
 | `useRBAC must be used within Auth` (or similar context error) | Duplicate `@strapi/admin` copies in node_modules | Delete node_modules + lockfile drift for @strapi/*, reinstall so all @strapi/* versions match `@strapi/strapi`'s |
 | `Could not find collectionType in url params` | Plugin < 0.6.1, or a CM hook used OUTSIDE a `<DocumentProvider>`/`<EditPage>` on a custom page | Upgrade plugin; ensure the hook call is inside the provider |
 | Code changes don't show up in the admin | Stale Vite prebundle cache | Phase 2 cache-clear step |
