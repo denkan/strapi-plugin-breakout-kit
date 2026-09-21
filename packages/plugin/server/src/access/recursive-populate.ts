@@ -722,11 +722,29 @@ export const installRecursiveDynamicZonePatches = ({ strapi }: { strapi: Core.St
   const policy: CyclePolicy = { maxDepth: Math.max(2, config.maxDepth ?? 10) };
 
   // Resolve the exact module instances the running app loaded: anchor on the app
-  // root, then on the content-manager server entry (its closure also gives us the
-  // same @strapi/utils instance the originals use).
+  // root, then on @strapi/strapi's closure — the loader that actually required the
+  // content-manager and core at runtime. Resolving from the app root directly only
+  // works under npm's flat hoisting; pnpm's strict layout makes @strapi/core (and,
+  // unless explicitly depended on, @strapi/content-manager) unresolvable from the
+  // app, while @strapi/strapi's own closure always reaches the loaded instances.
+  // The app-root fallback keeps exotic layouts (vendored @strapi/strapi) working.
   const appRequire = createRequire(path.join(strapi.dirs.app.root, 'package.json'));
+  const strapiRequire = (() => {
+    try {
+      return createRequire(appRequire.resolve('@strapi/strapi/package.json'));
+    } catch {
+      return appRequire;
+    }
+  })();
+  const resolveFromStrapi = (specifier: string): string => {
+    try {
+      return strapiRequire.resolve(specifier);
+    } catch {
+      return appRequire.resolve(specifier);
+    }
+  };
 
-  const cmServerEntry = appRequire.resolve('@strapi/content-manager/strapi-server');
+  const cmServerEntry = resolveFromStrapi('@strapi/content-manager/strapi-server');
   const cmServerDir = path.dirname(cmServerEntry); // .../dist/server
   const cmRequire = createRequire(cmServerEntry);
   const strapiUtils = cmRequire('@strapi/utils');
@@ -761,8 +779,8 @@ export const installRecursiveDynamicZonePatches = ({ strapi }: { strapi: Core.St
   }
 
   // 3. @strapi/core document-service populate (publish, discard, webhook payloads).
-  const corePkg = appRequire.resolve('@strapi/core/package.json');
-  const corePopulate = appRequire(
+  const corePkg = resolveFromStrapi('@strapi/core/package.json');
+  const corePopulate = strapiRequire(
     path.join(path.dirname(corePkg), 'dist', 'services', 'document-service', 'utils', 'populate.js')
   );
   replaceExports(
