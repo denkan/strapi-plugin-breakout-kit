@@ -187,11 +187,22 @@ export const EditForm = ({
   });
 
   // renderBody seam: sees every rendered panel at once (accordion grouping, tabs, …).
-  // DefaultBody = the stock vertical stack; `undefined` keeps stock.
-  const DefaultBody = () => (
-    <Flex direction="column" alignItems="stretch" gap={6}>
-      {panels.map((panel) => panel.node)}
-    </Flex>
+  // DefaultBody = the stock vertical stack; `undefined` keeps stock. Its component
+  // identity must survive re-renders (fresh panels flow through a ref) — a new type per
+  // render would make React remount the whole body on every EditForm re-render, wiping
+  // consumer state (accordion expansion, focus) and re-firing mount-time fetches.
+  const panelsRef = React.useRef<PanelInfo[]>(panels);
+  panelsRef.current = panels;
+  const DefaultBody = React.useMemo(
+    () =>
+      function DefaultBody() {
+        return (
+          <Flex direction="column" alignItems="stretch" gap={6}>
+            {panelsRef.current.map((panel) => panel.node)}
+          </Flex>
+        );
+      },
+    []
   );
   const bodyOverride = renderBody?.(panels, DefaultBody);
   const body = bodyOverride === undefined ? <DefaultBody /> : <>{bodyOverride}</>;

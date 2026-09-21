@@ -30,8 +30,9 @@ import { useComponent, ComponentProvider } from '@strapi/content-manager/dist/ad
 import { Initializer } from '@strapi/content-manager/dist/admin/pages/EditView/components/FormInputs/Component/Initializer.mjs';
 // [breakout-kit]
 import { getEntryCustomizationContext } from '../entry-customization-context.mjs';
+import { useStableNodeComponent, useStableEntrySlots } from '../stable-seam.mjs';
 
-const RepeatableComponent = ({ attribute, disabled, name, mainField, children, layout })=>{
+const RepeatableComponent =({ attribute, disabled, name, mainField, children, layout })=>{
     const { toggleNotification } = useNotification();
     const { formatMessage } = useIntl();
     const { search: searchString } = useLocation();
@@ -56,6 +57,14 @@ const RepeatableComponent = ({ attribute, disabled, name, mainField, children, l
     const value = React.useMemo(()=>Array.isArray(rawValue) ? rawValue : [], [
         rawValue
     ]);
+    // [breakout-kit] render-stable seam identities: this component re-renders on every
+    // change anywhere inside the repeatable (useField subscribes to the whole array),
+    // so the Default components handed to the seams must NOT be new types per render.
+    // One node component covers both add affordances (empty-state initializer / footer
+    // button) — they are mutually exclusive states of the same seam.
+    const [stockAddButtonRef, DefaultAddButton] = useStableNodeComponent();
+    const entrySlots = useStableEntrySlots();
+    entrySlots.prune(value.map((componentValue)=>componentValue.__temp_key__));
     const [collapseToOpen, setCollapseToOpen] = React.useState('');
     const [liveText, setLiveText] = React.useState('');
     React.useEffect(()=>{
@@ -244,7 +253,8 @@ const RepeatableComponent = ({ attribute, disabled, name, mainField, children, l
             onClick: handleClick
         });
         if (rConfig.renderAddButton) {
-            const override = rConfig.renderAddButton(addCtx, ()=>stockInitializer);
+            stockAddButtonRef.current = stockInitializer;
+            const override = rConfig.renderAddButton(addCtx, DefaultAddButton);
             if (override !== undefined) {
                 return override;
             }
@@ -316,10 +326,7 @@ const RepeatableComponent = ({ attribute, disabled, name, mainField, children, l
                                     children: children
                                 })
                             };
-                            const DefaultEntry = (overrides)=>/*#__PURE__*/ jsx(MemoizedComponent, {
-                                    ...stockProps,
-                                    ...overrides
-                                });
+                            const DefaultEntry = entrySlots.get(key, MemoizedComponent, stockProps);
                             rendered = rConfig.renderEntry(entry, DefaultEntry);
                         } else {
                             rendered = /*#__PURE__*/ jsx(MemoizedComponent, stockProps);
@@ -347,7 +354,8 @@ const RepeatableComponent = ({ attribute, disabled, name, mainField, children, l
                         if (!rConfig.renderAddButton) {
                             return stockAddButton;
                         }
-                        const override = rConfig.renderAddButton(addCtx, ()=>stockAddButton);
+                        stockAddButtonRef.current = stockAddButton;
+                        const override = rConfig.renderAddButton(addCtx, DefaultAddButton);
                         return override === undefined ? stockAddButton : override;
                     })()
                 ]

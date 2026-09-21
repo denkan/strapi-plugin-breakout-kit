@@ -83,9 +83,19 @@ const customConfig: SingleComponentCustomization = {
   },
 };
 
+/** DefaultBox passthrough: stock box (both states) inside consumer chrome. */
+const wrappedConfig: SingleComponentCustomization = {
+  renderBox: (_box, DefaultBox) => (
+    <Box data-testid="sc-wrapped-box">
+      <DefaultBox />
+    </Box>
+  ),
+};
+
 const MODES = [
   { value: 'stock', label: 'Stock (no config)' },
   { value: 'custom', label: 'renderBox: custom initializer + custom box' },
+  { value: 'wrapped', label: 'renderBox: <DefaultBox /> inside consumer chrome' },
 ] as const;
 
 type Mode = (typeof MODES)[number]['value'];
@@ -93,6 +103,7 @@ type Mode = (typeof MODES)[number]['value'];
 const CONFIGS: Record<Mode, SingleComponentCustomization | undefined> = {
   stock: undefined,
   custom: customConfig,
+  wrapped: wrappedConfig,
 };
 
 const SingleComponentDemo = () => {

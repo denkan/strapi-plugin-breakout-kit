@@ -36,12 +36,20 @@ from the fetched default:
 ```tsx
 const { document, schema, isLoading, status } = useDocument();
 const { layout } = useEditLayout();
-const { values, modified, setValue } = useEditForm();
+const { values, getValues, modified, setValue } = useEditForm();
 const field = useEditField('title');            // { value, onChange, error }
 const { save, publish, delete: del } = useDocumentOperations(); // promises, no navigation
 const { canUpdate, canPublish } = usePermissions();
 const { isEnabled, locales } = useLocales();
 ```
+
+**Re-render cost of `values`:** `useEditForm().values` subscribes to the whole form —
+the calling component re-renders on every keystroke anywhere in the form. That's fine
+for a live preview, but for event-time reads (submit, debounced sync) use the stable
+`getValues()` instead, and for one field use `useEditField(name)`. Rendering
+`<EditForm>`/`<EditPage>` below a `values`-subscribed component is safe — the plugin's
+`Default*` seam components keep stable identities and the stock inputs are memoized, so
+those re-renders don't remount anything — but it still costs a re-render per keystroke.
 
 STOCK Strapi hooks also work inside a `<DocumentProvider>` on custom pages — including
 route-coupled ones: `unstable_useContentManagerContext` (from `@strapi/strapi/admin`)

@@ -27,10 +27,15 @@ import { RepeatableComponent as MemoizedRepeatableComponent } from '@strapi/cont
 import { NonRepeatableComponent as MemoizedNonRepeatableComponent, NonRepeatableComponentFields } from './NonRepeatable.mjs';
 // [breakout-kit]
 import { getEntryCustomizationContext } from '../entry-customization-context.mjs';
+import { useStableNodeComponent } from '../stable-seam.mjs';
 
 const ComponentInput = ({ label, required, name, attribute, disabled, labelAction, ...props })=>{
     const { formatMessage } = useIntl();
     const field = useField(name);
+    // [breakout-kit] render-stable DefaultBox identity: this component re-renders on
+    // every change inside the component (useField), so a per-render type here would
+    // remount the consumer's `<DefaultBox />` subtree on each keystroke.
+    const [stockBoxRef, DefaultBox] = useStableNodeComponent();
     // [breakout-kit] renderBox seam (single components only); null config = stock
     const scConfig = React.useContext(getEntryCustomizationContext())?.singleComponent ?? {};
     const showResetComponent = !attribute.repeatable && field.value !== undefined && field.value !== null && !disabled;
@@ -87,7 +92,7 @@ const ComponentInput = ({ label, required, name, attribute, disabled, labelActio
             name: name,
             onClick: handleInitialisationClick
         });
-        const DefaultBox = ()=>stockCurrent;
+        stockBoxRef.current = stockCurrent;
         boxOverride = scConfig.renderBox(box, DefaultBox);
     }
     return /*#__PURE__*/ jsxs(Field.Root, {

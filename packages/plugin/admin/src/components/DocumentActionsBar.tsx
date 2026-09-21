@@ -1,10 +1,10 @@
 import * as React from 'react';
 import { useIntl } from 'react-intl';
 
-import { DocumentActions } from '../access';
+import { DocumentActions, useForm } from '../access';
 import { useHeadlessData } from '../data/context';
 import { useDocumentOperations } from '../data/operations';
-import { useEditForm, usePermissions } from '../data/hooks';
+import { usePermissions } from '../data/hooks';
 
 export type ActionType = 'save' | 'publish' | 'unpublish' | 'discard' | 'delete' | 'clone';
 
@@ -43,7 +43,10 @@ export interface DocumentActionsBarProps {
 export const DocumentActionsBar = ({ include, exclude, renderAction }: DocumentActionsBarProps) => {
   const { hasDraftAndPublish, status, isCreating } = useHeadlessData('DocumentActionsBar');
   const ops = useDocumentOperations();
-  const { modified, isSubmitting } = useEditForm();
+  // Narrow selectors, NOT useEditForm(): that hook subscribes to the whole values
+  // object, which would re-render this bar on every keystroke in the form.
+  const modified = useForm('DocumentActionsBar', (state) => state.modified as boolean);
+  const isSubmitting = useForm('DocumentActionsBar', (state) => state.isSubmitting as boolean);
   const rbac = usePermissions() as {
     canPublish?: boolean;
     canUpdate?: boolean;

@@ -11,7 +11,12 @@ import {
 } from '@strapi/design-system';
 
 import { useFetchClient } from '@strapi/strapi/admin';
-import { EditPage } from 'strapi-plugin-breakout-kit/strapi-admin';
+import {
+  DocumentProvider,
+  EditForm,
+  EditPage,
+  useEditForm,
+} from 'strapi-plugin-breakout-kit/strapi-admin';
 import type { PanelInfo, RenderBody } from 'strapi-plugin-breakout-kit/strapi-admin';
 
 /**
@@ -71,15 +76,35 @@ const tabsBody: RenderBody = (panels) => (
   </Box>
 );
 
+/**
+ * Dogfood replica of a consumer "controller": subscribes to the whole form values
+ * (useEditForm().values) so it RE-RENDERS ON EVERY KEYSTROKE, and renders the
+ * stock-body <EditForm> beneath it. The plugin must keep every rendered piece
+ * mounted across those re-renders (stable DefaultBody identity + memoized inputs) —
+ * a remount here loses input focus and re-fires mount-time fetches.
+ */
+const ValuesController = () => {
+  const { values } = useEditForm();
+  return (
+    <Flex direction="column" alignItems="stretch" gap={4}>
+      <Typography data-testid="controller-values-size">
+        {`values:${JSON.stringify(values ?? {}).length}`}
+      </Typography>
+      <EditForm />
+    </Flex>
+  );
+};
+
 const MODES = [
   { value: 'stock', label: 'Stock (no config)' },
   { value: 'accordion', label: 'renderBody: General accordion + zones below' },
   { value: 'tabs', label: 'renderBody: one tab per panel' },
+  { value: 'controller', label: 'controller: values-subscribed wrapper + stock EditForm' },
 ] as const;
 
 type Mode = (typeof MODES)[number]['value'];
 
-const CONFIGS: Record<Mode, RenderBody | undefined> = {
+const CONFIGS: Record<Exclude<Mode, 'controller'>, RenderBody | undefined> = {
   stock: undefined,
   accordion: accordionBody,
   tabs: tabsBody,
@@ -130,13 +155,24 @@ const LayoutDemo = () => {
           </Box>
         </Flex>
         <Box data-testid="layout-demo-root">
-          <EditPage
-            key={mode}
-            model="api::article.article"
-            documentId={articleId}
-            locale="en"
-            form={{ renderBody: CONFIGS[mode] }}
-          />
+          {mode === 'controller' ? (
+            <DocumentProvider
+              key={mode}
+              model="api::article.article"
+              documentId={articleId}
+              locale="en"
+            >
+              <ValuesController />
+            </DocumentProvider>
+          ) : (
+            <EditPage
+              key={mode}
+              model="api::article.article"
+              documentId={articleId}
+              locale="en"
+              form={{ renderBody: CONFIGS[mode] }}
+            />
+          )}
         </Box>
       </Box>
     </Main>
