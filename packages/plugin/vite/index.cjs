@@ -44,6 +44,26 @@ const isDependencyModule = (importer) => {
 
 const DEEP_ROOTS = ['@strapi/content-manager', '@strapi/admin'];
 
+/** One warning per offending file — the graph re-resolves constantly in dev. */
+const warnedDeepImporters = new Set();
+const warnAppSourceDeepImport = (importer, source) => {
+  const file = importer.split('?')[0];
+  if (warnedDeepImporters.has(file)) return;
+  warnedDeepImporters.add(file);
+  // eslint-disable-next-line no-console
+  console.warn(
+    `\n[breakout-kit] ${file}\n` +
+      `  deep-imports "${source}" from APP SOURCE. Deep @strapi/content-manager / ` +
+      `@strapi/admin dist imports cannot join the admin's pre-bundled dependency graph ` +
+      `when they come from app source — the graph is served raw and module singletons ` +
+      `split, crashing the admin with misleading downstream errors (react-intl ` +
+      `"does not provide an export named 'useIntl'", prism-tsx "Cannot convert ` +
+      `undefined or null to object", "Cannot set properties of undefined (setting 'comment')", ` +
+      `"useRBAC must be used within Auth").\n` +
+      `  Fix: import what you need from "strapi-plugin-breakout-kit/strapi-admin" instead.\n`
+  );
+};
+
 const packageRoot = (name, from) =>
   path.dirname(
     require.resolve(`${name}/package.json`, from ? { paths: [from] } : undefined)
@@ -219,6 +239,17 @@ function breakoutKit() {
       //    A trailing ?bk-original suffix resolves to the real file (used by the shims).
       for (const root of DEEP_ROOTS) {
         if (source.startsWith(`${root}/dist/`)) {
+          // Deep dist imports are only safe from inside the dependency graph, where the
+          // dep optimizer bundles them into the same chunks as the stock admin. From APP
+          // SOURCE they are served raw and drag the whole CM/admin graph out of the
+          // prebundle — module singletons split and the admin dies somewhere downstream
+          // with a cryptic error (react-intl "does not provide an export named 'useIntl'",
+          // prism-tsx "Cannot convert undefined or null to object", "setting 'comment'",
+          // "useRBAC must be used within Auth"). Resolve it anyway (don't break builds),
+          // but say what is actually wrong and where.
+          if (importer && !isDependencyModule(importer)) {
+            warnAppSourceDeepImport(importer, source);
+          }
           const isOriginal = source.endsWith(ORIGINAL_SUFFIX);
           const spec = isOriginal ? source.slice(0, -ORIGINAL_SUFFIX.length) : source;
           const rootDir = root === '@strapi/content-manager' ? cmRoot : adminRoot;
