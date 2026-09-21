@@ -267,4 +267,30 @@ describe('breakoutKit vite plugin', () => {
     );
     expect(config.optimizeDeps.esbuildOptions.plugins).toHaveLength(1);
   });
+
+  it('warns on a consumer optimizeDeps.entries override and stays quiet otherwise', () => {
+    // A user-set `entries` REPLACES Vite's default scan (Strapi sets none) and is a
+    // reproduced cause of the raw-served-graph prism crashes in `strapi develop`.
+    // The helper cannot repair it (appending the generated admin entry does not
+    // restore the scan), so it must warn — and never emit entries of its own.
+    const plugin = makePlugin();
+    const warnings = [];
+    const originalWarn = console.warn;
+    console.warn = (msg) => warnings.push(String(msg));
+    try {
+      const config = plugin.config({
+        optimizeDeps: { entries: ['src/plugins/**/client/**/*.tsx'] },
+      });
+      expect(config.optimizeDeps).not.toHaveProperty('entries');
+      expect(warnings.join('\n')).toContain('optimizeDeps.entries');
+
+      warnings.length = 0;
+      for (const userConfig of [undefined, {}, { optimizeDeps: {} }]) {
+        expect(plugin.config(userConfig).optimizeDeps).not.toHaveProperty('entries');
+      }
+      expect(warnings).toEqual([]);
+    } finally {
+      console.warn = originalWarn;
+    }
+  });
 });
