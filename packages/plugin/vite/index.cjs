@@ -46,6 +46,54 @@ const DEEP_ROOTS = ['@strapi/content-manager', '@strapi/admin'];
 
 /** One warning per offending file — the graph re-resolves constantly in dev. */
 const warnedDeepImporters = new Set();
+
+/**
+ * Tripwires for the dev server serving the CM/admin graph RAW. Pre-bundled code never
+ * reaches the rollup resolveId hook (relative imports inside a prebundled dep are
+ * resolved by esbuild at optimize time), so seeing (a) an importer that lives inside
+ * the @strapi/content-manager or @strapi/admin dist tree, or (b) a prismjs specifier,
+ * in resolveId during `vite serve` PROVES the graph escaped the pre-bundle — the
+ * downstream crash is misleading (prism "Cannot convert undefined or null to object",
+ * react-intl "does not provide an export named 'useIntl'", "setting 'comment'",
+ * "useRBAC must be used within Auth"), so name the entry point here instead.
+ */
+let warnedRawGraph = false;
+const warnRawGraphTraversal = (importer, source, cmRoot, adminRoot) => {
+  if (warnedRawGraph) return;
+  warnedRawGraph = true;
+  const file = importer.split('?')[0];
+  const which = cmRoot && file.startsWith(cmRoot) ? '@strapi/content-manager' : '@strapi/admin';
+  // eslint-disable-next-line no-console
+  console.warn(
+    `\n[breakout-kit] RAW GRAPH: the ${which} module graph is being served by the Vite ` +
+      `dev server OUTSIDE the dependency pre-bundle.\n` +
+      `  First seen: ${file}\n` +
+      `  importing:  "${source}"\n` +
+      `  Pre-bundled code never reaches the dev resolver, so something pulled this graph ` +
+      `out of the pre-bundle. Module singletons split and the admin crashes downstream ` +
+      `with a misleading error (prism "Cannot convert undefined or null to object", ` +
+      `react-intl "does not provide an export named 'useIntl'", "setting 'comment'", ` +
+      `"useRBAC must be used within Auth").\n` +
+      `  Common causes: an \`optimizeDeps.entries\` override in src/admin/vite.config.ts ` +
+      `replacing Vite's default scan; a dependency listed in \`optimizeDeps.exclude\` that ` +
+      `imports @strapi internals; app source deep-importing dist paths.\n`
+  );
+};
+let warnedRawPrism = false;
+const warnRawPrism = (importer, source) => {
+  if (warnedRawPrism) return;
+  warnedRawPrism = true;
+  const file = importer ? importer.split('?')[0] : '(unknown importer)';
+  // eslint-disable-next-line no-console
+  console.warn(
+    `\n[breakout-kit] RAW PRISM: "${source}" is being resolved by the Vite dev server, ` +
+      `so it will be served raw, outside the pre-bundle.\n` +
+      `  Importer: ${file}\n` +
+      `  A raw prismjs copy lacks the languages registered on the pre-bundled copy — ` +
+      `expect "Cannot convert undefined or null to object" in prism-*.js. The importer ` +
+      `named above is itself being served raw; fix why IT escaped the pre-bundle.\n`
+  );
+};
 const warnAppSourceDeepImport = (importer, source) => {
   const file = importer.split('?')[0];
   if (warnedDeepImporters.has(file)) return;
@@ -85,6 +133,8 @@ const resolveExportFile = (pkgRoot, subpath) => {
 
 function breakoutKit() {
   /** @type {string | undefined} */ let cmRoot;
+  /** True during `vite serve` — the raw-graph tripwires only apply to the dev server. */
+  let devServe = false;
   /** @type {string | undefined} */ let adminRoot;
   /** Map of real CM file path -> replacement shim path. */
   /** @type {Map<string, string>} */ let redirects = new Map();
@@ -218,10 +268,25 @@ function breakoutKit() {
       };
     },
     configResolved(config) {
+      devServe = config.command === 'serve';
       resolveRoots(config.root);
     },
     resolveId(source, importer) {
       if (!cmRoot) resolveRoots(process.cwd());
+
+      // Raw-graph tripwires (dev server only; see warnRawGraphTraversal/warnRawPrism).
+      if (devServe && importer) {
+        const importerFile = importer.split('?')[0];
+        if (
+          (cmRoot && importerFile.startsWith(cmRoot)) ||
+          (adminRoot && importerFile.startsWith(adminRoot))
+        ) {
+          warnRawGraphTraversal(importer, source, cmRoot, adminRoot);
+        }
+        if (source === 'prismjs' || source.startsWith('prismjs/')) {
+          warnRawPrism(importer, source);
+        }
+      }
 
       // 0. Singleton entry pins (see entryAliases above) — but ONLY for importers
       //    inside the dependency graph (node_modules, or this package when linked).
