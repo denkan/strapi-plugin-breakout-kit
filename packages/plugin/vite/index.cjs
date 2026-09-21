@@ -250,7 +250,26 @@ function breakoutKit() {
   return {
     name: 'breakout-kit',
     enforce: 'pre',
-    config() {
+    config(userConfig) {
+      // A user-set `optimizeDeps.entries` REPLACES Vite's default entry scan (Strapi's
+      // own config sets no entries), de-syncing the dep optimizer from the admin graph:
+      // parts of the CM graph then miss the pre-bundle in dev and get served raw.
+      // Reproduced deterministically (pnpm workspace + local plugin): with an entries
+      // override the admin dies in prism language components ("Cannot convert undefined
+      // or null to object", "setting 'triple-quoted-string'"); removing it fixes it.
+      // Appending the generated admin entry (.strapi/client/index.html) does NOT help —
+      // so warn instead of pretending to fix.
+      if (userConfig?.optimizeDeps?.entries) {
+        // eslint-disable-next-line no-console
+        console.warn(
+          '\n[breakout-kit] src/admin vite config sets `optimizeDeps.entries`. This ' +
+            'REPLACES Vite’s default entry scan and is known to break the admin in ' +
+            '`strapi develop` (raw-served @strapi graph; prism "Cannot convert undefined ' +
+            'or null to object" and similar crashes). Remove the `entries` override; to ' +
+            'pre-bundle heavy lazy-loaded deps, list the packages in ' +
+            '`optimizeDeps.include` instead.\n'
+        );
+      }
       return {
         optimizeDeps: {
           // Make this plugin's admin bundle a dep-optimize ENTRY (like Strapi does for
