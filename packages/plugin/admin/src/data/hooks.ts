@@ -61,9 +61,19 @@ export function useEditLayout(override?: Override<EditLayout>): {
   };
 }
 
-/** Form-level state and helpers over the shell Form mounted by the provider. */
+/**
+ * Form-level state and helpers over the shell Form mounted by the provider.
+ *
+ * Re-render cost: `values` subscribes to the WHOLE values object, so any component
+ * calling this hook re-renders on every keystroke anywhere in the form. For event-time
+ * reads (submit handlers, validation, debounced sync) use `getValues()` instead — it is
+ * referentially stable and never triggers re-renders; for one field use `useEditField`.
+ * Avoid reading `values` in a component that renders `<EditForm>`/`<EditPage>` unless
+ * you really want the whole form tree re-rendering as the user types.
+ */
 export function useEditForm() {
   const values = useForm('useEditForm', (state) => state.values as AnyRecord);
+  const getValues = useForm('useEditForm', (state) => state.getValues as () => AnyRecord);
   const errors = useForm('useEditForm', (state) => state.errors as AnyRecord);
   const modified = useForm('useEditForm', (state) => state.modified as boolean);
   const isSubmitting = useForm('useEditForm', (state) => state.isSubmitting as boolean);
@@ -79,7 +89,7 @@ export function useEditForm() {
     [onChange]
   );
 
-  return { values, errors, modified, isSubmitting, disabled, setValue, resetForm };
+  return { values, getValues, errors, modified, isSubmitting, disabled, setValue, resetForm };
 }
 
 /** One field's value/error/onChange by path — direct re-export of the shell's useField. */

@@ -227,3 +227,5 @@ stock view of an UNRELATED content type is unchanged. Commit per recipe. Do not 
 | Code changes don't show up in the admin | Stale Vite prebundle cache | Phase 2 cache-clear step |
 | npm warns about `@strapi/*` peer ranges at install | Project's Strapi outside the plugin's tested window | STOP and report; do not force |
 | Custom override renders but stock behavior (drag/save) broke inside it | Stock nodes/`renderFields()` were re-implemented instead of reused | Use the provided defaults (`d.*`, `entry.renderFields()`, `DefaultEntry`) |
+| Typing loses focus after one character; accordions collapse while editing; relation/media fields refetch in a loop | Plugin < 0.8.2: seam `Default*` components got a new identity per render, so any re-render (e.g. a component reading `useEditForm().values`) remounted the subtree | Upgrade plugin to >= 0.8.2 |
+| Whole page re-renders on every keystroke (slow typing, no remounts) | A component above the form reads `useEditForm().values` | Use `getValues()` (event-time, stable) or `useEditField(name)` instead; only read `values` where a live per-keystroke update is wanted |

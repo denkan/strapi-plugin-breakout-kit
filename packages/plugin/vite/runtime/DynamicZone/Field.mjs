@@ -25,6 +25,7 @@ import { ComponentPicker } from '@strapi/content-manager/dist/admin/pages/EditVi
 import { DynamicComponent as MemoizedDynamicComponent, DzEntryFields } from './DynamicComponent.mjs';
 // [breakout-kit]
 import { getEntryCustomizationContext } from '../entry-customization-context.mjs';
+import { useStableNodeComponent, useStableEntrySlots } from '../stable-seam.mjs';
 import { DynamicZoneLabel } from '@strapi/content-manager/dist/admin/pages/EditView/components/FormInputs/DynamicZone/DynamicZoneLabel.mjs';
 
 const [DynamicZoneProvider, useDynamicZone] = createContext('DynamicZone', {
@@ -49,6 +50,12 @@ const DynamicZone = ({ attribute, disabled: disabledProp, hint, label, labelActi
     const value = React.useMemo(()=>Array.isArray(rawValue) ? rawValue : [], [
         rawValue
     ]);
+    // [breakout-kit] render-stable seam identities: this component re-renders on every
+    // change anywhere inside the zone (useField subscribes to the whole array), so the
+    // Default components handed to the seams must NOT be new types per render.
+    const [stockAddButtonRef, DefaultAddButton] = useStableNodeComponent();
+    const entrySlots = useStableEntrySlots();
+    entrySlots.prune(value.map((field)=>field.__temp_key__));
     /**
    * Track the previous value array to detect when a new component is added.
    * When the array grows, we find the newly added item and force its accordion open.
@@ -254,7 +261,7 @@ const DynamicZone = ({ attribute, disabled: disabledProp, hint, label, labelActi
             add: handleAddComponent,
             componentsByCategory: dynamicComponentsByCategory
         };
-        const DefaultAddButton = ()=>stockAddButton;
+        stockAddButtonRef.current = stockAddButton;
         addButtonOverride = dzConfig.renderAddButton(addCtx, DefaultAddButton);
     }
     return /*#__PURE__*/ jsx(DynamicZoneProvider, {
@@ -336,10 +343,7 @@ const DynamicZone = ({ attribute, disabled: disabledProp, hint, label, labelActi
                                             children: children
                                         })
                                     };
-                                    const DefaultEntry = (overrides)=>/*#__PURE__*/ jsx(MemoizedDynamicComponent, {
-                                            ...stockProps,
-                                            ...overrides
-                                        });
+                                    const DefaultEntry = entrySlots.get(field.__temp_key__, MemoizedDynamicComponent, stockProps);
                                     rendered = dzConfig.renderEntry(entry, DefaultEntry);
                                 } else {
                                     rendered = /*#__PURE__*/ jsx(MemoizedDynamicComponent, {
