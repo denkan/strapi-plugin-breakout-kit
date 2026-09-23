@@ -92,10 +92,21 @@ const wrappedConfig: SingleComponentCustomization = {
   ),
 };
 
+/** renderFields({ fields }): only the listed fields of the component, stock chrome dropped. */
+const subsetConfig: SingleComponentCustomization = {
+  renderBox: (box: ComponentBox) =>
+    box.value ? (
+      <Box padding={2} data-testid="sc-subset-box">
+        {box.renderFields({ fields: ['metaTitle'] })}
+      </Box>
+    ) : undefined,
+};
+
 const MODES = [
   { value: 'stock', label: 'Stock (no config)' },
   { value: 'custom', label: 'renderBox: custom initializer + custom box' },
   { value: 'wrapped', label: 'renderBox: <DefaultBox /> inside consumer chrome' },
+  { value: 'subset', label: 'Subset: renderFields({ fields }) — only metaTitle' },
 ] as const;
 
 type Mode = (typeof MODES)[number]['value'];
@@ -104,6 +115,7 @@ const CONFIGS: Record<Mode, SingleComponentCustomization | undefined> = {
   stock: undefined,
   custom: customConfig,
   wrapped: wrappedConfig,
+  subset: subsetConfig,
 };
 
 const SingleComponentDemo = () => {

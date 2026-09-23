@@ -85,9 +85,7 @@ test('sugars mode: entryIcon, entryLabel and entryActions with mixed defaults', 
   expect(pageErrors).toEqual([]);
 });
 
-test('renderEntry mode: DefaultEntry overrides and fully custom chrome', async ({
-  page,
-}) => {
+test('renderEntry mode: DefaultEntry overrides and fully custom chrome', async ({ page }) => {
   const pageErrors: string[] = [];
   page.on('pageerror', (err) => pageErrors.push(String(err)));
 
@@ -144,9 +142,7 @@ test('boxes mode: accordion fully replaced by styled cards', async ({ page }) =>
   expect(pageErrors).toEqual([]);
 });
 
-test('addButton mode: custom button + popup picker replace the stock flow', async ({
-  page,
-}) => {
+test('addButton mode: custom button + popup picker replace the stock flow', async ({ page }) => {
   const pageErrors: string[] = [];
   page.on('pageerror', (err) => pageErrors.push(String(err)));
 
@@ -178,6 +174,47 @@ test('addButton mode: custom button + popup picker replace the stock flow', asyn
   await expect(picker).not.toBeVisible();
   await expect(dzList.getByRole('listitem')).toHaveCount(4);
   await expect(addButton).toContainText('4 added');
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('body mode: DefaultEntry body keeps the chrome; renderFields subsets split the fields', async ({
+  page,
+}) => {
+  const pageErrors: string[] = [];
+  page.on('pageerror', (err) => pageErrors.push(String(err)));
+
+  await page.goto('/admin/breakout-playground/dz-demo');
+  await waitForForm(page);
+  await selectMode(page, 'Body slot');
+  await waitForForm(page);
+
+  const root = page.getByTestId('dz-demo-root');
+  const dzList = root.locator('ol[aria-describedby]');
+
+  // Stock chrome is intact: the link entry is still an accordion with its drag handle.
+  await expect(dzList.getByRole('button', { name: /^Link/ })).toBeVisible();
+  await expect(dzList.getByRole('button', { name: 'Drag' })).toHaveCount(3);
+
+  // Expand the link entry (accordion content mounts on open). The body is ours, split
+  // in two subsets; each subset renders ONLY its fields.
+  await dzList.getByRole('button', { name: /^Link/ }).click();
+  const body = root.getByTestId('dz-body');
+  await expect(body).toHaveCount(1);
+  const main = body.getByTestId('dz-body-main');
+  const rest = body.getByTestId('dz-body-rest');
+  await expect(main.getByLabel(/label/)).toBeVisible();
+  await expect(main.getByLabel(/url/)).toHaveCount(0);
+  await expect(rest.getByLabel(/url/)).toBeVisible();
+  await expect(rest.getByLabel(/newTab/)).toBeVisible();
+  await expect(rest.getByLabel(/label/)).toHaveCount(0);
+
+  // Subset inputs are live form fields (same context as the stock grid).
+  await main.getByLabel(/label/).fill('Strapi docs (edited)');
+  await expect(main.getByLabel(/label/)).toHaveValue('Strapi docs (edited)');
+
+  // Other components keep the plain stock body.
+  await expect(root.getByTestId('dz-body')).toHaveCount(1);
 
   expect(pageErrors).toEqual([]);
 });

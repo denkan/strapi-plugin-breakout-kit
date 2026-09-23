@@ -31,6 +31,7 @@ import { Initializer } from '@strapi/content-manager/dist/admin/pages/EditView/c
 // [breakout-kit]
 import { getEntryCustomizationContext } from '../entry-customization-context.mjs';
 import { useStableNodeComponent, useStableEntrySlots } from '../stable-seam.mjs';
+import { filterLayoutRows } from '../layout-filter.mjs';
 
 const RepeatableComponent =({ attribute, disabled, name, mainField, children, layout })=>{
     const { toggleNotification } = useNotification();
@@ -319,9 +320,9 @@ const RepeatableComponent =({ attribute, disabled, name, mainField, children, la
                                 schema: schemaInfo,
                                 onRemove: ()=>handleDeleteComponent(index),
                                 onMove: (newIndex)=>handleMoveComponentField(newIndex, index),
-                                renderFields: ()=>/*#__PURE__*/ jsx(RepeatableComponentFields, {
+                                renderFields: (options)=>/*#__PURE__*/ jsx(RepeatableComponentFields, {
                                     attributeComponent: attribute.component,
-                                    layout: layout,
+                                    layout: filterLayoutRows(layout, options?.fields),
                                     nameWithIndex: nameWithIndex,
                                     children: children
                                 })
@@ -431,7 +432,7 @@ RepeatableComponentFields.displayName = 'RepeatableComponentFields';
 const Component = ({ attributeComponent, disabled, index, name, mainField = {
     name: 'id',
     type: 'integer'
-}, layout, onDeleteComponent, renderField, toggleCollapses, __temp_key__, totalLength, onMoveItem, icon: iconOverride, label: labelOverride, actions: actionsOverride, schemaInfo, ...dragProps })=>{
+}, layout, onDeleteComponent, renderField, toggleCollapses, __temp_key__, totalLength, onMoveItem, icon: iconOverride, label: labelOverride, actions: actionsOverride, body: bodyOverride, schemaInfo, ...dragProps })=>{
     // [breakout-kit] entry slots: explicit props > config fns > stock defaults
     const rConfig = React.useContext(getEntryCustomizationContext())?.repeatable ?? {};
     const { formatMessage } = useIntl();
@@ -591,7 +592,9 @@ const Component = ({ attributeComponent, disabled, index, name, mainField = {
                     ]
                 }),
                 /*#__PURE__*/ jsx(Accordion.Content, {
-                    children: /*#__PURE__*/ jsx(Flex, {
+                    // [breakout-kit] body slot: consumer content replaces the stock fields
+                    // grid (incl. its padded box) inside the stock chrome.
+                    children: bodyOverride !== undefined ? bodyOverride : /*#__PURE__*/ jsx(Flex, {
                         direction: "column",
                         alignItems: "stretch",
                         background: "neutral100",

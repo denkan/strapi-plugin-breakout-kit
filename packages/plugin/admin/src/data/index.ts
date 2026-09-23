@@ -19,6 +19,7 @@ export { resolveOverride, isControlledValue, type Override } from './override';
 export {
   getEntryCustomizationContext,
   type EntryCustomization,
+  type RenderFieldsOptions,
   type EntryCustomizationContextValue,
   type EntryActionDefaults,
   type ComponentEntry,

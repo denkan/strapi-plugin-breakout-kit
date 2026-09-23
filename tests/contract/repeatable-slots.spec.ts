@@ -67,9 +67,7 @@ test('sugars mode: added icon, fixed labels, extra action — defaults stay wire
   expect(pageErrors).toEqual([]);
 });
 
-test('custom mode: cards replace the accordion; custom add button appends', async ({
-  page,
-}) => {
+test('custom mode: cards replace the accordion; custom add button appends', async ({ page }) => {
   const pageErrors: string[] = [];
   page.on('pageerror', (err) => pageErrors.push(String(err)));
 
@@ -96,6 +94,33 @@ test('custom mode: cards replace the accordion; custom add button appends', asyn
   // Custom remove wired through entry.onRemove.
   await root.getByTestId('rep-box-entry').last().getByRole('button', { name: 'Remove' }).click();
   await expect(root.getByTestId('rep-box-entry')).toHaveCount(2);
+
+  expect(pageErrors).toEqual([]);
+});
+
+test('body mode: DefaultEntry body keeps the accordion; only the listed field renders', async ({
+  page,
+}) => {
+  const pageErrors: string[] = [];
+  page.on('pageerror', (err) => pageErrors.push(String(err)));
+
+  await page.goto('/admin/breakout-playground/repeatable-demo');
+  await waitForForm(page);
+  await selectMode(page, 'Body slot');
+  await waitForForm(page);
+
+  // Chrome intact: two stock entries with drag handles.
+  await expect(repRoot(page).getByRole('button', { name: 'Drag' })).toHaveCount(2);
+
+  // Expand the first entry (labelled by its mainField value, `attribution`) — accordion
+  // content mounts on open — and inspect the body.
+  await repRoot(page)
+    .getByRole('button', { name: /Alice Writer/ })
+    .click();
+  const body = repRoot(page).getByTestId('rep-body').first();
+  await expect(body).toBeVisible();
+  await expect(body.getByLabel(/text/)).toBeVisible();
+  await expect(body.getByLabel(/attribution/)).toHaveCount(0);
 
   expect(pageErrors).toEqual([]);
 });
