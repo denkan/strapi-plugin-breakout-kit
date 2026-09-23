@@ -398,13 +398,15 @@ const ComponentContainer = styled(Box)`
   padding: 0;
   margin: 0;
 `;
-const DynamicComponentFields = /*#__PURE__*/ React.memo(({ children, componentUid, index, layout, name })=>{
+const DynamicComponentFields = /*#__PURE__*/ React.memo(({ children, componentUid, index, layout, name, padded = true })=>{
     const { formatMessage } = useIntl();
     return /*#__PURE__*/ jsx(Box, {
-        padding: {
+        // [breakout-kit] the stock body pads the grid; `renderFields()` output must not
+        // (consumers own the chrome — mirrors the repeatable/single-component variants).
+        padding: padded ? {
             initial: 4,
             medium: 6
-        },
+        } : 0,
         children: /*#__PURE__*/ jsx(Grid.Root, {
             gap: 4,
             children: layout?.map((row, rowInd)=>{
@@ -455,6 +457,7 @@ const DzEntryFields = ({ componentUid, index, name, fields, children })=>{
     return /*#__PURE__*/ jsx(DynamicComponentFields, {
         componentUid: componentUid,
         index: index,
+        padded: false,
         layout: filterLayoutRows(componentUid ? components[componentUid]?.layout : undefined, fields),
         name: name,
         children: children

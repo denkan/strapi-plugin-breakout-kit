@@ -213,6 +213,13 @@ test('body mode: DefaultEntry body keeps the chrome; renderFields subsets split 
   await main.getByLabel(/label/).fill('Strapi docs (edited)');
   await expect(main.getByLabel(/label/)).toHaveValue('Strapi docs (edited)');
 
+  // renderFields() output carries no padding of its own (consumers own the chrome).
+  const labelInset = await main.evaluate((el) => {
+    const label = el.querySelector('label');
+    return label ? label.getBoundingClientRect().left - el.getBoundingClientRect().left : -1;
+  });
+  expect(labelInset).toBe(0);
+
   // Other components keep the plain stock body.
   await expect(root.getByTestId('dz-body')).toHaveCount(1);
 

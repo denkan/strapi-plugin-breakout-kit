@@ -40,7 +40,10 @@ export interface ComponentEntry extends ComponentEntryMeta {
   disabled?: boolean;
   onRemove: () => void;
   onMove: (newIndex: number) => void;
-  /** Renders the entry's field grid (stock inputs, nested recursion intact). */
+  /**
+   * Renders the entry's field grid (stock inputs, nested recursion intact). The output
+   * carries no padding of its own — the surrounding chrome is yours.
+   */
   renderFields: (options?: RenderFieldsOptions) => React.ReactNode;
 }
 
