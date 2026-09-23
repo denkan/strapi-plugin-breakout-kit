@@ -101,3 +101,25 @@ test('saving in create mode reports the new documentId (onCreated) and lands on 
 
   expect(pageErrors, `page errors: ${pageErrors.join(' | ')}`).toHaveLength(0);
 });
+
+test('document actions render formatted labels (delete label ICU select resolved)', async ({
+  page,
+}) => {
+  await page.goto(
+    '/admin/content-manager/collection-types/api::category.category?page=1&pageSize=10'
+  );
+  await dismissGuidedTour(page);
+  const row = page.getByRole('row').filter({ hasText: 'Tech' }).first();
+  await row.dispatchEvent('click');
+  const custom = page.getByTestId('custom-edit-view');
+  await expect(custom).toBeVisible({ timeout: 30_000 });
+
+  // The catalog message for the delete action is an ICU select on `isLocalized`; the bar
+  // must pass the value (like stock does) instead of leaking the raw pattern into the UI.
+  await custom.getByRole('button', { name: /more document actions/i }).click();
+  const deleteItem = page.getByRole('menuitem', { name: /delete entry/i });
+  await expect(deleteItem).toBeVisible();
+  await expect(deleteItem).not.toContainText('{');
+  await expect(deleteItem).toHaveText(/^Delete entry$/);
+  await page.keyboard.press('Escape');
+});
