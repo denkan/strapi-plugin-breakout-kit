@@ -15,11 +15,12 @@ import { transformDocumentData } from './transform-data';
 
 type AnyRecord = Record<string, unknown>;
 type OperationResult =
-  | { data: AnyRecord; error?: undefined }
-  | { error: unknown; data?: undefined };
+  { data: AnyRecord; error?: undefined } | { error: unknown; data?: undefined };
 
 const isValidationError = (error: unknown): error is { name: string; details: unknown } =>
-  typeof error === 'object' && error !== null && (error as { name?: string }).name === 'ValidationError';
+  typeof error === 'object' &&
+  error !== null &&
+  (error as { name?: string }).name === 'ValidationError';
 
 /**
  * The stock actions resolve with the unwrapped payload (`res.data`) on success and with
@@ -30,6 +31,22 @@ const toResult = (res: unknown): OperationResult => {
     return { error: (res as { error: unknown }).error };
   }
   return { data: res as AnyRecord };
+};
+
+/**
+ * Extracts the documentId from a create/clone action result. The stock
+ * `useDocumentActions().create/autoClone` resolve with the RESPONSE BODY
+ * (`{ data: { documentId, … }, meta }`) — the stock edit view reads
+ * `res.data.data.documentId`. A bare `{ documentId }` is accepted too so a future
+ * unwrapping upstream cannot silently break the callbacks.
+ */
+const documentIdOf = (payload: unknown): string => {
+  const outer = payload as { documentId?: string; data?: { documentId?: string } } | undefined;
+  const id = outer?.data?.documentId ?? outer?.documentId;
+  if (typeof id !== 'string') {
+    throw new Error('[breakout-kit] create/clone succeeded but the response carried no documentId');
+  }
+  return id;
 };
 
 /**
@@ -54,8 +71,7 @@ export function useDocumentOperations() {
 
   const { model, collectionType, documentId, params } = meta;
   const schema = currentDocument.schema as
-    | { attributes?: AnyRecord; options?: { draftAndPublish?: boolean } }
-    | undefined;
+    { attributes?: AnyRecord; options?: { draftAndPublish?: boolean } } | undefined;
   const components = currentDocument.components as AnyRecord;
 
   /** Shared pre-submit pipeline: blur+flush, validate, strip invisible, unwrap apiData. */
@@ -80,10 +96,11 @@ export function useDocumentOperations() {
         });
         return null;
       }
-      const { data } = handleInvisibleAttributes(
-        transformDocumentData(getValues()) as AnyRecord,
-        { schema, initialValues, components }
-      );
+      const { data } = handleInvisibleAttributes(transformDocumentData(getValues()) as AnyRecord, {
+        schema,
+        initialValues,
+        components,
+      });
       return data;
     },
     [validate, getValues, toggleNotification, formatMessage, schema, initialValues, components]
@@ -113,7 +130,7 @@ export function useDocumentOperations() {
         return result;
       }
       resetForm(getValues());
-      callbacks.onCreated?.({ documentId: (result.data as { documentId: string }).documentId });
+      callbacks.onCreated?.({ documentId: documentIdOf(result.data) });
       return result;
     } finally {
       setSubmitting(false);
@@ -158,7 +175,20 @@ export function useDocumentOperations() {
     } finally {
       setSubmitting(false);
     }
-  }, [actions, callbacks, collectionType, documentId, getValues, isCreating, model, params, prepareValues, resetForm, setErrors, setSubmitting]);
+  }, [
+    actions,
+    callbacks,
+    collectionType,
+    documentId,
+    getValues,
+    isCreating,
+    model,
+    params,
+    prepareValues,
+    resetForm,
+    setErrors,
+    setSubmitting,
+  ]);
 
   const unpublish = React.useCallback(
     async (opts?: { discardDraft?: boolean }): Promise<OperationResult> => {
@@ -176,9 +206,7 @@ export function useDocumentOperations() {
   );
 
   const discard = React.useCallback(async (): Promise<OperationResult> => {
-    const result = toResult(
-      await actions.discard({ collectionType, model, documentId, params })
-    );
+    const result = toResult(await actions.discard({ collectionType, model, documentId, params }));
     if (result.error) return result;
     callbacks.onDiscarded?.();
     return result;
@@ -211,7 +239,7 @@ export function useDocumentOperations() {
       })
     );
     if (result.error) return result;
-    callbacks.onCloned?.({ documentId: (result.data as { documentId: string }).documentId });
+    callbacks.onCloned?.({ documentId: documentIdOf(result.data) });
     return result;
   }, [actions, callbacks, documentId, model]);
 
