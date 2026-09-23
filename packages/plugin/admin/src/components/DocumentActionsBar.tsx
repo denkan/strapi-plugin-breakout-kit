@@ -41,7 +41,8 @@ export interface DocumentActionsBarProps {
  * telemetry wiring intentionally omitted (docs/decisions.md #3).
  */
 export const DocumentActionsBar = ({ include, exclude, renderAction }: DocumentActionsBarProps) => {
-  const { hasDraftAndPublish, status, isCreating } = useHeadlessData('DocumentActionsBar');
+  const { hasDraftAndPublish, status, isCreating, currentDocument } =
+    useHeadlessData('DocumentActionsBar');
   const ops = useDocumentOperations();
   // Narrow selectors, NOT useEditForm(): that hook subscribes to the whole values
   // object, which would re-render this bar on every keystroke in the form.
@@ -142,10 +143,16 @@ export const DocumentActionsBar = ({ include, exclude, renderAction }: DocumentA
   if (wanted('delete') && (rbac.canDelete ?? false) && !isCreating) {
     descriptions.push({
       id: 'delete',
-      label: formatMessage({
-        id: 'content-manager.actions.delete.label',
-        defaultMessage: 'Delete entry',
-      }),
+      // The catalog message for this id is an ICU select on `isLocalized` (stock passes it
+      // from the document's locale); without the value react-intl falls back to the RAW
+      // message — "Delete entry{isLocalized, select, …}" — in the UI.
+      label: formatMessage(
+        {
+          id: 'content-manager.actions.delete.label',
+          defaultMessage: 'Delete entry{isLocalized, select, true { (all locales)} other {}}',
+        },
+        { isLocalized: currentDocument.document?.locale != null }
+      ),
       variant: 'danger',
       dialog: {
         type: 'dialog',
