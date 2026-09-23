@@ -11,6 +11,7 @@
  */
 import { jsx, jsxs, Fragment } from 'react/jsx-runtime';
 import * as React from 'react';
+import { filterLayoutRows } from '../layout-filter.mjs';
 import { useIsDesktop, useForm } from '@strapi/admin/strapi-admin';
 import { Box, Grid, useComposedRefs, IconButton, Menu, Flex, Accordion } from '@strapi/design-system';
 import { Trash, Drag, ArrowUp, ArrowDown, More } from '@strapi/icons';
@@ -30,7 +31,7 @@ import { InputRenderer as MemoizedInputRenderer } from '@strapi/content-manager/
 // [breakout-kit]
 import { getEntryCustomizationContext } from '../entry-customization-context.mjs';
 
-const DynamicComponent = ({ componentUid, disabled, index, name, onRemoveComponentClick, onMoveComponent, onGrabItem, onDropItem, onCancel, dynamicComponentsByCategory = {}, onAddComponent, totalLength, children, forceOpen, onForceOpenHandled, icon: iconOverride, label: labelOverride, actions: actionsOverride })=>{
+const DynamicComponent = ({ componentUid, disabled, index, name, onRemoveComponentClick, onMoveComponent, onGrabItem, onDropItem, onCancel, dynamicComponentsByCategory = {}, onAddComponent, totalLength, children, forceOpen, onForceOpenHandled, icon: iconOverride, label: labelOverride, actions: actionsOverride, body: bodyOverride })=>{
     // [breakout-kit] entry slots: explicit props > config fns > stock defaults
     const dzConfig = React.useContext(getEntryCustomizationContext())?.dynamicZone ?? {};
     const { formatMessage } = useIntl();
@@ -353,7 +354,9 @@ const DynamicComponent = ({ componentUid, disabled, index, name, onRemoveCompone
                             /*#__PURE__*/ jsx(Accordion.Content, {
                                 children: /*#__PURE__*/ jsx(AccordionContentRadius, {
                                     background: "neutral0",
-                                    children: /*#__PURE__*/ jsx(DynamicComponentFields, {
+                                    // [breakout-kit] body slot: consumer content replaces the stock
+                                    // fields grid (incl. its padding) inside the stock chrome.
+                                    children: bodyOverride !== undefined ? bodyOverride : /*#__PURE__*/ jsx(DynamicComponentFields, {
                                         componentUid: componentUid,
                                         index: index,
                                         layout: componentUid ? components[componentUid]?.layout : undefined,
@@ -446,13 +449,13 @@ DynamicComponentFields.displayName = 'DynamicComponentFields';
 const MemoizedDynamicComponent = /*#__PURE__*/ React.memo(DynamicComponent);
 // [breakout-kit] standalone fields body for renderEntry consumers: fetches the component
 // layout the same way DynamicComponent does, then renders the stock fields grid.
-const DzEntryFields = ({ componentUid, index, name, children })=>{
+const DzEntryFields = ({ componentUid, index, name, fields, children })=>{
     const { currentDocumentMeta } = useDocumentContext('DzEntryFields');
     const { edit: { components } } = useDocumentLayout(currentDocumentMeta.model);
     return /*#__PURE__*/ jsx(DynamicComponentFields, {
         componentUid: componentUid,
         index: index,
-        layout: componentUid ? components[componentUid]?.layout : undefined,
+        layout: filterLayoutRows(componentUid ? components[componentUid]?.layout : undefined, fields),
         name: name,
         children: children
     });

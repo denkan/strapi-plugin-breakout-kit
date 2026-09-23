@@ -336,10 +336,11 @@ const DynamicZone = ({ attribute, disabled: disabledProp, hint, label, labelActi
                                         } : undefined,
                                         onRemove: ()=>handleRemoveComponent(index),
                                         onMove: (newIndex)=>handleMoveComponent(newIndex, index),
-                                        renderFields: ()=>/*#__PURE__*/ jsx(DzEntryFields, {
+                                        renderFields: (options)=>/*#__PURE__*/ jsx(DzEntryFields, {
                                             componentUid: field.__component,
                                             index: index,
                                             name: name,
+                                            fields: options?.fields,
                                             children: children
                                         })
                                     };

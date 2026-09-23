@@ -12,6 +12,7 @@
  */
 import { jsxs, Fragment, jsx } from 'react/jsx-runtime';
 import * as React from 'react';
+import { filterLayoutRows } from '../layout-filter.mjs';
 import { useField, useForm } from '@strapi/admin/strapi-admin';
 import { Field, Flex, IconButton } from '@strapi/design-system';
 import { Trash } from '@strapi/icons';
@@ -68,7 +69,7 @@ const ComponentInput = ({ label, required, name, attribute, disabled, labelActio
             disabled: Boolean(disabled),
             onInitialize: handleInitialisationClick,
             onClear: ()=>field.onChange(name, null),
-            renderFields: ()=>field.value ? /*#__PURE__*/ jsx(ComponentProvider, {
+            renderFields: (options)=>field.value ? /*#__PURE__*/ jsx(ComponentProvider, {
                 id: componentId,
                 uid: attribute.component,
                 level: level + 1,
@@ -76,7 +77,7 @@ const ComponentInput = ({ label, required, name, attribute, disabled, labelActio
                 children: /*#__PURE__*/ jsx(NonRepeatableComponentFields, {
                     attribute: attribute,
                     name: name,
-                    layout: props.layout,
+                    layout: filterLayoutRows(props.layout, options?.fields),
                     children: props.children
                 })
             }) : null

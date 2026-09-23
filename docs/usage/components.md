@@ -130,11 +130,25 @@ misses fall through naturally:
     // enough for a fully custom picker (the stock inline picker stays closed).
     renderAddButton: (ctx, DefaultAddButton) => <MyAddFlow ctx={ctx} />,
     // 3. Full chrome control. DefaultEntry = the stock accordion with all behavior
-    // pre-bound; accepts icon/label/actions overrides. Or skip it and build your own
-    // container around entry.renderFields() (reorder/a11y is then yours to provide).
+    // pre-bound; accepts icon/label/actions overrides, and `body` to replace ONLY the
+    // fields area (padding included) while keeping drag/actions/collapse. Or skip it
+    // and build your own container around entry.renderFields() (reorder/a11y is then
+    // yours to provide). renderFields({ fields }) renders a subset, in layout order —
+    // call it several times to spread one entry over tabs or sections.
     renderEntry: (entry, DefaultEntry) =>
       entry.componentUid === 'shared.hero' ? (
         <MyCard onRemove={entry.onRemove}>{entry.renderFields()}</MyCard>
+      ) : entry.componentUid === 'shared.link' ? (
+        <DefaultEntry
+          body={
+            <MyTabs
+              tabs={[
+                { label: 'Text', node: entry.renderFields({ fields: ['label'] }) },
+                { label: 'Target', node: entry.renderFields({ fields: ['url', 'newTab'] }) },
+              ]}
+            />
+          }
+        />
       ) : (
         <DefaultEntry />
       ),
@@ -173,7 +187,8 @@ boxed fields alike. Branch on `box.value`; `undefined` keeps stock for that stat
 
 `box` = `{ source: 'singleComponent', componentUid, name, schema, disabled, value,
 onInitialize, onClear, renderFields }`; `renderFields()` carries its own component
-context so nested inputs work inside custom chrome. The field label row (and its stock
+context so nested inputs work inside custom chrome, and accepts `{ fields }` to render
+a subset (same contract as entries). The field label row (and its stock
 "Reset Entry" trash) stays either way.
 
 Worked examples: the playground's "Dynamic zone", "Repeatable" and "Component" pages

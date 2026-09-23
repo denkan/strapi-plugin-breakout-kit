@@ -19,6 +19,7 @@ export {
   useLocales,
   useDocumentOperations,
   type EntryCustomization,
+  type RenderFieldsOptions,
   type EntryActionDefaults,
   type ComponentEntry,
   type ComponentEntryMeta,

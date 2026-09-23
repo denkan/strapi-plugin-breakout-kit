@@ -43,7 +43,9 @@ const sugarsConfig: EntryCustomization = {
         variant="ghost"
         label="Entry info"
         data-testid="rep-custom-action"
-        onClick={() => window.alert(`${entry.schema?.displayName} ${entry.index + 1}/${entry.total}`)}
+        onClick={() =>
+          window.alert(`${entry.schema?.displayName} ${entry.index + 1}/${entry.total}`)
+        }
       >
         <Information />
       </IconButton>
@@ -66,7 +68,9 @@ const CustomAddButton = ({ ctx }: { ctx: AddButtonContext }) => (
     startIcon={<Plus />}
     fullWidth
     disabled={ctx.disabled || (ctx.max !== undefined && ctx.total >= ctx.max)}
-    onClick={() => ctx.add(ctx.componentsByCategory[Object.keys(ctx.componentsByCategory)[0]][0].uid)}
+    onClick={() =>
+      ctx.add(ctx.componentsByCategory[Object.keys(ctx.componentsByCategory)[0]][0].uid)
+    }
     data-testid="rep-custom-add"
   >
     Add quote #{ctx.total + 1} — custom button
@@ -115,10 +119,27 @@ const customConfig: EntryCustomization = {
   renderAddButton: (ctx) => <CustomAddButton ctx={ctx} />,
 };
 
+/**
+ * Mode "body" — stock accordion chrome, custom body: only the `text` field, rendered
+ * through `entry.renderFields({ fields })` inside `<DefaultEntry body>`.
+ */
+const bodyConfig: EntryCustomization = {
+  renderEntry: (entry: ComponentEntry, DefaultEntry) => (
+    <DefaultEntry
+      body={
+        <Box padding={2} data-testid="rep-body">
+          {entry.renderFields({ fields: ['text'] })}
+        </Box>
+      }
+    />
+  ),
+};
+
 const MODES = [
   { value: 'stock', label: 'Stock (no config)' },
   { value: 'sugars', label: 'Sugars: added icon, fixed labels, extra action' },
   { value: 'custom', label: 'Custom: cards + custom add button' },
+  { value: 'body', label: 'Body slot: DefaultEntry body with a field subset' },
 ] as const;
 
 type Mode = (typeof MODES)[number]['value'];
@@ -127,6 +148,7 @@ const CONFIGS: Record<Mode, EntryCustomization | undefined> = {
   stock: undefined,
   sugars: sugarsConfig,
   custom: customConfig,
+  body: bodyConfig,
 };
 
 const RepeatableDemo = () => {

@@ -67,7 +67,9 @@ const sugarsConfig: EntryCustomization = {
         label="Entry info"
         data-testid="dz-custom-action"
         onClick={() =>
-          window.alert(`${entry.schema?.displayName} — position ${entry.index + 1} of ${entry.total}`)
+          window.alert(
+            `${entry.schema?.displayName} — position ${entry.index + 1} of ${entry.total}`
+          )
         }
       >
         <Information />
@@ -272,12 +274,39 @@ const addButtonConfig: EntryCustomization = {
   renderAddButton: (ctx) => <CustomAddFlow ctx={ctx} />,
 };
 
+/**
+ * Mode "body" — keep the stock accordion chrome (drag, actions, collapse) but replace the
+ * BODY via `<DefaultEntry body>`, composing it from `entry.renderFields({ fields })`
+ * subsets: the fields of one entry split across sections/tabs, each call carrying its
+ * own component context.
+ */
+const bodyConfig: EntryCustomization = {
+  renderEntry: (entry: ComponentEntry, DefaultEntry: DefaultEntryComponent) =>
+    entry.componentUid === 'shared.link' ? (
+      <DefaultEntry
+        body={
+          <Box padding={2} data-testid="dz-body">
+            <Box paddingBottom={2} data-testid="dz-body-main">
+              {entry.renderFields({ fields: ['label'] })}
+            </Box>
+            <Box data-testid="dz-body-rest">
+              {entry.renderFields({ fields: ['url', 'newTab'] })}
+            </Box>
+          </Box>
+        }
+      />
+    ) : (
+      <DefaultEntry />
+    ),
+};
+
 const MODES = [
   { value: 'stock', label: 'Stock (no config)' },
   { value: 'sugars', label: 'Sugars: entryIcon / entryLabel / entryActions' },
   { value: 'renderEntry', label: 'renderEntry: DefaultEntry tweaks + custom chrome' },
   { value: 'boxes', label: 'Boxes: no accordion, styled cards for every entry' },
   { value: 'addButton', label: 'renderAddButton: custom button + popup picker' },
+  { value: 'body', label: 'Body slot: DefaultEntry body + renderFields subsets' },
 ] as const;
 
 type Mode = (typeof MODES)[number]['value'];
@@ -288,6 +317,7 @@ const CONFIGS: Record<Mode, EntryCustomization | undefined> = {
   renderEntry: renderEntryConfig,
   boxes: boxesConfig,
   addButton: addButtonConfig,
+  body: bodyConfig,
 };
 
 const DynamicZoneDemo = () => {

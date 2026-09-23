@@ -67,3 +67,20 @@ test('custom mode: renderBox covers both states with a full roundtrip', async ({
 
   expect(pageErrors).toEqual([]);
 });
+
+test('subset mode: renderFields({ fields }) renders only the listed fields', async ({ page }) => {
+  const pageErrors: string[] = [];
+  page.on('pageerror', (err) => pageErrors.push(String(err)));
+
+  await page.goto('/admin/breakout-playground/component-demo');
+  await waitForForm(page);
+  await selectMode(page, 'Subset');
+  await waitForForm(page);
+
+  const box = page.getByTestId('sc-demo-root').getByTestId('sc-subset-box');
+  await expect(box).toBeVisible();
+  await expect(box.getByLabel(/metaTitle/)).toBeVisible();
+  await expect(box.getByLabel(/metaDescription/)).toHaveCount(0);
+
+  expect(pageErrors).toEqual([]);
+});

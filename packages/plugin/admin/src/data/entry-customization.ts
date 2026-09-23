@@ -23,6 +23,16 @@ export interface ComponentEntryMeta {
   schema?: { icon?: string; displayName?: string; category?: string };
 }
 
+/** Options for `renderFields()` on entries and boxes. */
+export interface RenderFieldsOptions {
+  /**
+   * Render only these fields (component attribute names), in layout order; rows left
+   * empty are dropped. Omit for the full grid. Lets one entry be split across several
+   * containers (tabs, sections) — each call carries its own component context.
+   */
+  fields?: string[];
+}
+
 /** Full entry contract handed to renderEntry. */
 export interface ComponentEntry extends ComponentEntryMeta {
   /** The entry's current form value (includes __component, __temp_key__). */
@@ -31,7 +41,7 @@ export interface ComponentEntry extends ComponentEntryMeta {
   onRemove: () => void;
   onMove: (newIndex: number) => void;
   /** Renders the entry's field grid (stock inputs, nested recursion intact). */
-  renderFields: () => React.ReactNode;
+  renderFields: (options?: RenderFieldsOptions) => React.ReactNode;
 }
 
 /**
@@ -103,6 +113,12 @@ export type DefaultEntryComponent = React.ComponentType<{
   icon?: React.ReactNode;
   label?: React.ReactNode;
   actions?: React.ReactNode;
+  /**
+   * Replaces the accordion BODY (the stock fields grid and its padding) while keeping
+   * the stock chrome: header, drag & drop, actions, collapse state. Compose it from
+   * `entry.renderFields({ fields })` calls to group fields into tabs/sections.
+   */
+  body?: React.ReactNode;
 }>;
 
 export interface EntryCustomization {
@@ -113,7 +129,10 @@ export interface EntryCustomization {
    * stock icon (`defaultIcon` is null) but the accordion supports one, so this can add
    * an icon stock can't.
    */
-  entryIcon?: (entry: ComponentEntryMeta, defaultIcon: React.ReactNode) => React.ReactNode | undefined;
+  entryIcon?: (
+    entry: ComponentEntryMeta,
+    defaultIcon: React.ReactNode
+  ) => React.ReactNode | undefined;
   /** Override the accordion label per entry; `undefined` keeps the stock label. */
   entryLabel?: (entry: ComponentEntryMeta, defaultLabel: string) => React.ReactNode | undefined;
   /**
@@ -123,7 +142,10 @@ export interface EntryCustomization {
    * Called even when the field is disabled (all defaults null) so read-only actions
    * are possible.
    */
-  entryActions?: (entry: ComponentEntryMeta, defaults: EntryActionDefaults) => React.ReactNode | undefined;
+  entryActions?: (
+    entry: ComponentEntryMeta,
+    defaults: EntryActionDefaults
+  ) => React.ReactNode | undefined;
   /**
    * Replace the "add" affordance (button and, if you like, the whole picking flow).
    * `undefined` keeps stock. A custom UI typically renders its own button + popup and
@@ -162,8 +184,9 @@ export interface ComponentBox {
   /**
    * The stock fields grid without box chrome — carries its own ComponentProvider so
    * nested inputs work inside custom chrome. Returns null while `value` is null.
+   * `{ fields }` renders a subset (see RenderFieldsOptions).
    */
-  renderFields: () => React.ReactNode;
+  renderFields: (options?: RenderFieldsOptions) => React.ReactNode;
 }
 
 /** The stock box for the CURRENT state: the initializer when null, the boxed fields when set. */
