@@ -29,7 +29,9 @@ test('category edit route renders the registered replacement', async ({ page }) 
   const custom = page.getByTestId('custom-edit-view');
   await expect(custom).toBeVisible();
   await expect(custom).toContainText('Custom category editor');
-  await expect(custom.getByLabel(/name/i).first()).toHaveValue('Tech', { timeout: 30_000 });
+  await expect(custom.getByLabel(/name/i).first()).toHaveValue('Tech', {
+    timeout: 30_000,
+  });
 
   expect(pageErrors, `page errors: ${pageErrors.join(' | ')}`).toHaveLength(0);
 });
@@ -59,9 +61,7 @@ test('category create route renders the replacement in create mode', async ({ pa
   const pageErrors: string[] = [];
   page.on('pageerror', (err) => pageErrors.push(String(err)));
 
-  await page.goto(
-    '/admin/content-manager/collection-types/api::category.category/create'
-  );
+  await page.goto('/admin/content-manager/collection-types/api::category.category/create');
   await dismissGuidedTour(page);
 
   const custom = page.getByTestId('custom-edit-view');
@@ -69,6 +69,35 @@ test('category create route renders the replacement in create mode', async ({ pa
   await expect(custom).toContainText('create');
   // The create form renders empty, ready for input.
   await expect(custom.getByLabel(/name/i).first()).toHaveValue('');
+
+  expect(pageErrors, `page errors: ${pageErrors.join(' | ')}`).toHaveLength(0);
+});
+
+test('saving in create mode reports the new documentId (onCreated) and lands on its edit route', async ({
+  page,
+}) => {
+  const pageErrors: string[] = [];
+  page.on('pageerror', (err) => pageErrors.push(String(err)));
+
+  await page.goto('/admin/content-manager/collection-types/api::category.category/create');
+  await dismissGuidedTour(page);
+  const custom = page.getByTestId('custom-edit-view');
+  await expect(custom).toBeVisible({ timeout: 30_000 });
+
+  const name = `Created via replacement ${Date.now()}`;
+  await custom.getByLabel(/name/i).first().fill(name);
+  await page.getByRole('button', { name: 'Save' }).click();
+
+  // onCreated must receive the REAL documentId (the stock action resolves with the
+  // response body, `{ data: { documentId } }`) — the playground's replacement view
+  // navigates to it exactly like the stock create flow does.
+  await page.waitForURL(/collection-types\/api::category\.category\/(?!create)[a-z0-9]+$/i, {
+    timeout: 30_000,
+  });
+  await expect(page.getByTestId('custom-edit-view')).toContainText(name, {
+    timeout: 30_000,
+  });
+  await expect(custom.getByLabel(/name/i).first()).toHaveValue(name);
 
   expect(pageErrors, `page errors: ${pageErrors.join(' | ')}`).toHaveLength(0);
 });
