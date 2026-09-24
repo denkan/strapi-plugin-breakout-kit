@@ -225,6 +225,11 @@ hash-tracked in a drift manifest, and guarded by contract tests against a real a
 Strapi upgrade outside the tested range can break it. Pin your Strapi version to the tested
 range, or wait for the matching plugin release.
 
+How the borrowing actually works — re-exports of your installed Strapi's own code vs.
+behavior-identical shims vs. vendored seam components, and how new Strapi releases are
+adapted — is documented in
+[docs/how-it-works.md](https://github.com/denkan/strapi-plugin-breakout-kit/blob/main/docs/how-it-works.md).
+
 Current known gaps (deliberate, v0): in-place editing of relations in a modal, plugin-
 registered header actions (e.g. the i18n locale picker — pass `locale` as a prop instead),
 third-party side panels, history/preview actions.
