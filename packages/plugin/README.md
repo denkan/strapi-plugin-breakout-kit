@@ -199,11 +199,11 @@ See [docs/usage/edit-page.md](https://github.com/denkan/strapi-plugin-breakout-k
 
 | Plugin version | Tested against Strapi |
 |---|---|
-| 0.x | 5.50 – 5.54 (every minor suite-verified) |
+| 0.x | 5.50 – 5.55 (every minor suite-verified) |
 
 Every Strapi minor in the tested window also gets a dist-tag pointing at the **newest
 release that supports it**, so you can install by your Strapi version:
-`npm install strapi-plugin-breakout-kit@strapi-5.54`. When the window's floor moves past
+`npm install strapi-plugin-breakout-kit@strapi-5.55`. When the window's floor moves past
 a minor, that minor's tag stays frozen at the last release that supported it.
 
 The supported window is declared by the package's peerDependencies and verified by a
