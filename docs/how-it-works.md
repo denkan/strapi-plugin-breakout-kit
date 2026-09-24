@@ -82,7 +82,19 @@ the helper so both stock and headless pages run them:
 
 They are vendored from the **published dist output** (the compiled `.mjs`, not the
 repo's TypeScript source), and every deviation is marked with a `// [breakout-kit]`
-comment. With no customization config present they render byte-identically to stock —
+comment. Strapi ships its packages per-module and **unminified** — the dist is the
+source with types stripped and JSX compiled, comments and names intact — so it reads
+like source and diffs cleanly. Dist is preferred over the repo `.tsx` because it is
+exactly what the runtime graph expects (Strapi's own compilation, sibling imports
+already expressed as resolvable deep specifiers); vendoring source would mean owning
+a compile step that must match Strapi's toolchain forever.
+
+Should Strapi ever start minifying its dist: tier 1 is unaffected (re-exports don't
+care what the bytes look like), and tiers 2–3 never depended on dist readability —
+the manifest tracks every internal by its *repo source* path, and `drift:hashes`
+already runs against a checkout of the matching tag, so the fallback is vendoring by
+compiling the tagged source ourselves. The drift check and parity suite would flag a
+dist-format change on the adaptation branch immediately. With no customization config present they render byte-identically to stock —
 asserted by the parity suite. Two absolute rules: nothing is ever copied from
 Strapi's `ee/` directories (different license), and seam `Default*` components handed
 to consumer callbacks must keep render-stable identities (`stable-seam.mjs`), or
