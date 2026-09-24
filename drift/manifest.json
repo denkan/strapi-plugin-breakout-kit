@@ -1,7 +1,7 @@
 {
-  "strapiVersion": "5.54.0",
+  "strapiVersion": "5.55.0",
   "strapiFloor": "5.50.0",
-  "strapiCommit": "4576739631b0534dd7464e3ca85e068fa57dfba5",
+  "strapiCommit": "2986acf70cb905fe82293eb90138cfac715b8cde",
   "notes": "Paths are relative to the strapi/strapi repo root; hashes are sha256 of normalized SOURCE content (drift/scripts/lib/normalize.mjs). distPath is the runtime file our deep imports resolve to (1:1 compiled from path). Support window: strapiFloor..strapiVersion (roof/target); peers must declare >=floor <roof-next-minor; the version matrix (drift/scripts/version-matrix.mjs) verifies every minor in the window.",
   "dependencies": [
     {
@@ -149,7 +149,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/components/FormInputs/Relations/RelationModal.tsx",
       "distPath": "dist/admin/pages/EditView/components/FormInputs/Relations/RelationModal.mjs",
       "symbol": "useRelationModal (context value shape: currentDocumentMeta, currentDocument)",
-      "hash": "7da3980efc752ae10c79a47d80ec4f461134db68924a86ccef0cd4ed16859a2f",
+      "hash": "f28697bed509e87043d68865c70b088c123ae98d3a5e5f1b2526188aae4186da",
       "usedBy": [
         "packages/plugin/vite/runtime/useDocumentContext.mjs"
       ]
@@ -273,7 +273,7 @@
       "kind": "structure",
       "path": "packages/core/content-manager/package.json",
       "symbol": "exports map + unbundled dist/admin layout (deep-import resolution target)",
-      "hash": "321581d422853f770807e5cf98b436ad1f99282e80ca26208033a6d55d6023af",
+      "hash": "60f8eeefec9b6abeeadf999453f3049aa0047e4124c255be0459024fdeb64497",
       "usedBy": [
         "packages/plugin/vite/index.cjs"
       ],
