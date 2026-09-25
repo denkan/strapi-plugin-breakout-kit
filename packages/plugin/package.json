@@ -1,5 +1,5 @@
 {
-  "version": "0.9.2",
+  "version": "0.9.3",
   "keywords": [
     "strapi",
     "strapi-plugin",
@@ -44,9 +44,9 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "@strapi/strapi": "^5.55.0",
-    "@strapi/admin": "^5.55.0",
-    "@strapi/content-manager": "^5.55.0",
+    "@strapi/strapi": "^5.55.1",
+    "@strapi/admin": "^5.55.1",
+    "@strapi/content-manager": "^5.55.1",
     "@strapi/sdk-plugin": "^6.1.1",
     "prettier": "^3.9.7",
     "@strapi/design-system": "^2.2.4",

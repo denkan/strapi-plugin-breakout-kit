@@ -1,7 +1,7 @@
 {
-  "strapiVersion": "5.55.0",
+  "strapiVersion": "5.55.1",
   "strapiFloor": "5.50.0",
-  "strapiCommit": "2986acf70cb905fe82293eb90138cfac715b8cde",
+  "strapiCommit": "7a67a8889969c981aede3d303aaf4949fceab262",
   "notes": "Paths are relative to the strapi/strapi repo root; hashes are sha256 of normalized SOURCE content (drift/scripts/lib/normalize.mjs). distPath is the runtime file our deep imports resolve to (1:1 compiled from path). Support window: strapiFloor..strapiVersion (roof/target); peers must declare >=floor <roof-next-minor; the version matrix (drift/scripts/version-matrix.mjs) verifies every minor in the window.",
   "dependencies": [
     {
@@ -273,7 +273,7 @@
       "kind": "structure",
       "path": "packages/core/content-manager/package.json",
       "symbol": "exports map + unbundled dist/admin layout (deep-import resolution target)",
-      "hash": "60f8eeefec9b6abeeadf999453f3049aa0047e4124c255be0459024fdeb64497",
+      "hash": "0db341b7e1cacf0ee49e33655e7904867789169dcf18c26fb6eaf0563c10e2a6",
       "usedBy": [
         "packages/plugin/vite/index.cjs"
       ],
