@@ -1,7 +1,7 @@
 {
-  "strapiVersion": "5.55.1",
+  "strapiVersion": "5.56.0",
   "strapiFloor": "5.50.0",
-  "strapiCommit": "7a67a8889969c981aede3d303aaf4949fceab262",
+  "strapiCommit": "64145e1b4fc1bac8bc4f84d51c88d0e9f139e826",
   "notes": "Paths are relative to the strapi/strapi repo root; hashes are sha256 of normalized SOURCE content (drift/scripts/lib/normalize.mjs). distPath is the runtime file our deep imports resolve to (1:1 compiled from path). Support window: strapiFloor..strapiVersion (roof/target); peers must declare >=floor <roof-next-minor; the version matrix (drift/scripts/version-matrix.mjs) verifies every minor in the window.",
   "dependencies": [
     {
@@ -32,7 +32,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/components/DocumentActions.tsx",
       "distPath": "dist/admin/pages/EditView/components/DocumentActions.mjs",
       "symbol": "DocumentActions, DocumentActionButton, DocumentActionsMenu",
-      "hash": "ef3283a1adcbf58b246dc84916a6a5d9fdc8478ceb0edf34703c15239d3915c7",
+      "hash": "8dc18fb86bca4fe252c07eed8c81e23696320d16ccbefbd48523e07bf466660a",
       "usedBy": [
         "packages/plugin/admin/src/access/internal.ts"
       ]
@@ -149,7 +149,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/components/FormInputs/Relations/RelationModal.tsx",
       "distPath": "dist/admin/pages/EditView/components/FormInputs/Relations/RelationModal.mjs",
       "symbol": "useRelationModal (context value shape: currentDocumentMeta, currentDocument)",
-      "hash": "f28697bed509e87043d68865c70b088c123ae98d3a5e5f1b2526188aae4186da",
+      "hash": "54a98467611ceeb8d818cbad7387c71f808694dcbd4aeda01050fc05e1943de2",
       "usedBy": [
         "packages/plugin/vite/runtime/useDocumentContext.mjs"
       ]
@@ -273,7 +273,7 @@
       "kind": "structure",
       "path": "packages/core/content-manager/package.json",
       "symbol": "exports map + unbundled dist/admin layout (deep-import resolution target)",
-      "hash": "0db341b7e1cacf0ee49e33655e7904867789169dcf18c26fb6eaf0563c10e2a6",
+      "hash": "bae123a1f3aa09a92eda1738984a2b9b31f0522e1f706029c33ef0d70ac9865a",
       "usedBy": [
         "packages/plugin/vite/index.cjs"
       ],
