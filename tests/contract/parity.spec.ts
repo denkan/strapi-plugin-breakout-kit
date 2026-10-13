@@ -121,11 +121,17 @@ for (const type of TYPES) {
     const stockLabels = await formLabels(page, page.locator('main'));
 
     await openEditPage(page, type);
-    const headlessLabels = await formLabels(page, page.getByTestId('editpage-root'));
 
-    expect(headlessLabels, 'label sequence must match the stock edit view').toEqual(
-      stockLabels
-    );
+    // Relation labels gain their count only once each field's relations request resolves,
+    // so a single read races field data loading (the stock view usually wins that race by
+    // blocking the main thread while it mounts). Compare the settled form: re-read until it
+    // matches, failing with the last diff if it never does.
+    await expect
+      .poll(() => formLabels(page, page.getByTestId('editpage-root')), {
+        message: 'label sequence must match the stock edit view',
+        timeout: 30_000,
+      })
+      .toEqual(stockLabels);
   });
 }
 
