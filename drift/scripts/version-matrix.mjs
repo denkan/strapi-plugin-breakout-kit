@@ -95,6 +95,9 @@ const cleanInstall = () => {
   }
   fs.rmSync(path.join(repoRoot, 'package-lock.json'), { force: true });
   run('npm install --no-audit --no-fund');
+  // Without the lockfile, ^@playwright/test can resolve to a newer release than the
+  // baseline whose browser build isn't installed yet — fetch the one it expects.
+  run('npx playwright install chromium');
   fs.mkdirSync(path.join(repoRoot, 'apps', 'playground', '.tmp'), { recursive: true });
 };
 

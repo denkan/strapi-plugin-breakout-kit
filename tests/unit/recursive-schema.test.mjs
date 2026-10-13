@@ -170,9 +170,13 @@ const makeModels = ({ recursive }) => {
       seo: { type: 'component', repeatable: false, component: 'shared.seo' },
       sections: { type: 'dynamiczone', components: ['shared.quote', 'shared.wrapper'] },
     }),
-    'api::author.author': contentType('api::author.author', {
-      name: { type: 'string', required: true },
-    }),
+    'api::author.author': {
+      ...contentType('api::author.author', {
+        name: { type: 'string', required: true },
+      }),
+      // Localized relation target: draft-count populate adds `locale` to its fields.
+      pluginOptions: { i18n: { localized: true } },
+    },
     'admin::user': {
       uid: 'admin::user',
       modelType: 'contentType',
@@ -195,8 +199,13 @@ const makeModels = ({ recursive }) => {
   return models;
 };
 
+// v5.57.0+ upstream asks `strapi.localization` (core's localization capability, backed
+// by the i18n plugin's provider) whether a model is localized; mirror that provider here.
 const makeStrapiStub = (models) => ({
   getModel: (uid) => models[uid],
+  localization: {
+    isLocalizedContentType: (model) => model?.pluginOptions?.i18n?.localized === true,
+  },
 });
 
 const cmDistPopulatePath = path.join(

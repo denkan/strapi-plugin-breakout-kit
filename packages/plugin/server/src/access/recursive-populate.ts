@@ -80,8 +80,13 @@ export const createCycleSafeCmPopulateUtils = ({ strapi, strapiUtils, policy }: 
   const { isAnyToMany } = strapiUtils.relations;
   const { PUBLISHED_AT_ATTRIBUTE } = strapiUtils.contentTypes.constants;
 
+  // v5.57.0+ asks core's localization capability (strapi.localization, backed by the
+  // i18n plugin's provider); older versions read the model's i18n plugin option directly.
+  const localization = (strapi as any).localization;
   const isLocalizedContentType = (model: any) =>
-    model?.pluginOptions?.i18n?.localized === true;
+    localization
+      ? localization.isLocalizedContentType(model) === true
+      : model?.pluginOptions?.i18n?.localized === true;
 
   /* ------------------------------- getDeepPopulate ------------------------------- */
 
