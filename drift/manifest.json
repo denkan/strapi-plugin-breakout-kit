@@ -1,7 +1,7 @@
 {
-  "strapiVersion": "5.56.0",
+  "strapiVersion": "5.57.0",
   "strapiFloor": "5.50.0",
-  "strapiCommit": "64145e1b4fc1bac8bc4f84d51c88d0e9f139e826",
+  "strapiCommit": "unknown",
   "notes": "Paths are relative to the strapi/strapi repo root; hashes are sha256 of normalized SOURCE content (drift/scripts/lib/normalize.mjs). distPath is the runtime file our deep imports resolve to (1:1 compiled from path). Support window: strapiFloor..strapiVersion (roof/target); peers must declare >=floor <roof-next-minor; the version matrix (drift/scripts/version-matrix.mjs) verifies every minor in the window.",
   "dependencies": [
     {
@@ -32,7 +32,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/components/DocumentActions.tsx",
       "distPath": "dist/admin/pages/EditView/components/DocumentActions.mjs",
       "symbol": "DocumentActions, DocumentActionButton, DocumentActionsMenu",
-      "hash": "8dc18fb86bca4fe252c07eed8c81e23696320d16ccbefbd48523e07bf466660a",
+      "hash": "b696bdaba415e2bbcff9a6f79f4578a83fe63af1d0d9f6e180e3617f3806420c",
       "usedBy": [
         "packages/plugin/admin/src/access/internal.ts"
       ]
@@ -43,7 +43,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/utils/data.ts",
       "distPath": "dist/admin/pages/EditView/utils/data.mjs",
       "symbol": "transformDocument, handleInvisibleAttributes",
-      "hash": "b0b02f861b93c13123e0ff88ab2797563a9052ecb9981d2bfa2093c8a4a71832",
+      "hash": "82cc62a23f72a5650bb3dc3de65e4910b9f5c66058bf563f4b040388c788e663",
       "usedBy": [
         "packages/plugin/admin/src/access/internal.ts"
       ]
@@ -65,7 +65,7 @@
       "path": "packages/core/content-manager/admin/src/utils/validation.ts",
       "distPath": "dist/admin/utils/validation.mjs",
       "symbol": "createYupSchema",
-      "hash": "f7cd747c44fcfe4a5d4c60445dd425d4a5ca1e1e422ff0b21e8a4a76e91e6ed8",
+      "hash": "3e76ad04774c5a2e4c511829fc20ce3d8dd5c86f320c10ad98e01f332539e3bd",
       "usedBy": [
         "packages/plugin/admin/src/access/internal.ts"
       ]
@@ -111,7 +111,7 @@
       "path": "packages/core/content-manager/admin/src/features/DocumentRBAC.tsx",
       "distPath": "dist/admin/features/DocumentRBAC.mjs",
       "symbol": "DocumentRBAC, useDocumentRBAC",
-      "hash": "f3bfd8b9927fb5d0607317bceb28dcd39103f539507a544319611c4557b70497",
+      "hash": "1ea1ceebc6850a99fc328754701684040201f6aef37ad848ba22436a4e7940e0",
       "usedBy": [
         "packages/plugin/admin/src/access/internal.ts",
         "packages/plugin/admin/src/access/public.ts"
@@ -149,7 +149,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/components/FormInputs/Relations/RelationModal.tsx",
       "distPath": "dist/admin/pages/EditView/components/FormInputs/Relations/RelationModal.mjs",
       "symbol": "useRelationModal (context value shape: currentDocumentMeta, currentDocument)",
-      "hash": "54a98467611ceeb8d818cbad7387c71f808694dcbd4aeda01050fc05e1943de2",
+      "hash": "e0d5cddcecdab6fe18e9bcebf9233d35f97e2222d5ecbce900a7e2eae09dca5a",
       "usedBy": [
         "packages/plugin/vite/runtime/useDocumentContext.mjs"
       ]
@@ -160,7 +160,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/components/FormInputs/DynamicZone/Field.tsx",
       "distPath": "dist/admin/pages/EditView/components/FormInputs/DynamicZone/Field.mjs",
       "symbol": "DynamicZone, useDynamicZone",
-      "hash": "46655de1fc735bfbd64f233c7b993c6a30f224c47e555e401accb2f54d67f4f9",
+      "hash": "65473856c391a0a5727c8d86d85093364f0fb356a96e626cef2bb90caf518b9d",
       "usedBy": [
         "packages/plugin/vite/runtime/DynamicZone/Field.mjs"
       ],
@@ -220,7 +220,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/EditViewPage.tsx",
       "distPath": "dist/admin/pages/EditView/EditViewPage.mjs",
       "symbol": "EditViewPage, ProtectedEditViewPage, getDocumentStatus",
-      "hash": "61c0220176c19702c32ca6075a6101bb3f20bf81cd4ff64ee3ff0d9756aa4514",
+      "hash": "4429f6b1092990097c4140c1b6b19ac18f35a70dbd2b8df2c44035da69fd30ca",
       "usedBy": [
         "packages/plugin/vite/runtime/EditViewPage.mjs"
       ],
@@ -273,7 +273,7 @@
       "kind": "structure",
       "path": "packages/core/content-manager/package.json",
       "symbol": "exports map + unbundled dist/admin layout (deep-import resolution target)",
-      "hash": "bae123a1f3aa09a92eda1738984a2b9b31f0522e1f706029c33ef0d70ac9865a",
+      "hash": "9e3695cbfb4c58e9cce52ecd07259a6631789f20e6d02f203451d9c875b77743",
       "usedBy": [
         "packages/plugin/vite/index.cjs"
       ],
@@ -285,7 +285,7 @@
       "path": "packages/core/content-manager/server/src/services/utils/populate.ts",
       "distPath": "dist/server/services/utils/populate.js",
       "symbol": "getDeepPopulate, getPopulateForValidation, getDeepPopulateDraftCount",
-      "hash": "216374a5cadf268f99791b1fc7f81b15b28f03c7f24b7b409bfb3a7ce4766fb2",
+      "hash": "1e0a63adacc70696ff287529d988eaaa6c89f70a692d0b2a75b6cf273462da65",
       "usedBy": [
         "packages/plugin/server/src/access/recursive-populate.ts"
       ],
@@ -297,7 +297,7 @@
       "path": "packages/core/content-manager/server/src/history/services/utils.ts",
       "distPath": "dist/server/history/services/utils.js",
       "symbol": "createServiceUtils (getDeepPopulate, getComponentFields)",
-      "hash": "9612c46cd0fd571ea8ee48afc80cd2f57aa93024eca9680b582327a2bf8b3b3b",
+      "hash": "4fbe41ee191ec2deeb3f6f7fbb4a2d4d698f6a7352b950446bfeaf3b346afa34",
       "usedBy": [
         "packages/plugin/server/src/access/recursive-populate.ts"
       ],
@@ -321,7 +321,7 @@
       "path": "packages/plugins/i18n/server/src/services/content-types.ts",
       "distPath": "dist/server/services/content-types.js",
       "symbol": "getNestedPopulateOfNonLocalizedAttributes",
-      "hash": "1a2d0c2708ea55f633946392461593e13c92d55aa0b409aa0b85ea7c601fc893",
+      "hash": "ada69a9f6d816c2c41eafa2e6c74b7ca6353f9ffd8c08e24bfbf916e65f0d510",
       "usedBy": [
         "packages/plugin/server/src/access/recursive-populate.ts"
       ],
