@@ -1,7 +1,7 @@
 {
-  "strapiVersion": "5.57.0",
+  "strapiVersion": "5.58.0",
   "strapiFloor": "5.50.0",
-  "strapiCommit": "unknown",
+  "strapiCommit": "348d7b8bddf018ef7370d5621b3ae59b95bbbe4f",
   "notes": "Paths are relative to the strapi/strapi repo root; hashes are sha256 of normalized SOURCE content (drift/scripts/lib/normalize.mjs). distPath is the runtime file our deep imports resolve to (1:1 compiled from path). Support window: strapiFloor..strapiVersion (roof/target); peers must declare >=floor <roof-next-minor; the version matrix (drift/scripts/version-matrix.mjs) verifies every minor in the window.",
   "dependencies": [
     {
@@ -273,7 +273,7 @@
       "kind": "structure",
       "path": "packages/core/content-manager/package.json",
       "symbol": "exports map + unbundled dist/admin layout (deep-import resolution target)",
-      "hash": "9e3695cbfb4c58e9cce52ecd07259a6631789f20e6d02f203451d9c875b77743",
+      "hash": "9016324a8697b5be4f561dd6e485702d657eef71cc5d5793aa22504ef4d13daa",
       "usedBy": [
         "packages/plugin/vite/index.cjs"
       ],
@@ -297,7 +297,7 @@
       "path": "packages/core/content-manager/server/src/history/services/utils.ts",
       "distPath": "dist/server/history/services/utils.js",
       "symbol": "createServiceUtils (getDeepPopulate, getComponentFields)",
-      "hash": "4fbe41ee191ec2deeb3f6f7fbb4a2d4d698f6a7352b950446bfeaf3b346afa34",
+      "hash": "a0ef4a1a0882e5eac8d2fe8e73efe877d5d0e94b3bc77da08a4c2fce53e15a7d",
       "usedBy": [
         "packages/plugin/server/src/access/recursive-populate.ts"
       ],
