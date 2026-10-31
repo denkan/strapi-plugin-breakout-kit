@@ -1,7 +1,7 @@
 {
-  "strapiVersion": "5.58.0",
+  "strapiVersion": "5.60.0",
   "strapiFloor": "5.50.0",
-  "strapiCommit": "348d7b8bddf018ef7370d5621b3ae59b95bbbe4f",
+  "strapiCommit": "9f3af72b99be721cc692769f160eff2026516db4",
   "notes": "Paths are relative to the strapi/strapi repo root; hashes are sha256 of normalized SOURCE content (drift/scripts/lib/normalize.mjs). distPath is the runtime file our deep imports resolve to (1:1 compiled from path). Support window: strapiFloor..strapiVersion (roof/target); peers must declare >=floor <roof-next-minor; the version matrix (drift/scripts/version-matrix.mjs) verifies every minor in the window.",
   "dependencies": [
     {
@@ -10,7 +10,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/components/InputRenderer.tsx",
       "distPath": "dist/admin/pages/EditView/components/InputRenderer.mjs",
       "symbol": "InputRenderer",
-      "hash": "769609da72add04f9c9b772d9e899cc9bc49d838599714bda15ca078dd27e72f",
+      "hash": "e58c623d3b83ec3df76dc18f4574141e381d06f987430846e3e5cea6dd2fb332",
       "usedBy": [
         "packages/plugin/admin/src/access/internal.ts"
       ]
@@ -21,7 +21,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/components/FormLayout.tsx",
       "distPath": "dist/admin/pages/EditView/components/FormLayout.mjs",
       "symbol": "FormLayout",
-      "hash": "150e2d49901b00e078937e35b035d71387910e2e333915a62dc074496daa70c8",
+      "hash": "78a58b1258e9bdc08718ae11c5a29d32d3b9557f1791561f29958555ce83f297",
       "usedBy": [
         "packages/plugin/admin/src/access/internal.ts"
       ]
@@ -43,7 +43,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/utils/data.ts",
       "distPath": "dist/admin/pages/EditView/utils/data.mjs",
       "symbol": "transformDocument, handleInvisibleAttributes",
-      "hash": "82cc62a23f72a5650bb3dc3de65e4910b9f5c66058bf563f4b040388c788e663",
+      "hash": "e41a589bec61556124a7fbb52a788a924de91ffbb8ec268fc820605cdf8dbf06",
       "usedBy": [
         "packages/plugin/admin/src/access/internal.ts"
       ]
@@ -172,7 +172,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/components/FormInputs/DynamicZone/DynamicComponent.tsx",
       "distPath": "dist/admin/pages/EditView/components/FormInputs/DynamicZone/DynamicComponent.mjs",
       "symbol": "DynamicComponent",
-      "hash": "f3dad8cc75dc1b3a4646d55efe9018f397b52631ffa3866ce5e41089ce7dbd26",
+      "hash": "5e8e0c43b01b488be35384190f1e80b085f1ead9dfba9b9adbfd45b37310c555",
       "usedBy": [
         "packages/plugin/vite/runtime/DynamicZone/DynamicComponent.mjs"
       ],
@@ -184,7 +184,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/components/FormInputs/Component/Repeatable.tsx",
       "distPath": "dist/admin/pages/EditView/components/FormInputs/Component/Repeatable.mjs",
       "symbol": "RepeatableComponent",
-      "hash": "3c44a1898b2a323b680d384dbf80aef8043c4c6750706730c188c9069e39ea5f",
+      "hash": "21038bb1e5e83ddd9b2f46caa11be4c5da0950fcea653ac0c78593610d51c3ed",
       "usedBy": [
         "packages/plugin/vite/runtime/Component/Repeatable.mjs"
       ],
@@ -208,7 +208,7 @@
       "path": "packages/core/content-manager/admin/src/pages/EditView/components/FormInputs/Component/NonRepeatable.tsx",
       "distPath": "dist/admin/pages/EditView/components/FormInputs/Component/NonRepeatable.mjs",
       "symbol": "NonRepeatableComponent",
-      "hash": "3b125da5b6ee7828916b86bd4f5895174fcaf7f485df0d31050fe3d13d4654a8",
+      "hash": "6320baab5d18a33236f365071c68c7784524f83fc24c56e3737cf6fc6b7f9234",
       "usedBy": [
         "packages/plugin/vite/runtime/Component/NonRepeatable.mjs"
       ],
@@ -273,7 +273,7 @@
       "kind": "structure",
       "path": "packages/core/content-manager/package.json",
       "symbol": "exports map + unbundled dist/admin layout (deep-import resolution target)",
-      "hash": "9016324a8697b5be4f561dd6e485702d657eef71cc5d5793aa22504ef4d13daa",
+      "hash": "a66a746590bc16f15131b49ffe5df3881346faec3dade5185779ad86d1bac5c8",
       "usedBy": [
         "packages/plugin/vite/index.cjs"
       ],
